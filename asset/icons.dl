@@ -1,0 +1,18 @@
+--
+name : sun
+image : icons/sun.png
+--
+name : moon
+image : icons/moon.png
+--
+name : heart
+image : icons/heart.png
+--
+name : skull
+image : icons/skull.png
+--
+name : hand
+image : icons/hand.png
+--
+name : foot
+image : icons/foot.png
