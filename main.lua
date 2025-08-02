@@ -3,15 +3,18 @@ local spritemgr = require "soluna.spritemgr"
 local mattext = require "soluna.material.text"
 local font = require "soluna.font"
 local soluna = require "soluna"
-local icon = require "soluna.icon"
+--local icon = require "soluna.icon"
 local layout = require "soluna.layout"
+local text = require "soluna.text"
 
 local batch = ...
+
+soluna.set_window_title "Deep Future"
 
 local function font_init()
 	local sysfont = require "soluna.font.system"
 	font.import(assert(sysfont.ttfdata "微软雅黑"))
-	font.import_icon(icon.bundle "asset/icons.dl")
+	text.init "asset/icons.dl"
 	return font.name ""
 end
 
@@ -23,46 +26,47 @@ local font_id = font_init()
 
 local callback = {}
 
-local function text(c, color)
-	local cp = utf8.codepoint(c)
-	return mattext.char(cp, font_id, 24, color)
-end
-
-local icons = { "sun", "moon", "heart", "skull", "hand", "foot" }
-
 local fontcobj = font.cobj()
--- local block = mattext.block(fontcobj, font_id, 16)
--- local label = block ("这[FF0000]是[800000]五[400000]个[n]字[i0] [00FF00]你好[n]世界")
 
 local dom = layout.load "asset/card.dl"
+local hex_dom = layout.load "asset/hex.dl"
 
-local text = {
-	["card.corner"] = "1[i0]",
+local card_text = {
+	["card.corner"] = "1[sun]",
 	["card.world"] = "55 广州",
 	["card.title"] = "0. 星球",
-	["card.adv1"] = "[i0] 工程.0",
-	["card.desc1"] = "[0000FF][[发展] [n]M+1",
-	["card.adv2"] = "[i1] 艺术.1",
-	["card.desc2"] = "[0000FF][[开始] [n]C+1",
-	["card.adv3"] = "[i2] 医学.1",
+	["card.adv1"] = "[moon] 工程.0",
+	["card.desc1"] = "[blue][[发展] [n]M+1",
+	["card.adv2"] = "[moon] 艺术.1",
+	["card.desc2"] = "[blue][[开始] [n]C+1",
+	["card.adv3"] = "[heart] 医学.1",
 	["card.desc3"] = "[0000FF][[殖民] [n]S+1",
 }
 
-local function draw_list(dom)
-	local pos = layout.calc(dom)
-	for _, obj in ipairs(pos) do
-		if obj.image then
-			obj.command = { sprites[obj.image], obj.x, obj.y }
-		elseif obj.text then
-			local block = mattext.block(fontcobj, font_id, obj.size or 16, obj.color or 0, obj.align)
-			local label = block(text[obj.text], obj.w, obj.h)
-			obj.command = { label, obj.x, obj.y }
-		end
-	end
-	return pos
+for k,v in pairs(card_text) do
+	card_text[k] = text.convert[v]
 end
 
-local draw = draw_list(dom)
+local function draw_list(dom, texts)
+	local pos = layout.calc(dom)
+	local r = {}
+	local n = 1
+	for idx, obj in ipairs(pos) do
+		if obj.image then
+			r[n] = { sprites[obj.image], obj.x, obj.y }; n = n + 1
+		elseif obj.text then
+			local label = texts[obj.text]
+			if label then
+				local block = mattext.block(fontcobj, font_id, obj.size or 16, obj.color or 0, obj.align)
+				local label = block(label, obj.w, obj.h)
+				r[n] = { label, obj.x, obj.y }; n = n + 1
+			end
+		end
+	end
+	return r
+end
+
+local draw = draw_list(dom, card_text)
 
 local offx = 100
 local offy = 100
@@ -84,11 +88,36 @@ local hex_id = {
 	{ 41 },
 }
 
+local hex_people = {
+	[63] = { "008000", 5 },
+	[16] = { "black", 3 },
+	[31] = { "red", 4 },
+	[41] = { "blue", 2 },
+	[25] = { "808000", 1 },
+}
+
+local function people_icons(color, n)
+	local r = "["..color.."]"
+	if n <= 3 then
+		r = r .. ("[people]"):rep(n)
+	else
+		r = r .. "[people][people]\n" .. ("[people]"):rep(n-2)
+	end
+	return text.convert[r]
+end
+
 local function hex_init()
-	local number = mattext.block(fontcobj, font_id, 12, 0x808080)
+	local hex_text = {}
 	for _, v in pairs(hex_id) do
 		for k, content in pairs(v) do
-			v[k] = number(tostring(content), 30, 20)
+			local p = hex_people[content]
+			if p then
+				hex_text["hex.people"] = people_icons(table.unpack(p))
+			else
+				hex_text["hex.people"] = nil
+			end
+			hex_text["hex.id"] = text.convert["[gray]".. tostring(content)]
+			v[k] = draw_list(hex_dom, hex_text)
 		end
 	end
 end
@@ -96,16 +125,18 @@ end
 hex_init()
 
 local function map(x, y)
-	local id = sprites.hex 
 	for i = 1, #lines do
 		local n = lines[i]
 		local xx = x - n * 72
 		for j = 1, n do
-			batch:add(id, xx, y)
-			local label = hex_id[i][j]
-			if label then
-				batch:add(label, xx + 26 , y + 5)
+			local list = hex_id[i][j]
+			if list then
+				for _, obj in ipairs(list) do
+					local o, dx, dy = table.unpack(obj)
+					batch:add(o, dx + xx, dy + y)
+				end
 			else
+				batch:add(sprites.hex, xx, y)
 				batch:add(sprites.core, xx, y)
 			end
 			xx = xx + 144
@@ -119,27 +150,17 @@ function callback.frame(count)
 	local rad = count * 3.1415927 / 180
 	local scale = math.sin(rad)
 	for _, obj in ipairs(draw) do
-		local o, x, y = table.unpack(obj.command)
+		local o, x, y = table.unpack(obj)
 		batch:add(o, x + offx, y + offy)
 	end
 	map(600, 100)
 --	batch:add(sprites.cardface, 256, 200)
 --	if soluna.gamepad.A then
---		batch:add(text ("你", 0xff0000), 20, 100)
---		batch:add(text ("好", 0x0000ff), 50, 100)
 --		batch:add(label, 200, 200)
 --		for i, name in ipairs(icons) do
 --			batch:add(icon.symbol(name, 18, 0xff0000), 50 + i * 25, 100)
 --		end
 --	end
---	batch:add(sprites.avatar, 256, 400, scale + 1.2, -rad)
---	batch:add(sprites.avatar, 256, 600, - scale + 1.2, rad)
 end
-
---local sdf = require "soluna.image.sdf"
---local file = require "soluna.file"
---local data = file.load "asset/star.png" 
---local oimg = assert(sdf.load(data))
---sdf.save("sdfstar.png", oimg)
 
 return callback

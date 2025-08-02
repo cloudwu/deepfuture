@@ -16,3 +16,6 @@ image : icons/hand.png
 --
 name : foot
 image : icons/foot.png
+--
+name : people
+image : icons/people.png

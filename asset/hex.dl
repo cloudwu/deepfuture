@@ -1,67 +1,18 @@
-image : cardface
-width : 200
-height : 280
-padding : 10
-content :
+image : hex
+width : 100
+height : 86
+people :
 	position : absolute
 	width : 100%
-	height : 80%
-	bottom : 0
-	title :
-		text : card.title
-		size : 20
-		left : 5
-		height : 20%
-	advancement :
-		height : 80%
-		padding : 20
-		justify: space-between
-		adv :
-			height : 40
-			name :
-				text : card.adv1
-				height : 50%
-				size : 16
-			desc :
-				left : 20
-				text : card.desc1
-				height : 50%
-				size : 12
-		adv :
-			height : 40
-			name :
-				text : card.adv2
-				height : 50%
-				size : 16
-			desc :
-				left : 20
-				text : card.desc2
-				height : 50%
-				size : 12
-		adv :
-			height : 40
-			name :
-				text : card.adv3
-				height : 50%
-				size : 16
-			desc :
-				left : 20
-				text : card.desc3
-				height : 50%
-				size : 12
-corner :
-	text : card.corner
-	text_align : T
+	height : 100%
+	text : hex.people
 	size : 16
-	position : absolute
-	width : 40
-	height : 40
-world :
-	direction: row
-	position : absolute
-	width : 50%
-	height : 40
-	right : 0
-	text : card.world
 	text_align : C
-	size : 14
+id :
+	position : absolute
+	left : 28%
+	height : 20
+	width : 100%
+	top : 3
+	text : hex.id
+	size : 12
