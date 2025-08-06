@@ -125,20 +125,15 @@ end
 function callback.frame(count)
 	local rad = count * 3.1415927 / 180
 	local scale = math.sin(rad)
-	batch:layer(512, 384)
-	batch:layer(-512, -384 , 1, rad)
-	batch:layer(100, 100)
-	batch:layer(-100, -140, 0.5, rad)
+	batch:layer(0.5, rad, 200, 200)
+	batch:layer(-100, -140)
 	for _, obj in ipairs(draw) do
 		local o, x, y = table.unpack(obj)
 		batch:add(o, x, y)
 	end
 	batch:layer()
 	batch:layer()
---	batch:layer(1 * 3.14 /180)
 	map(600, 100)
---	batch:layer()
-	batch:layer()
 end
 
 function callback.char(c)
