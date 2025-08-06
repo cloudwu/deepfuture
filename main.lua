@@ -6,6 +6,7 @@ local soluna = require "soluna"
 --local icon = require "soluna.icon"
 local layout = require "soluna.layout"
 local text = require "soluna.text"
+local widget = require "core.widget"
 
 local batch = ...
 
@@ -26,15 +27,10 @@ local font_id = font_init()
 
 local callback = {}
 
-local fontcobj = font.cobj()
-
-local dom = layout.load "asset/card.dl"
-local hex_dom = layout.load "asset/hex.dl"
-
 local card_text = {
 	["card.corner"] = "1[sun]",
-	["card.world"] = "55 广州",
-	["card.title"] = "0. 星球",
+	["card.world"] = "55 一个名字很长的星球",
+	["card.title"] = "0. [planet]星球",
 	["card.adv1"] = "[moon] 工程.0",
 	["card.desc1"] = "[blue][[发展] [n]M+1",
 	["card.adv2"] = "[moon] 艺术.1",
@@ -47,29 +43,7 @@ for k,v in pairs(card_text) do
 	card_text[k] = text.convert[v]
 end
 
-local function draw_list(dom, texts)
-	local pos = layout.calc(dom)
-	local r = {}
-	local n = 1
-	for idx, obj in ipairs(pos) do
-		if obj.image then
-			r[n] = { sprites[obj.image], obj.x, obj.y }; n = n + 1
-		elseif obj.text then
-			local label = texts[obj.text]
-			if label then
-				local block = mattext.block(fontcobj, font_id, obj.size or 16, obj.color or 0, obj.align)
-				local label = block(label, obj.w, obj.h)
-				r[n] = { label, obj.x, obj.y }; n = n + 1
-			end
-		end
-	end
-	return r
-end
-
-local draw = draw_list(dom, card_text)
-
-local offx = 100
-local offy = 100
+local draw = widget.draw_list("card", card_text, font_id, sprites)
 
 local lines = { 1, 2, 3, 4, 3, 4, 3, 4, 3, 4, 3, 2, 1 }
 local hex_id = {
@@ -117,7 +91,7 @@ local function hex_init()
 				hex_text["hex.people"] = nil
 			end
 			hex_text["hex.id"] = text.convert["[gray]".. tostring(content)]
-			v[k] = draw_list(hex_dom, hex_text)
+			v[k] = widget.draw_list("hex", hex_text, font_id, sprites)
 		end
 	end
 end
@@ -125,9 +99,11 @@ end
 hex_init()
 
 local function map(x, y)
+	batch:layer(x,y)
+	y = 0
 	for i = 1, #lines do
 		local n = lines[i]
-		local xx = x - n * 72
+		local xx = - n * 72
 		for j = 1, n do
 			local list = hex_id[i][j]
 			if list then
@@ -143,24 +119,30 @@ local function map(x, y)
 		end
 		y = y + 42
 	end
-	
+	batch:layer()
 end
 
 function callback.frame(count)
 	local rad = count * 3.1415927 / 180
 	local scale = math.sin(rad)
+	batch:layer(512, 384)
+	batch:layer(-512, -384 , 1, rad)
+	batch:layer(100, 100)
+	batch:layer(-100, -140, 0.5, rad)
 	for _, obj in ipairs(draw) do
 		local o, x, y = table.unpack(obj)
-		batch:add(o, x + offx, y + offy)
+		batch:add(o, x, y)
 	end
+	batch:layer()
+	batch:layer()
+--	batch:layer(1 * 3.14 /180)
 	map(600, 100)
---	batch:add(sprites.cardface, 256, 200)
---	if soluna.gamepad.A then
---		batch:add(label, 200, 200)
---		for i, name in ipairs(icons) do
---			batch:add(icon.symbol(name, 18, 0xff0000), 50 + i * 25, 100)
---		end
---	end
+--	batch:layer()
+	batch:layer()
+end
+
+function callback.char(c)
+	print("Char", c, utf8.char(c))
 end
 
 return callback

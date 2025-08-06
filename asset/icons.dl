@@ -19,3 +19,24 @@ image : icons/foot.png
 --
 name : people
 image : icons/people.png
+--
+name : coin
+image : icons/coin.png
+--
+name : cube
+image : icons/cube.png
+--
+name : planet
+image : icons/planet.png
+--
+name : sword
+image : icons/sword.png
+--
+name : mask
+image : icons/mask.png
+--
+name : balance
+image : icons/balance.png
+--
+name : start
+image : icons/start.png

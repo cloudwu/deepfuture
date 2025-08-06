@@ -9,7 +9,7 @@ content :
 	bottom : 0
 	title :
 		text : card.title
-		size : 20
+		size : 18
 		left : 5
 		height : 20%
 	advancement :
@@ -26,7 +26,7 @@ content :
 				left : 20
 				text : card.desc1
 				height : 50%
-				size : 12
+				size : 14
 		adv :
 			height : 40
 			name :
@@ -37,7 +37,7 @@ content :
 				left : 20
 				text : card.desc2
 				height : 50%
-				size : 12
+				size : 14
 		adv :
 			height : 40
 			name :
@@ -48,7 +48,7 @@ content :
 				left : 20
 				text : card.desc3
 				height : 50%
-				size : 12
+				size : 14
 corner :
 	text : card.corner
 	text_align : T
