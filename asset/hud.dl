@@ -1,0 +1,370 @@
+id : screen
+padding : 10
+direction : row
+gap : 10
+map :
+	area : map
+	width : 532
+info :
+	flex : 1
+	track :
+		height : 130
+		gap : 2
+		padding : 5
+		track:
+			flex : 1
+			direction : row
+			name :
+				text : hud.C
+				size : 20
+				width : 30
+			grid :
+				text : hud.C1
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40ffffff
+			grid :
+				text : hud.C2
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40000000
+			grid :
+				text : hud.C3
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40ffffff
+			grid :
+				text : hud.C4
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40000000
+			grid :
+				text : hud.C5
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40ffffff
+			grid :
+				text : hud.C6
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40000000
+			grid :
+				text : hud.C7
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40ffffff
+			grid :
+				text : hud.C8
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40000000
+			grid :
+				text : hud.C9
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40ffffff
+			grid :
+				text : hud.C10
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40000000
+			grid :
+				text : hud.C11
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40ffffff
+			grid :
+				text : hud.C12
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40000000
+			grid :
+				text : hud.C13
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40ffffff
+		track:
+			flex : 1
+			direction : row
+			name :
+				text : hud.M
+				size : 20
+				width : 30
+			grid :
+				text : hud.M1
+				width : 30
+				text_align : C
+				size : 20
+				background : 0x40ffffff
+			grid :
+				text : hud.M2
+				width : 30
+				text_align : C
+				size : 20
+				background : 0x40000000
+			grid :
+				text : hud.M3
+				width : 30
+				text_align : C
+				size : 20
+				background : 0x40ffffff
+			grid :
+				text : hud.M4
+				width : 30
+				text_align : C
+				size : 20
+				background : 0x40000000
+			grid :
+				text : hud.M5
+				width : 30
+				text_align : C
+				size : 20
+				background : 0x40ffffff
+			grid :
+				text : hud.M6
+				width : 30
+				text_align : C
+				size : 20
+				background : 0x40000000
+			grid :
+				text : hud.M7
+				width : 30
+				text_align : C
+				size : 20
+				background : 0x40ffffff
+			grid :
+				text : hud.M8
+				width : 30
+				text_align : C
+				size : 20
+				background : 0x40000000
+			grid :
+				text : hud.M9
+				width : 30
+				text_align : C
+				size : 20
+				background : 0x40ffffff
+			grid :
+				text : hud.M10
+				width : 30
+				text_align : C
+				size : 20
+				background : 0x40000000
+			grid :
+				text : hud.M11
+				width : 30
+				text_align : C
+				size : 20
+				background : 0x40ffffff
+			grid :
+				text : hud.M12
+				width : 30
+				text_align : C
+				size : 20
+				background : 0x40000000
+			grid :
+				text : hud.M13
+				width : 30
+				text_align : C
+				size : 20
+				background : 0x40ffffff
+		track:
+			flex : 1
+			direction : row
+			name :
+				text : hud.S
+				size : 20
+				width : 30
+			grid :
+				text : hud.S1
+				width : 30
+				text_align : C
+				size : 20
+				background : 0x40ffffff
+			grid :
+				text : hud.S2
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40000000
+			grid :
+				text : hud.S3
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40ffffff
+			grid :
+				text : hud.S4
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40000000
+			grid :
+				text : hud.S5
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40ffffff
+			grid :
+				text : hud.S6
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40000000
+			grid :
+				text : hud.S7
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40ffffff
+			grid :
+				text : hud.S8
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40000000
+			grid :
+				text : hud.S9
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40ffffff
+			grid :
+				text : hud.S10
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40000000
+			grid :
+				text : hud.S11
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40ffffff
+			grid :
+				text : hud.S12
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40000000
+			grid :
+				text : hud.S13
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40ffffff
+		track:
+			flex : 1
+			direction : row
+			name :
+				text : hud.X
+				size : 20
+				width : 30
+			grid :
+				text : hud.X1
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40ffffff
+			grid :
+				text : hud.X2
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40000000
+			grid :
+				text : hud.X3
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40ffffff
+			grid :
+				text : hud.X4
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40000000
+			grid :
+				text : hud.X5
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40ffffff
+			grid :
+				text : hud.X6
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40000000
+			grid :
+				text : hud.X7
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40ffffff
+			grid :
+				text : hud.X8
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40000000
+			grid :
+				text : hud.X9
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40ffffff
+			grid :
+				text : hud.X10
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40000000
+			grid :
+				text : hud.X11
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40ffffff
+			grid :
+				text : hud.X12
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40000000
+			grid :
+				text : hud.X13
+				text_align : C
+				size : 20
+				width : 30
+				background : 0x40ffffff
+	title :
+		text : hud.world
+		height : 20
+		size : 16
+	card :
+		margin : 5
+		area : homeworld
+		flex : 0.3
+	title :
+		text : hud.colony
+		height : 20
+		size : 16
+	card :
+		margin : 5
+		area : colony
+		flex : 0.3
+	

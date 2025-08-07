@@ -4,11 +4,11 @@ local mattext = require "soluna.material.text"
 local font = require "soluna.font"
 local soluna = require "soluna"
 --local icon = require "soluna.icon"
-local layout = require "soluna.layout"
 local text = require "soluna.text"
 local widget = require "core.widget"
 
-local batch = ...
+local args = ...
+local batch = args.batch
 
 soluna.set_window_title "Deep Future"
 
@@ -24,6 +24,15 @@ local sprites = ltask.call(loader, "loadbundle", "asset/sprites.dl")
 local render = ltask.uniqueservice "render"
 ltask.call(render, "load_sprites", "asset/sprites.dl")
 local font_id = font_init()
+
+local function set_hud(w, h)
+	widget.set("hud", {
+		screen = {
+			width = w,
+			height = h,
+		}
+	})
+end
 
 local callback = {}
 
@@ -103,7 +112,7 @@ local function map(x, y)
 	y = 0
 	for i = 1, #lines do
 		local n = lines[i]
-		local xx = - n * 72
+		local xx = - n * 72 + 288
 		for j = 1, n do
 			local list = hex_id[i][j]
 			if list then
@@ -122,18 +131,89 @@ local function map(x, y)
 	batch:layer()
 end
 
-function callback.frame(count)
-	local rad = count * 3.1415927 / 180
-	local scale = math.sin(rad)
-	batch:layer(0.5, rad, 200, 200)
-	batch:layer(-100, -140)
-	for _, obj in ipairs(draw) do
-		local o, x, y = table.unpack(obj)
-		batch:add(o, x, y)
+local hud = {}
+
+function hud:map()
+	map(self.x, self.y)
+end
+
+hud["hud.world"] = "母星"
+hud["hud.colony"] = "殖民地"
+hud["hud.C"] = "C"
+hud["hud.M"] = "M"
+hud["hud.S"] = "S"
+hud["hud.X"] = "X"
+hud["hud.C1"] = text.convert["[star]"]
+hud["hud.M1"] = text.convert["[star]"]
+hud["hud.S1"] = text.convert["[star]"]
+hud["hud.X1"] = text.convert["[star]"]
+hud["hud.M7"] = text.convert["[circle]"]
+hud["hud.S7"] = text.convert["[circle]"]
+hud["hud.X7"] = text.convert["[circle]"]
+hud["hud.C13"] = text.convert["[circle]"]
+hud["hud.M13"] = text.convert["[cross]"]
+hud["hud.S13"] = text.convert["[cross]"]
+hud["hud.X13"] = text.convert["[cross]"]
+
+do
+	local _, _, card_w, card_h = widget.get("card", "card")
+
+	local function calc_scale(self)
+		local w = self.w - 15
+		local h = self.h
+		local scale_w = 1
+		local scale_h = 1
+		if card_w * 4 > w then
+			scale_w = w / (card_w * 4)
+		end
+		if card_h > h then
+			scale_h = h / card_h
+		end
+		return scale_w > scale_h and scale_h or scale_w
 	end
-	batch:layer()
-	batch:layer()
-	map(600, 100)
+
+	function hud:homeworld()
+		local scale = calc_scale(self)
+		w = card_w * scale + 5
+		local x = self.x
+		local y = self.y
+		for i = 1, 4 do
+			widget.draw(batch, draw, x, y, scale)
+			x = x + w
+		end
+	end
+
+	function hud:colony()
+		local scale = calc_scale(self)
+		w = card_w * scale + 5
+		local x = self.x
+		local y = self.y
+		for i = 1, 3 do
+			widget.draw(batch, draw, x, y, scale)
+			x = x + w
+		end
+	end
+end
+
+set_hud(args.width, args.height)
+local hud_draw_list = widget.draw_list("hud", hud, font_id, sprites)
+
+function callback.window_resize(w,h)
+	set_hud(w, h)
+	hud_draw_list = widget.draw_list("hud", hud, font_id, sprites)
+end
+
+function callback.frame(count)
+	widget.draw(batch, hud_draw_list)
+--	local rad = count * 3.1415927 / 180
+--	local scale = math.sin(rad)
+--	map(50, 50)
+--	widget.draw(batch, draw, x, y, 0.6)
+
+--	batch:layer(0.5, 200, 200)
+---	batch:layer(-100, -140)
+--	batch:layer()
+--	batch:layer()
 end
 
 function callback.char(c)

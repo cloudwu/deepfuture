@@ -40,3 +40,13 @@ image : icons/balance.png
 --
 name : start
 image : icons/start.png
+--
+name : star
+image : icons/star.png
+--
+name : circle
+image : icons/circle.png
+--
+name : cross
+image : icons/cross.png
+
