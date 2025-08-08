@@ -1,6 +1,12 @@
 --
-name : cardface
-filename : cardface.png
+name : cardworld
+filename : cardworld.png
+--
+name : cardblank
+filename : cardblank.png
+--
+name : cardciv
+filename : cardciv.png
 --
 name : hex
 filename : hex.png
