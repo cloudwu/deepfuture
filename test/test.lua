@@ -9,5 +9,8 @@ print(version.older_than("0.1.1", "0.2.0"))
 
 
 card.init_deck()
-card.init_draw()
+card.setup()
+print_r(card.draw_discard())
+print_r(card.generate_newcard())
+card.discard()
 persist.save "test.dl"

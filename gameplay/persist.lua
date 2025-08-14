@@ -96,12 +96,13 @@ do
 	end
 	
 	function persist.save(filename)
+		local data = DATA
+		assert(data.context._temporary == nil)
 		local f <close> = io.open(filename, "wb")
 		if not f then
 			print ("Save to " .. filename .. " failed")
 			return false
 		end
-		local data = DATA
 		data.version = version.full()
 		local keys = sort_keys(data)
 		for _, key in ipairs(keys) do
