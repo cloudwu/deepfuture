@@ -20,6 +20,10 @@ function persist.init(entry, init)
 	return init
 end
 
+function persist.drop(entry)
+	DATA[entry] = nil
+end
+
 function persist.load(filename)
 	return pcall(loadfile, filename)	
 end
@@ -97,7 +101,6 @@ do
 	
 	function persist.save(filename)
 		local data = DATA
-		assert(data.context._temporary == nil)
 		local f <close> = io.open(filename, "wb")
 		if not f then
 			print ("Save to " .. filename .. " failed")

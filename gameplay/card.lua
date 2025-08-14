@@ -1,4 +1,6 @@
 local persist = require "gameplay.persist"
+local math = math
+local table = table
 
 local card = {}
 
@@ -39,48 +41,55 @@ function card.init_deck()
 	DECK = persist.init("deck", init)
 end
 
-local DRAW
-local DISCARD
-local HAND
-local CONTEXT
+local GAME
+local areas = { "draw", "discard", "hand", "neutral", "homeworld", "colony" }
 
-function card.setup()
-	local init = { _type = "list" }
+function areas.draw(init)
 	local n = 1
 	for id, card in ipairs(DECK) do
 		if card.type ~= "deleted" then
 			init[n] = id; n = n + 1
+			card._id = id
 		end
 	end
-	DRAW = persist.init("draw", init)
-	DISCARD = persist.init("discard", { _type = "list" })
-	HAND = persist.init("hand", { _type = "list" })
-	CONTEXT = persist.init("context", {
-		seen = 0,	-- seen cards of drawpile
-	})
 end
 
+function card.setup()
+	local game = {}
+	for _, area in ipairs(areas) do
+		game[area] = { _type = "list" }
+		local init_func = areas[area]
+		if init_func then
+			init_func(game[area])
+		end
+	end
+	game.seen = 0 -- seen cards of drawpile
+	GAME = persist.init("game", game)	
+end
+
+local print = print
 local function draw_card()
-	local n = #DRAW
+	local _ENV = GAME
+	local n = #draw
 	if n == 0 then
-		n = #DISCARD
+		n = #discard
 		if n == 0 then
 			-- discard pile is empty, draw fail
 			return
 		end
 		-- swap draw pile and discard pile
-		DRAW, DISCARD = DISCARD, DRAW
+		draw, discard = discard, draw
 	end
-	local seen = CONTEXT.seen
+	
 	if seen == 0 then
 		local idx = math.random(n)
-		local card = DRAW[idx]
-		DRAW[idx] = DRAW[n]
-		DRAW[n] = nil
+		local card = draw[idx]
+		draw[idx] = draw[n]
+		draw[n] = nil
 		return card
 	end
-	CONTEXT.seen = seen - 1
-	return table.remove(DRAW, 1)
+	seen = seen - 1
+	return table.remove(draw, 1)
 end
 
 function card.draw_hand()
@@ -88,7 +97,7 @@ function card.draw_hand()
 	if card_id == nil then
 		return
 	end
-	HAND[#HAND+1] = card_id
+	GAME.hand[#GAME.hand+1] = card_id
 	return DECK[card_id]
 end
 
@@ -97,42 +106,82 @@ function card.draw_discard()
 	if card_id == nil then
 		return
 	end
-	DISCARD[#DISCARD+1] = card_id
+	GAME.discard[#GAME.discard+1] = card_id
 	return DECK[card_id]
 end
 
+function card.draw_type(type)
+	local n = #GAME.draw + #GAME.discard
+	for i = 1, n do
+		local card = draw_card()
+		card = DECK[card]
+		if card.type == type then
+			return card
+		end
+	end
+end
+
 function card.generate_newcard()
-	assert(CONTEXT._temporary == nil)
 	local card1 = draw_card()
 	local card2 = draw_card()
 	if not (card1 and card2) then
 		-- no 2 cards
 		return
 	end
-	local n = #DISCARD
-	DISCARD[n+1] = card1
-	DISCARD[n+2] = card2
+	local n = #GAME.discard
+	GAME.discard[n+1] = card1
+	GAME.discard[n+2] = card2
 
 	card1 = DECK[card1]
 	card2 = DECK[card2]
 	
+	local newcard = #DECK + 1
+	
 	local card = {
+		_id = newcard,
 		value = card1.value,
 		suit = card2.suit,
 		type = "blank",
 	}
 
-	local newcard = #DECK + 1
-	CONTEXT._temporary = newcard
-	
 	DECK[newcard] = card
 	return card, card1, card2
 end
 
-function card.discard()
-	local card = assert(CONTEXT._temporary)
-	CONTEXT._temporary = nil
-	DISCARD[#DISCARD + 1] = card
+function card.pickup(where, card)
+	local id = card._id
+	local area = GAME[where]
+	for i, c in ipairs(area) do
+		if c == id then
+			table.remove(area, i)
+			return
+		end
+	end
+	error ("No card in " .. where)
+end
+
+function card.putdown(where, card)
+	local id = card._id
+	local area = GAME[where]
+	for i, c in ipairs(area) do
+		if c == id then
+			return
+		end
+	end
+	area[#area+1] = id
+end
+
+function card.drophand()
+	table.move(GAME.hand, 1, #GAME.hand, #GAME.discard + 1, GAME.discard)
+	GAME.hand = {}
+end
+
+function card.discard(card)
+	GAME.discard[#GAME.discard + 1] = card._id
+end
+
+function card.cleanup()
+	persist.drop "game"
 end
 
 return card
