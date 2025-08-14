@@ -80,10 +80,18 @@ do
 	end
 
 	local function write_list(f, key, list)
-		f:write(key, ":\n")
-		for _, item in ipairs(list) do
-			f:write("\t---\n")
-			write_kv(f, item, "\t")
+		if #list == 0 then
+			f:write(key, ":{}\n")
+		else
+			if type(list[1]) == "table" then
+				f:write(key, ":\n")
+				for _, item in ipairs(list) do
+					f:write("\t---\n")
+					write_kv(f, item, "\t")
+				end
+			else
+				f:write(key, ":", tolist(list), "\n")
+			end
 		end
 	end
 	

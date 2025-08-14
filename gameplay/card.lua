@@ -13,7 +13,7 @@ H : hand
 F : foot
 
 value : 1-6
-type : blank world tech civ
+type : blank world tech civ deleted
 
 ]]
 
@@ -37,6 +37,19 @@ function card.init_deck()
 		end
 	end
 	DECK = persist.init("deck", init)
+end
+
+local DRAW
+
+function card.init_draw()
+	local init = { _type = "list" }
+	local n = 1
+	for id, card in ipairs(DECK) do
+		if card.type ~= "deleted" then
+			init[n] = id; n = n + 1
+		end
+	end
+	DRAW = persist.init("draw", init)
 end
 
 return card
