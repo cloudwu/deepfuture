@@ -6,8 +6,13 @@ local FONT_ID
 local SPRITES
 local BATCH
 
+local card_type = {
+	world = "worldcard",
+	blank = "blankcard",
+}
+
 local function gen_draw_list(self, data)
-	local draw = widget.draw_list("card", data, FONT_ID, SPRITES)
+	draw = widget.draw_list(card_type[data.type], data, FONT_ID, SPRITES)
 	self[data] = draw
 	return draw
 end

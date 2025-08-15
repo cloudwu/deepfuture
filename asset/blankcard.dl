@@ -1,0 +1,12 @@
+id : card
+image : cardblank
+width : 200
+height : 280
+padding : 10
+corner :
+	text : card.corner
+	text_align : T
+	size : 16
+	position : absolute
+	width : 40
+	height : 40

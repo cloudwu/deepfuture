@@ -9,7 +9,9 @@ local widget = require "core.widget"
 
 local initial = require "gameplay.initial"
 local setup = require "gameplay.setup"
+local card = require "gameplay.card"
 local vcard = require "visual.card"
+local vmap = require "visual.map"
 
 local localization = require "core.localization"
 
@@ -34,6 +36,7 @@ ltask.call(render, "load_sprites", "asset/sprites.dl")
 local font_id = font_init()
 
 vcard.init(batch, font_id, sprites)
+vmap.init(batch, font_id, sprites)
 
 local function set_hud(w, h)
 	widget.set("hud", {
@@ -48,101 +51,59 @@ local callback = {}
 
 local desktop = {}
 
-local function setup_desktop()
-	initial.new()
-	desktop.hand = setup.draw_worlds()
-	-- todo : choose a world
-	setup.new_world()
-	desktop.neutral = setup.neutral()
-end
-
-setup_desktop()
-
---local draw = widget.draw_list("card", card_text, font_id, sprites)
-
-local lines = { 1, 2, 3, 4, 3, 4, 3, 4, 3, 4, 3, 2, 1 }
-local hex_id = {
-	{ 11 },
-	{ 63, 12 },
-	{ 62, 14, 13 },
-	{ 61, 65, 15, 21 },
-	{ 64, 16, 24 },
-	{ 53, 66, 26, 22 },
-	{ 55, nil, 25 },
-	{ 52, 56, 36, 23 },
-	{ 54, 46, 34 },
-	{ 51, 45, 35, 31 },
-	{ 43, 44, 32 },
-	{ 42, 33 },
-	{ 41 },
-}
-
-local hex_people = {
-	[63] = { "008000", 5 },
-	[16] = { "black", 3 },
-	[31] = { "red", 4 },
-	[41] = { "blue", 2 },
-	[25] = { "808000", 1 },
-}
-
-local function people_icons(color, n)
-	local r = "["..color.."]"
-	if n <= 3 then
-		r = r .. ("[people]"):rep(n)
-	else
-		r = r .. "[people][people]\n" .. ("[people]"):rep(n-2)
+local function draw_hand(n)
+	local r = {}
+	for i = 1, n do
+		r[#r+1] = card.draw_hand()
 	end
 	return r
 end
 
-local function hex_init()
-	local hex_text = {}
-	for _, v in pairs(hex_id) do
-		for k, content in pairs(v) do
-			local p = hex_people[content]
-			if p then
-				hex_text.content = {
-					people = people_icons(table.unpack(p))
-				}
-			else
-				hex_text.content = nil
-			end
-			hex_text.id = tostring(content)
-			v[k] = widget.draw_list("hex", hex_text, font_id, sprites)
-		end
+local function set_neutral(card)
+	local sec = card.sector
+	local hex = desktop.map[sec]
+	if hex == nil then
+		hex = { "black", 0 }
+		desktop.map[sec] = hex
 	end
+	local n = hex[2] + 3
+	if n > 5 then
+		n = 5
+	end
+	hex[2] = n
+end
+
+local function setup_desktop()
+	initial.new()
+	desktop.hand = setup.draw_worlds()
+	-- todo : choose a world
+	desktop.homeworld = { (setup.new_world()) }
+	desktop.neutral = setup.neutral(desktop.homeworld[1])
+	desktop.colony = {}
+	desktop.hand = draw_hand(5)
+	local map = {}
+	desktop.map = map
+	for _, card in ipairs(desktop.neutral) do
+		set_neutral(card)
+	end
+	map[desktop.homeworld[1].sector] = { "blue", 3 }
+end
+
+setup_desktop()
+
+local function hex_init()
+	for k,v in pairs(desktop.map) do
+		vmap.set(k, v[1], v[2])
+	end
+	vmap.update()
 end
 
 hex_init()
 
-local function map(x, y)
-	batch:layer(x,y)
-	y = 0
-	for i = 1, #lines do
-		local n = lines[i]
-		local xx = - n * 72 + 288
-		for j = 1, n do
-			local list = hex_id[i][j]
-			if list then
-				for _, obj in ipairs(list) do
-					local o, dx, dy = table.unpack(obj)
-					batch:add(o, dx + xx, dy + y)
-				end
-			else
-				batch:add(sprites.hex, xx, y)
-				batch:add(sprites.core, xx, y)
-			end
-			xx = xx + 144
-		end
-		y = y + 42
-	end
-	batch:layer()
-end
-
 local hud = {}
 
 function hud:map()
-	map(self.x, self.y)
+	vmap.draw(self.x, self.y)
 end
 
 hud.mark_C1 = { mark = "[star]" }
@@ -158,7 +119,7 @@ hud.mark_X7 = { mark = "[circle]" }
 hud.mark_X13 = { mark = "[cross]" }
 
 do
-	local _, _, card_w, card_h = widget.get("card", "card")
+	local _, _, card_w, card_h = widget.get("blankcard", "card")
 
 	local function calc_scale(self, n)
 		local w = self.w - (n - 1) * 3
@@ -176,7 +137,7 @@ do
 	
 	function hud:natural()
 		local scale = calc_scale(self, 6)
-		w = card_w * scale + 3
+		local w = card_w * scale + 3
 		local x = self.x
 		local y = self.y
 		for i = 1, #desktop.neutral do
@@ -188,23 +149,56 @@ do
 
 	function hud:homeworld()
 		local scale = calc_scale(self, 4)
-		w = card_w * scale + 3
+		local w = card_w * scale + 3
 		local x = self.x
 		local y = self.y
-		for i = 1, 4 do
---			widget.draw(batch, draw, x, y, scale)
+		local n = #desktop.homeworld
+		if n > 4 then
+			w = (self.w - card_w * scale) / (n-1)
+		end
+		for i = 1, n do
+			local c = desktop.homeworld[i]
+			vcard.draw(c, x, y, scale)
 			x = x + w
 		end
 	end
 
 	function hud:colony()
 		local scale = calc_scale(self, 4)
-		w = card_w * scale + 3
+		local w = card_w * scale + 3
 		local x = self.x
 		local y = self.y
-		for i = 1, 3 do
---			widget.draw(batch, draw, x, y, scale)
+		local n = #desktop.colony
+		if n > 4 then
+			w = (self.w - card_w * scale) / (n-1)
+		end
+		for i = 1, n do
+			local c = desktop.colony[i]
+			vcard.draw(c, x, y, scale)
 			x = x + w
+		end
+	end
+	
+	function hud:hand()
+		local n = #desktop.hand
+		local x = self.x
+		local y = self.y
+		if n == 0 then
+			return
+		end
+		local w = card_w * n + 3 * (n - 1)
+		local offx
+		if w > self.w then
+			offx = (self.w - card_w) / (n - 1)
+			w = self.w
+		else
+			offx = card_w + 3
+		end
+		local x = x + (self.w - w) / 2
+		for i = 1, n do
+			local c = desktop.hand[i]
+			vcard.draw(c, x, y, 1)
+			x = x + offx
 		end
 	end
 end

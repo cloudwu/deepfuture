@@ -1,4 +1,5 @@
 local card = require "gameplay.card"
+local name = require "gameplay.name"
 
 local setup = {}
 
@@ -38,13 +39,14 @@ function setup.new_world()
 		era = world.era,
 	}
 	card.gen_desc(world)
+	name.world(world)
 
 	card.putdown("homeworld", world)
 	card.drophand()
 	return world, card1, card2, card3, card4
 end
 
-function setup.neutral()
+function setup.neutral(homeworld)
 	-- todo : add cubes
 	local tmp = {}
 	local r = {}
@@ -54,13 +56,15 @@ function setup.neutral()
 			-- no more worlds
 			break
 		end
-		if tmp[world.value] then
-			card.discard(world)
-			return r
-		else
-			tmp[world.value] = true
-			r[#r+1] = world
-			card.putdown("neutral", world)
+		if world.sector ~= homeworld.sector then
+			if tmp[world.value] then
+				card.discard(world)
+				return r
+			else
+				tmp[world.value] = true
+				r[#r+1] = world
+				card.putdown("neutral", world)
+			end
 		end
 	end
 	return r
