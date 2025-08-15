@@ -205,6 +205,7 @@ local function gen_adv_desc(adv)
 		return
 	end
 	local prefix = "$(adv."..adv.suit.."."..adv.value.."."
+	adv._suit = "$(suit."..adv.suit..")"
 	adv._name = prefix .. "name)"
 	adv._stage = prefix .. "stage)"
 	adv._desc = prefix .. "desc)"

@@ -26,8 +26,18 @@ function setup.new_world()
 	local card4 = card.draw_discard()
 	local sector = card3.value * 10 + card4.value
 
+	local advsuit = card.draw_discard()
+	local advtype = card.draw_discard()
+
 	world.type = "world"
 	world.sector = sector
+
+	world.adv1 = {
+		suit = advsuit.suit,
+		value = advtype.value,
+		era = world.era,
+	}
+	card.gen_desc(world)
 
 	card.putdown("homeworld", world)
 	card.drophand()
