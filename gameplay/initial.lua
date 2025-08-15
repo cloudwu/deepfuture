@@ -13,11 +13,20 @@ function initial.new()
 		local card1 = card.draw_discard()
 		local card2 = card.draw_discard()
 		local sector = card1.value * 10 + card2.value
+		local advsuit = card.draw_discard()
+		local advtype = card.draw_discard()
 		world.type = "world"
 		world.sector = sector
+		world.adv1 = {
+			suit = advsuit.suit,
+			value = advtype.value,
+			era = 0,
+		}
+		card.gen_desc(world)
 		name.world(world)
 	end
 	card.cleanup()
+	card.nextera()
 end
 
 function initial.load(filename)

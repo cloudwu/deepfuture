@@ -20,34 +20,40 @@ content :
 		adv :
 			height : 40
 			name :
-				text : card.adv1
+				text : card.adv
+				env : adv1
 				height : 50%
 				size : 16
 			desc :
 				left : 20
-				text : card.desc1
+				text : card.desc
+				env : adv1
 				height : 50%
 				size : 14
 		adv :
 			height : 40
 			name :
-				text : card.adv2
+				text : card.adv
+				env : adv2
 				height : 50%
 				size : 16
 			desc :
 				left : 20
-				text : card.desc2
+				text : card.desc
+				env : adv2
 				height : 50%
 				size : 14
 		adv :
 			height : 40
 			name :
 				text : card.adv3
+				env : adv3
 				height : 50%
 				size : 16
 			desc :
 				left : 20
-				text : card.desc3
+				text : card.desc
+				env : adv3
 				height : 50%
 				size : 14
 corner :

@@ -3,6 +3,8 @@ local cache = require "core.cache"
 local mattext = require "soluna.material.text"
 local matquad = require "soluna.material.quad"
 local font = require "soluna.font"
+local textconv = require "soluna.text"
+local localization = require "core.localization"
 
 local widget = {}
 
@@ -25,7 +27,8 @@ function widget.set(dom, attribs)
 end
 
 function widget.get(dom, id)
-	local d= doms[dom]
+	local d = doms[dom]
+	layout.calc(d)
 	return d[id]:get()
 end
 
@@ -40,8 +43,13 @@ function widget.draw_list(dom, texts, font_id, sprites)
 		if obj.image then
 			r[n] = { sprites[obj.image], obj.x, obj.y }; n = n + 1
 		elseif obj.text then
-			local label = texts[obj.text]
-			if label then
+			local env = texts
+			if obj.env then
+				env = texts[obj.env]
+			end
+			if env then
+				local label = localization.convert(obj.text, env)
+				label = textconv.convert[label]
 				local block = mattext.block(fontcobj, font_id, obj.size or 16, obj.color or 0, obj.align)
 				local label = block(label, obj.w, obj.h)
 				r[n] = { label, obj.x, obj.y }; n = n + 1

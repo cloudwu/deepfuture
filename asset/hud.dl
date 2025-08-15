@@ -7,6 +7,10 @@ map :
 	width : 532
 info :
 	flex : 1
+	card :
+		margin : 5
+		area : natural
+		flex : 0.2
 	track :
 		height : 130
 		gap : 2
@@ -19,79 +23,92 @@ info :
 				size : 20
 				width : 30
 			grid :
-				text : hud.C1
+				text : hud.mark
+				env : mark_C1
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40ffffff
 			grid :
-				text : hud.C2
+				text : hud.mark
+				env : mark_C2
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40000000
 			grid :
-				text : hud.C3
+				text : hud.mark
+				env : mark_C3
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40ffffff
 			grid :
-				text : hud.C4
+				text : hud.mark
+				env : mark_C4
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40000000
 			grid :
-				text : hud.C5
+				text : hud.mark
+				env : mark_C5
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40ffffff
 			grid :
-				text : hud.C6
+				text : hud.mark
+				env : mark_C6
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40000000
 			grid :
-				text : hud.C7
+				text : hud.mark
+				env : mark_C7
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40ffffff
 			grid :
-				text : hud.C8
+				text : hud.mark
+				env : mark_C8
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40000000
 			grid :
-				text : hud.C9
+				text : hud.mark
+				env : mark_C9
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40ffffff
 			grid :
-				text : hud.C10
+				text : hud.mark
+				env : mark_C10
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40000000
 			grid :
-				text : hud.C11
+				text : hud.mark
+				env : mark_C11
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40ffffff
 			grid :
-				text : hud.C12
+				text : hud.mark
+				env : mark_C12
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40000000
 			grid :
-				text : hud.C13
+				text : hud.mark
+				env : mark_C13
 				text_align : C
 				size : 20
 				width : 30
@@ -104,79 +121,92 @@ info :
 				size : 20
 				width : 30
 			grid :
-				text : hud.M1
+				text : hud.mark
+				env : mark_M1
 				width : 30
 				text_align : C
 				size : 20
 				background : 0x40ffffff
 			grid :
-				text : hud.M2
+				text : hud.mark
+				env : mark_M2
 				width : 30
 				text_align : C
 				size : 20
 				background : 0x40000000
 			grid :
-				text : hud.M3
+				text : hud.mark
+				env : mark_M3
 				width : 30
 				text_align : C
 				size : 20
 				background : 0x40ffffff
 			grid :
-				text : hud.M4
+				text : hud.mark
+				env : mark_M4
 				width : 30
 				text_align : C
 				size : 20
 				background : 0x40000000
 			grid :
-				text : hud.M5
+				text : hud.mark
+				env : mark_M5
 				width : 30
 				text_align : C
 				size : 20
 				background : 0x40ffffff
 			grid :
-				text : hud.M6
+				text : hud.mark
+				env : mark_M6
 				width : 30
 				text_align : C
 				size : 20
 				background : 0x40000000
 			grid :
-				text : hud.M7
+				text : hud.mark
+				env : mark_M7
 				width : 30
 				text_align : C
 				size : 20
 				background : 0x40ffffff
 			grid :
-				text : hud.M8
+				text : hud.mark
+				env : mark_M8
 				width : 30
 				text_align : C
 				size : 20
 				background : 0x40000000
 			grid :
-				text : hud.M9
+				text : hud.mark
+				env : mark_M9
 				width : 30
 				text_align : C
 				size : 20
 				background : 0x40ffffff
 			grid :
-				text : hud.M10
+				text : hud.mark
+				env : mark_M10
 				width : 30
 				text_align : C
 				size : 20
 				background : 0x40000000
 			grid :
-				text : hud.M11
+				text : hud.mark
+				env : mark_M11
 				width : 30
 				text_align : C
 				size : 20
 				background : 0x40ffffff
 			grid :
-				text : hud.M12
+				text : hud.mark
+				env : mark_M12
 				width : 30
 				text_align : C
 				size : 20
 				background : 0x40000000
 			grid :
-				text : hud.M13
+				text : hud.mark
+				env : mark_M13
 				width : 30
 				text_align : C
 				size : 20
@@ -189,79 +219,92 @@ info :
 				size : 20
 				width : 30
 			grid :
-				text : hud.S1
+				text : hud.mark
+				env : mark_S1
 				width : 30
 				text_align : C
 				size : 20
 				background : 0x40ffffff
 			grid :
-				text : hud.S2
+				text : hud.mark
+				env : mark_S2
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40000000
 			grid :
-				text : hud.S3
+				text : hud.mark
+				env : mark_S3
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40ffffff
 			grid :
-				text : hud.S4
+				text : hud.mark
+				env : mark_S4
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40000000
 			grid :
-				text : hud.S5
+				text : hud.mark
+				env : mark_S5
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40ffffff
 			grid :
-				text : hud.S6
+				text : hud.mark
+				env : mark_S6
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40000000
 			grid :
-				text : hud.S7
+				text : hud.mark
+				env : mark_S7
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40ffffff
 			grid :
-				text : hud.S8
+				text : hud.mark
+				env : mark_S8
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40000000
 			grid :
-				text : hud.S9
+				text : hud.mark
+				env : mark_S9
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40ffffff
 			grid :
-				text : hud.S10
+				text : hud.mark
+				env : mark_S10
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40000000
 			grid :
-				text : hud.S11
+				text : hud.mark
+				env : mark_S11
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40ffffff
 			grid :
-				text : hud.S12
+				text : hud.mark
+				env : mark_S12
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40000000
 			grid :
-				text : hud.S13
+				text : hud.mark
+				env : mark_S13
 				text_align : C
 				size : 20
 				width : 30
@@ -274,79 +317,92 @@ info :
 				size : 20
 				width : 30
 			grid :
-				text : hud.X1
+				text : hud.mark
+				env : mark_S1
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40ffffff
 			grid :
-				text : hud.X2
+				text : hud.mark
+				env : mark_S2
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40000000
 			grid :
-				text : hud.X3
+				text : hud.mark
+				env : mark_S3
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40ffffff
 			grid :
-				text : hud.X4
+				text : hud.mark
+				env : mark_S4
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40000000
 			grid :
-				text : hud.X5
+				text : hud.mark
+				env : mark_S5
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40ffffff
 			grid :
-				text : hud.X6
+				text : hud.mark
+				env : mark_S6
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40000000
 			grid :
-				text : hud.X7
+				text : hud.mark
+				env : mark_S7
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40ffffff
 			grid :
-				text : hud.X8
+				text : hud.mark
+				env : mark_S8
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40000000
 			grid :
-				text : hud.X9
+				text : hud.mark
+				env : mark_S9
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40ffffff
 			grid :
-				text : hud.X10
+				text : hud.mark
+				env : mark_S10
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40000000
 			grid :
-				text : hud.X11
+				text : hud.mark
+				env : mark_S11
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40ffffff
 			grid :
-				text : hud.X12
+				text : hud.mark
+				env : mark_S12
 				text_align : C
 				size : 20
 				width : 30
 				background : 0x40000000
 			grid :
-				text : hud.X13
+				text : hud.mark
+				env : mark_S13
 				text_align : C
 				size : 20
 				width : 30

@@ -20,10 +20,15 @@ type : blank world tech civ deleted
 ]]
 
 local actions = {
-	"S", "M", "H", "K", "H", "F"
+	"S", "M", "R", "K", "H", "F"
 }
 
 local DECK
+local HISTORY
+
+local function gen_value_suit(obj)
+	obj.value_suit = tostring(obj.value) .. "$(suit." .. obj.suit .. ")"
+end
 
 function card.init_deck()
 	local init = { _type = "list" }
@@ -34,11 +39,16 @@ function card.init_deck()
 				value = i,
 				suit = actions[j],
 				type = "blank",
+				era = 0,
 			}
+			gen_value_suit(card)
 			init[id] = card; id = id + 1
 		end
 	end
 	DECK = persist.init("deck", init)
+	HISTORY = persist.init("history", {
+		era = 0
+	})
 end
 
 local GAME
@@ -142,10 +152,16 @@ function card.generate_newcard()
 		value = card1.value,
 		suit = card2.suit,
 		type = "blank",
+		era = HISTORY.era,
 	}
+	gen_value_suit(card)
 
 	DECK[newcard] = card
 	return card, card1, card2
+end
+
+function card.nextera()
+	HISTORY.era = HISTORY.era + 1
 end
 
 function card.pickup(where, card)
@@ -183,5 +199,25 @@ end
 function card.cleanup()
 	persist.drop "game"
 end
+
+local function gen_adv_desc(adv)
+	if adv == nil then
+		return
+	end
+	local prefix = "$(adv."..adv.suit.."."..adv.value.."."
+	adv._name = prefix .. "name)"
+	adv._stage = prefix .. "stage)"
+	adv._desc = prefix .. "desc)"
+end
+
+function card.gen_desc(c)
+	if c.type == "world" then
+		gen_adv_desc(c.adv1)
+		gen_adv_desc(c.adv2)
+		gen_adv_desc(c.adv3)
+	end
+end
+
+-- todo: load deck
 
 return card

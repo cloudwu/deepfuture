@@ -7,6 +7,14 @@ local soluna = require "soluna"
 local text = require "soluna.text"
 local widget = require "core.widget"
 
+local initial = require "gameplay.initial"
+local setup = require "gameplay.setup"
+local vcard = require "visual.card"
+
+local localization = require "core.localization"
+
+localization.load("localization/schinese.dl", "schinese")
+
 local args = ...
 local batch = args.batch
 
@@ -25,6 +33,8 @@ local render = ltask.uniqueservice "render"
 ltask.call(render, "load_sprites", "asset/sprites.dl")
 local font_id = font_init()
 
+vcard.init(batch, font_id, sprites)
+
 local function set_hud(w, h)
 	widget.set("hud", {
 		screen = {
@@ -36,23 +46,19 @@ end
 
 local callback = {}
 
-local card_text = {
-	["card.corner"] = "1[sun]",
-	["card.world"] = "55 一个名字很长的星球",
-	["card.title"] = "0. [planet]星球",
-	["card.adv1"] = "[moon] 工程.0",
-	["card.desc1"] = "[blue][[发展] [n]M+1",
-	["card.adv2"] = "[moon] 艺术.1",
-	["card.desc2"] = "[blue][[开始] [n]C+1",
-	["card.adv3"] = "[heart] 医学.1",
-	["card.desc3"] = "[0000FF][[殖民] [n]S+1",
-}
+local desktop = {}
 
-for k,v in pairs(card_text) do
-	card_text[k] = text.convert[v]
+local function setup_desktop()
+	initial.new()
+	desktop.hand = setup.draw_worlds()
+	-- todo : choose a world
+	setup.new_world()
+	desktop.neutral = setup.neutral()
 end
 
-local draw = widget.draw_list("card", card_text, font_id, sprites)
+setup_desktop()
+
+--local draw = widget.draw_list("card", card_text, font_id, sprites)
 
 local lines = { 1, 2, 3, 4, 3, 4, 3, 4, 3, 4, 3, 2, 1 }
 local hex_id = {
@@ -86,7 +92,7 @@ local function people_icons(color, n)
 	else
 		r = r .. "[people][people]\n" .. ("[people]"):rep(n-2)
 	end
-	return text.convert[r]
+	return r
 end
 
 local function hex_init()
@@ -95,11 +101,13 @@ local function hex_init()
 		for k, content in pairs(v) do
 			local p = hex_people[content]
 			if p then
-				hex_text["hex.people"] = people_icons(table.unpack(p))
+				hex_text.content = {
+					people = people_icons(table.unpack(p))
+				}
 			else
-				hex_text["hex.people"] = nil
+				hex_text.content = nil
 			end
-			hex_text["hex.id"] = text.convert["[gray]".. tostring(content)]
+			hex_text.id = tostring(content)
 			v[k] = widget.draw_list("hex", hex_text, font_id, sprites)
 		end
 	end
@@ -137,59 +145,65 @@ function hud:map()
 	map(self.x, self.y)
 end
 
-hud["hud.world"] = "母星"
-hud["hud.colony"] = "殖民地"
-hud["hud.C"] = "C"
-hud["hud.M"] = "M"
-hud["hud.S"] = "S"
-hud["hud.X"] = "X"
-hud["hud.C1"] = text.convert["[star]"]
-hud["hud.M1"] = text.convert["[star]"]
-hud["hud.S1"] = text.convert["[star]"]
-hud["hud.X1"] = text.convert["[star]"]
-hud["hud.M7"] = text.convert["[circle]"]
-hud["hud.S7"] = text.convert["[circle]"]
-hud["hud.X7"] = text.convert["[circle]"]
-hud["hud.C13"] = text.convert["[circle]"]
-hud["hud.M13"] = text.convert["[cross]"]
-hud["hud.S13"] = text.convert["[cross]"]
-hud["hud.X13"] = text.convert["[cross]"]
+hud.mark_C1 = { mark = "[star]" }
+hud.mark_C13 = { mark = "[circle]" }
+hud.mark_M1 = { mark = "[star]" }
+hud.mark_M7 = { mark = "[circle]" }
+hud.mark_M13 = { mark = "[cross]" }
+hud.mark_S1 = { mark = "[star]" }
+hud.mark_S7 = { mark = "[circle]" }
+hud.mark_S13 = { mark = "[cross]" }
+hud.mark_X1 = { mark = "[star]" }
+hud.mark_X7 = { mark = "[circle]" }
+hud.mark_X13 = { mark = "[cross]" }
 
 do
 	local _, _, card_w, card_h = widget.get("card", "card")
 
-	local function calc_scale(self)
-		local w = self.w - 15
+	local function calc_scale(self, n)
+		local w = self.w - (n - 1) * 3
 		local h = self.h
 		local scale_w = 1
 		local scale_h = 1
-		if card_w * 4 > w then
-			scale_w = w / (card_w * 4)
+		if card_w * n > w then
+			scale_w = w / (card_w * n)
 		end
 		if card_h > h then
 			scale_h = h / card_h
 		end
 		return scale_w > scale_h and scale_h or scale_w
 	end
+	
+	function hud:natural()
+		local scale = calc_scale(self, 6)
+		w = card_w * scale + 3
+		local x = self.x
+		local y = self.y
+		for i = 1, #desktop.neutral do
+			local c = desktop.neutral[i]
+			vcard.draw(c, x, y, scale)
+			x = x + w
+		end
+	end
 
 	function hud:homeworld()
-		local scale = calc_scale(self)
-		w = card_w * scale + 5
+		local scale = calc_scale(self, 4)
+		w = card_w * scale + 3
 		local x = self.x
 		local y = self.y
 		for i = 1, 4 do
-			widget.draw(batch, draw, x, y, scale)
+--			widget.draw(batch, draw, x, y, scale)
 			x = x + w
 		end
 	end
 
 	function hud:colony()
-		local scale = calc_scale(self)
-		w = card_w * scale + 5
+		local scale = calc_scale(self, 4)
+		w = card_w * scale + 3
 		local x = self.x
 		local y = self.y
 		for i = 1, 3 do
-			widget.draw(batch, draw, x, y, scale)
+--			widget.draw(batch, draw, x, y, scale)
 			x = x + w
 		end
 	end
