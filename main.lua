@@ -12,6 +12,7 @@ local setup = require "gameplay.setup"
 local card = require "gameplay.card"
 local vcard = require "visual.card"
 local vmap = require "visual.map"
+local vregion = require "visual.region"
 
 local localization = require "core.localization"
 
@@ -51,6 +52,13 @@ local callback = {}
 
 local desktop = {}
 
+local region = {
+	neutral = vregion(),
+	homeworld = vregion(),
+	colony = vregion(),
+	hand = vregion(),
+}
+
 local function draw_hand(n)
 	local r = {}
 	for i = 1, n do
@@ -87,6 +95,12 @@ local function setup_desktop()
 		set_neutral(card)
 	end
 	map[desktop.homeworld[1].sector] = { "blue", 3 }
+	for what,r in pairs(region) do
+		local cards = desktop[what]
+		for i = 1, #cards do
+			r:add(cards[i])
+		end
+	end
 end
 
 setup_desktop()
@@ -135,71 +149,55 @@ do
 		return scale_w > scale_h and scale_h or scale_w
 	end
 	
-	function hud:natural()
-		local scale = calc_scale(self, 6)
-		local w = card_w * scale + 3
-		local x = self.x
-		local y = self.y
-		for i = 1, #desktop.neutral do
-			local c = desktop.neutral[i]
-			vcard.draw(c, x, y, scale)
-			x = x + w
+	local function draw_region(self, what, n)
+		if region[what]:update(self.w, self.h) then
+			local scale = calc_scale(self, n)
+			local offx = card_w * scale + 3
+			local x = 0
+			for _, obj in ipairs(region[what]) do
+				obj.x = x
+				obj.scale = scale
+				x = x + offx
+			end
 		end
+		region[what]:draw(self.x, self.y)
+	end
+	
+	function hud:neutral()
+		draw_region(self, "neutral",6)
 	end
 
 	function hud:homeworld()
-		local scale = calc_scale(self, 4)
-		local w = card_w * scale + 3
-		local x = self.x
-		local y = self.y
-		local n = #desktop.homeworld
-		if n > 4 then
-			w = (self.w - card_w * scale) / (n-1)
-		end
-		for i = 1, n do
-			local c = desktop.homeworld[i]
-			vcard.draw(c, x, y, scale)
-			x = x + w
-		end
+		draw_region(self, "homeworld",4)
 	end
 
 	function hud:colony()
-		local scale = calc_scale(self, 4)
-		local w = card_w * scale + 3
-		local x = self.x
-		local y = self.y
-		local n = #desktop.colony
-		if n > 4 then
-			w = (self.w - card_w * scale) / (n-1)
-		end
-		for i = 1, n do
-			local c = desktop.colony[i]
-			vcard.draw(c, x, y, scale)
-			x = x + w
-		end
+		draw_region(self, "colony",4)
 	end
 	
 	function hud:hand()
-		local n = #desktop.hand
-		local x = self.x
-		local y = self.y
-		if n == 0 then
-			return
+		if region.hand:update(self.w, self.h) then
+			local n = #desktop.hand
+			local x = 0
+			if n == 0 then
+				return
+			end
+			local w = card_w * n + 3 * (n - 1)
+			local offx
+			if w > self.w then
+				offx = (self.w - card_w) / (n - 1)
+				w = self.w
+			else
+				offx = card_w + 3
+			end
+			for _, obj in ipairs(region.hand) do
+				obj.x = x
+				obj.scale = 1
+				x = x + offx
+			end
 		end
-		local w = card_w * n + 3 * (n - 1)
-		local offx
-		if w > self.w then
-			offx = (self.w - card_w) / (n - 1)
-			w = self.w
-		else
-			offx = card_w + 3
-		end
-		local x = x + (self.w - w) / 2
-		for i = 1, n do
-			local c = desktop.hand[i]
-			vcard.draw(c, x, y, 1)
-			x = x + offx
-		end
+
+		region.hand:draw(self.x, self.y)
 	end
 end
 
@@ -213,15 +211,6 @@ end
 
 function callback.frame(count)
 	widget.draw(batch, hud_draw_list)
---	local rad = count * 3.1415927 / 180
---	local scale = math.sin(rad)
---	map(50, 50)
---	widget.draw(batch, draw, x, y, 0.6)
-
---	batch:layer(0.5, 200, 200)
----	batch:layer(-100, -140)
---	batch:layer()
---	batch:layer()
 end
 
 function callback.char(c)

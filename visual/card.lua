@@ -1,4 +1,5 @@
 local widget = require "core.widget"
+local cache = require "core.cache"
 
 local card = {}
 
@@ -11,16 +12,16 @@ local card_type = {
 	blank = "blankcard",
 }
 
-local function gen_draw_list(self, data)
-	draw = widget.draw_list(card_type[data.type], data, FONT_ID, SPRITES)
-	self[data] = draw
-	return draw
-end
-
-local card_draw_list = setmetatable({}, { __index = gen_draw_list })
+local card_draw_list = cache.table(function(data)
+	return widget.draw_list(card_type[data.type], data, FONT_ID, SPRITES)
+end)
 
 function card.draw(c, x, y, scale)
 	widget.draw(BATCH, card_draw_list[c], x, y, scale)
+end
+
+function card.layer(...)
+	BATCH:layer(...)
 end
 
 function card.init(batch, font_id, sprites)

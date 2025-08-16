@@ -13,7 +13,7 @@ desktop :
 		flex : 1
 		card :
 			margin : 5
-			region : natural
+			region : neutral
 			flex : 0.2
 		track :
 			height : 130
