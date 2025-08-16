@@ -16,8 +16,13 @@ end)
 
 local fontcobj = font.cobj()
 
+local layout_pos = cache.table(function(k)
+	return (layout.calc(doms[k]))
+end)
+
 function widget.set(dom, attribs)
 	local d = doms[dom]
+	layout_pos[dom] = nil
 	for k,v in pairs(attribs) do
 		local obj = d[k]
 		for k,v in pairs(v) do
@@ -27,13 +32,13 @@ function widget.set(dom, attribs)
 end
 
 function widget.get(dom, id)
+	local pos = layout_pos[dom]
 	local d = doms[dom]
-	layout.calc(d)
 	return d[id]:get()
 end
 
 function widget.draw_list(dom, texts, font_id, sprites)
-	local pos = layout.calc(doms[dom])
+	local pos = layout_pos[dom]
 	local r = {}
 	local n = 1
 	for idx, obj in ipairs(pos) do
@@ -73,6 +78,33 @@ function widget.draw(batch, list, x, y, scale)
 		else
 			batch:add(o, x, y)
 		end
+	end
+	batch:layer()
+end
+
+function widget.test_list(dom, funcs)
+	local pos = layout_pos[dom]
+	local r = {}
+	local n = 1
+	for idx, obj in ipairs(pos) do
+		if obj.region then
+			local f = funcs[obj.region]
+			if f then
+				r[n] = { f, obj }; n = n + 1
+			end
+		end
+	end
+	return r
+end
+
+function widget.test(mx, my, batch, list, x, y, scale)
+	batch:layer(scale or 1, x or 0 , y or 0)
+	local flag = nil
+	for i = #list, 1, -1 do
+		local obj = list[i]
+		local tx, ty = batch:point(mx, my)
+		local r = obj[2]
+		flag = obj[1](r.region, flag, tx - r.x , ty - r.y, r.w, r. h)
 	end
 	batch:layer()
 end

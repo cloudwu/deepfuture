@@ -228,4 +228,38 @@ function callback.char(c)
 	print("Char", c, utf8.char(c))
 end
 
+local mouse_x = 0
+local mouse_y = 0
+
+function callback.mouse_move(x, y)
+	mouse_x = x
+	mouse_y = y
+	
+end
+
+local function test_func(region, flag,  x, y, w, h)
+	if flag then
+		return flag
+	end
+	if x >= 0 and x < w and y >= 0 and y < h then
+		print(region, x, y)
+		return true
+	end
+end
+
+local test = {
+	natural = test_func,
+	homeworld = test_func,
+	colony = test_func,
+	hand = test_func,
+}
+
+local hud_test_list = widget.test_list("hud", test)
+
+function callback.mouse_button(btn, down)
+	if down == 1 then
+		widget.test(mouse_x, mouse_y, batch, hud_test_list)
+	end
+end
+
 return callback
