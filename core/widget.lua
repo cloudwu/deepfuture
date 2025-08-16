@@ -50,12 +50,12 @@ function widget.draw_list(dom, texts, font_id, sprites)
 			if env then
 				local label = localization.convert(obj.text, env)
 				label = textconv.convert[label]
-				local block = mattext.block(fontcobj, font_id, obj.size or 16, obj.color or 0, obj.align)
+				local block = mattext.block(fontcobj, font_id, obj.size or 16, obj.color or 0, obj.text_align)
 				local label = block(label, obj.w, obj.h)
 				r[n] = { label, obj.x, obj.y }; n = n + 1
 			end
-		elseif obj.area then
-			local f = texts[obj.area]
+		elseif obj.region then
+			local f = texts[obj.region]
 			if f then
 				r[n] = { f, obj }; n = n + 1
 			end

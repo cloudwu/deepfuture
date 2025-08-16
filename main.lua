@@ -103,7 +103,7 @@ hex_init()
 local hud = {}
 
 function hud:map()
-	vmap.draw(self.x, self.y)
+	vmap.draw(self.x + self.w - 532, self.y)
 end
 
 hud.mark_C1 = { mark = "[star]" }

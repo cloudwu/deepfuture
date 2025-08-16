@@ -5,13 +5,15 @@ desktop :
 	direction : row
 	gap : 10
 	map :
-		area : map
-		width : 532
+		region : map
+		width : 50%
+		minWidth: 532
 	info :
+		width : 50%
 		flex : 1
 		card :
 			margin : 5
-			area : natural
+			region : natural
 			flex : 0.2
 		track :
 			height : 130
@@ -415,7 +417,7 @@ desktop :
 			size : 16
 		card :
 			margin : 5
-			area : homeworld
+			region : homeworld
 			flex : 0.3
 		title :
 			text : hud.colony
@@ -423,9 +425,9 @@ desktop :
 			size : 16
 		card :
 			margin : 5
-			area : colony
+			region : colony
 			flex : 0.3
 hand:
 	flex:1
-	area : hand
+	region : hand
 

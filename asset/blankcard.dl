@@ -6,7 +6,7 @@ padding : 10
 corner :
 	text : card.corner
 	text_align : T
-	size : 16
+	size : 20
 	position : absolute
 	width : 40
 	height : 40
