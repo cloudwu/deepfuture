@@ -30,12 +30,21 @@ local function gen_value_suit(obj)
 	obj.value_suit = tostring(obj.value) .. "$(suit." .. obj.suit .. ")"
 end
 
+local card_meta = {
+	__tostring = function (self)
+		return "[CARD " .. self.value .. self.suit .. "]"
+	end
+}
+local function new_card(obj)
+	return setmetatable(obj, card_meta)
+end
+
 function card.init_deck()
 	local init = { _type = "list" }
 	local id = 1
 	for i = 1, 6 do
 		for j = 1, 6 do
-			local card = {
+			local card = new_card {
 				value = i,
 				suit = actions[j],
 				type = "blank",
@@ -147,7 +156,7 @@ function card.generate_newcard()
 	
 	local newcard = #DECK + 1
 	
-	local card = {
+	local card = new_card {
 		_id = newcard,
 		value = card1.value,
 		suit = card2.suit,

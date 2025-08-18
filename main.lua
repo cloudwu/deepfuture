@@ -226,18 +226,21 @@ function callback.mouse_move(x, y)
 	
 end
 
-local function test_func(region, flag,  x, y, w, h)
+local function test_func(region_name, flag,  x, y, w, h)
 	if flag then
 		return flag
 	end
 	if x >= 0 and x < w and y >= 0 and y < h then
-		print(region, x, y)
-		return true
+		local c = region[region_name]:test(mouse_x, mouse_y, x, y)
+		if c then
+			print(c)
+			return true
+		end
 	end
 end
 
 local test = {
-	natural = test_func,
+	neutral = test_func,
 	homeworld = test_func,
 	colony = test_func,
 	hand = test_func,

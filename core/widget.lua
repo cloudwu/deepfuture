@@ -104,7 +104,9 @@ function widget.test(mx, my, batch, list, x, y, scale)
 		local obj = list[i]
 		local tx, ty = batch:point(mx, my)
 		local r = obj[2]
+		batch:layer(r.x, r.y)
 		flag = obj[1](r.region, flag, tx - r.x , ty - r.y, r.w, r. h)
+		batch:layer()
 	end
 	batch:layer()
 end
