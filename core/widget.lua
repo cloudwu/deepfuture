@@ -69,28 +69,25 @@ function widget.draw_list(dom, texts, font_id, sprites)
 	return r
 end
 
-function widget.draw(batch, list, x, y, scale)
-	batch:layer(scale or 1, x or 0 , y or 0)
+function widget.draw(batch, list, focus)
+	local focus_region_func
+	local focus_region_object
 	for _, obj in ipairs(list) do
 		local o, x, y = table.unpack(obj)
 		if type(o) == "function" then
-			o(x, false)
+			if x.region ~= focus then
+				o(x)
+			else
+				focus_region_func = o
+				focus_region_object = x
+			end
 		else
 			batch:add(o, x, y)
 		end
 	end
-	batch:layer()
-end
-
-function widget.draw_focus(batch, list, x, y, scale)
-	batch:layer(scale or 1, x or 0 , y or 0)
-	for _, obj in ipairs(list) do
-		local o, x, y = table.unpack(obj)
-		if type(o) == "function" then
-			o(x, true)
-		end
+	if focus_region_func then
+		focus_region_func(focus_region_object)
 	end
-	batch:layer()
 end
 
 function widget.test_list(dom, funcs)

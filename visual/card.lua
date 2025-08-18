@@ -19,13 +19,24 @@ local card_draw_list = cache.table(function(data)
 end)
 
 function card.draw(c, x, y, scale)
-	widget.draw(BATCH, card_draw_list[c], x, y, scale)
+	if x then
+		BATCH:layer(scale or 1, x, y)
+		widget.draw(BATCH, card_draw_list[c])
+		BATCH:layer()
+	else
+		widget.draw(BATCH, card_draw_list[c])
+	end
 end
 
 function card.test(mx, my, x, y, scale)
-	BATCH:layer(scale or 1, x or 0 , y or 0)
-	local tx, ty = BATCH:point(mx, my)
-	BATCH:layer()
+	local tx, ty
+	if x then
+		BATCH:layer(scale or 1, x , y)
+		tx, ty = BATCH:point(mx, my)
+		BATCH:layer()
+	else
+		tx, ty = BATCH:point(mx, my)
+	end
 	return tx >= 0 and tx < card_w and ty >= 0 and ty < card_h
 end
 

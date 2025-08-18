@@ -155,76 +155,63 @@ do
 			local scale = calc_scale(self, n)
 			local offx = card_w * scale + 3
 			local x = 0
-			for _, obj in ipairs(region[what]) do
+			for idx, obj in ipairs(region[what]) do
 				obj.x = x
 				obj.scale = scale
+				if idx > 3 then
+					obj.focus_target.x = obj.x - card_w * (1-scale)
+				end
 				obj.focus_target.scale = 1
 				x = x + offx
 			end
 		end
 	end
 	
-	function hud:neutral(focus)
-		if focus then
-			region.neutral:draw_focus(self.x, self.y)
-		else
-			update_region(self, "neutral",6)
-			region.neutral:draw(self.x, self.y)
-		end
+	function hud:neutral()
+		update_region(self, "neutral",6)
+		region.neutral:draw(self.x, self.y)
 	end
 
-	function hud:homeworld(focus)
-		if focus then
-			region.homeworld:draw_focus(self.x, self.y)
-		else
-			update_region(self, "homeworld",4)
-			region.homeworld:draw(self.x, self.y)
-		end
+	function hud:homeworld()
+		update_region(self, "homeworld",4)
+		region.homeworld:draw(self.x, self.y)
 	end
 
-	function hud:colony(focus)
-		if focus then
-			region.colony:draw_focus(self.x, self.y)
-		else
-			update_region(self, "colony",4)
-			region.colony:draw(self.x, self.y)
-		end
+	function hud:colony()
+		update_region(self, "colony",4)
+		region.colony:draw(self.x, self.y)
 	end
 	
-	function hud:hand(focus)
-		if focus then
-			region.hand:draw_focus(self.x, self.y)
-		else
-			region.hand:animation_update()
-			if region.hand:update(self.w, self.h) then
-				local n = #desktop.hand
-				local x = 0
-				if n == 0 then
-					return
-				end
-				local w = card_w * n + 3 * (n - 1)
-				local offx
-				if w > self.w then
-					offx = (self.w - card_w) / (n - 1)
-					w = self.w
-				else
-					x = (self.w - w) / 2
-					offx = card_w + 3
-				end
-				local dy = self.h - card_h
-				if dy >= 0 then
-					dy = - 20
-				end
-				for _, obj in ipairs(region.hand) do
-					obj.x = x
-					obj.scale = 1
-					obj.focus_target.y = dy
-					x = x + offx
-				end
+	function hud:hand()
+		region.hand:animation_update()
+		if region.hand:update(self.w, self.h) then
+			local n = #desktop.hand
+			local x = 0
+			if n == 0 then
+				return
 			end
-
-			region.hand:draw(self.x, self.y)
+			local w = card_w * n + 3 * (n - 1)
+			local offx
+			if w > self.w then
+				offx = (self.w - card_w) / (n - 1)
+				w = self.w
+			else
+				x = (self.w - w) / 2
+				offx = card_w + 3
+			end
+			local dy = self.h - card_h
+			if dy >= 0 then
+				dy = - 20
+			end
+			for _, obj in ipairs(region.hand) do
+				obj.x = x
+				obj.scale = 1
+				obj.focus_target.y = dy
+				x = x + offx
+			end
 		end
+
+		region.hand:draw(self.x, self.y)
 	end
 end
 
@@ -236,17 +223,9 @@ function callback.window_resize(w,h)
 	hud_draw_list = widget.draw_list("hud", hud, font_id, sprites)
 end
 
-function callback.frame(count)
-	widget.draw(batch, hud_draw_list)
-	widget.draw_focus(batch, hud_draw_list)
-end
-
-function callback.char(c)
-	print("Char", c, utf8.char(c))
-end
-
 local mouse_x = 0
 local mouse_y = 0
+local focus_region_name
 
 local function test_func(region_name, flag,  x, y, w, h)
 	if flag then
@@ -257,11 +236,15 @@ local function test_func(region_name, flag,  x, y, w, h)
 		for k,v in pairs(region) do
 			if k == region_name then
 				v:focus(c)
+				focus_region_name = region_name
 			else
 				v:focus(nil)
 			end
 		end
 		return true
+	end
+	if focus_region_name == region_name then
+		focus_region_name = nil
 	end
 	region[region_name]:focus(nil)
 end
@@ -285,5 +268,13 @@ end
 --	if down == 1 then
 --	end
 --end
+
+function callback.frame(count)
+	widget.draw(batch, hud_draw_list, focus_region_name)
+end
+
+function callback.char(c)
+	print("Char", c, utf8.char(c))
+end
 
 return callback

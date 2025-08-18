@@ -22,19 +22,19 @@ function region:animation_update()
 	for i = 1, #self do
 		local obj = self[i]
 		if self._focus == obj.card then
-			if obj.focus then
-				if obj.focus < FOCUS_TIME then
-					obj.focus = obj.focus + 1
+			if obj._focus_time then
+				if obj._focus_time < FOCUS_TIME then
+					obj._focus_time = obj._focus_time + 1
 				end
 			else
-				obj.focus = 0
+				obj._focus_time = 0
 			end
 		else
-			if obj.focus then
-				if obj.focus == 0 then
-					obj.focus = nil
+			if obj._focus_time then
+				if obj._focus_time == 0 then
+					obj._focus_time = nil
 				else
-					obj.focus = obj.focus - 1
+					obj._focus_time = obj._focus_time - 1
 				end
 			end
 		end
@@ -59,7 +59,7 @@ end
 local function focus_args(obj)
 	local base_scale = obj.scale
 	local target_scale = obj.focus_target.scale
-	local fac = math.sin(obj.focus * FOCUS_TIME_FACTOR)
+	local fac = math.sin(obj._focus_time * FOCUS_TIME_FACTOR)
 	local scale = target_scale and (base_scale + (target_scale - base_scale) * fac) or base_scale
 	local x = obj.focus_target.x and (obj.x + (obj.focus_target.x - obj.x) * fac) or obj.x
 	local y = obj.focus_target.y and (obj.y + (obj.focus_target.y - obj.y) * fac) or obj.y
@@ -67,7 +67,7 @@ local function focus_args(obj)
 end
 
 local function draw_card(obj)
-	if obj.focus then
+	if obj._focus_time then
 		vcard.draw(obj.card, focus_args(obj))
 	else
 		vcard.draw(obj.card, obj.x, obj.y, obj.scale)
@@ -75,36 +75,24 @@ local function draw_card(obj)
 end
 
 local function test_card(obj, mx, my)
---	if obj.focus then
---		return vcard.test(mx, my, focus_args(obj))
---	else
-		return vcard.test(mx, my, obj.x, obj.y, obj.scale)
---	end
+	return vcard.test(mx, my, obj.x, obj.y, obj.scale)
 end
 
 function region:draw(x, y)
 	vcard.layer(x, y)
-	for i = 1, #self do
-		local obj = self[i]
-		if obj.card then
-			if self._focus ~= obj.card then
-				draw_card(obj)
-			end
-		end
-	end
-	vcard.layer()
-end
-
-function region:draw_focus(x, y)
-	vcard.layer(x, y)
+	local focus
 	for i = 1, #self do
 		local obj = self[i]
 		if obj.card then
 			if self._focus == obj.card then
+				focus = obj
+			else
 				draw_card(obj)
-				break
 			end
 		end
+	end
+	if focus then
+		draw_card(focus)
 	end
 	vcard.layer()
 end
