@@ -1,10 +1,12 @@
 local widget = require "core.widget"
+local mask = require "soluna.material.mask"
 local map = {}
 
 local FONT_ID
 local SPRITES
 local BATCH
 
+local focus_color <const> = 0x00ff00
 local lines = { 1, 2, 3, 4, 3, 4, 3, 4, 3, 4, 3, 2, 1 }
 local hex_id = {
 	{ 11 },
@@ -21,6 +23,7 @@ local hex_id = {
 	{ 42, 33 },
 	{ 41 },
 }
+local hex_drawlist = {}
 
 local hex_people = {}
 
@@ -42,6 +45,18 @@ function map.set(sector, color, n)
 	end
 end
 
+local focus = {
+	sector = nil,
+	time = 0,
+}
+
+function map.focus(sector)
+	if focus.sector ~= sector then
+		focus.sector = sector
+		focus.time = 60
+	end
+end
+
 function map.update()
 	local hex_text = {}
 	for _, v in pairs(hex_id) do
@@ -55,7 +70,19 @@ function map.update()
 				hex_text.content = nil
 			end
 			hex_text.id = tostring(content)
-			v[k] = widget.draw_list("hex", hex_text, FONT_ID, SPRITES)
+			hex_drawlist[content] = widget.draw_list("hex", hex_text, FONT_ID, SPRITES)
+		end
+	end
+end
+
+local function update_focus_color()
+	if focus.sector then
+		local t = focus.time
+		focus.time = t - 1
+		if t == 0 then
+			focus.sector = nil
+		else
+			return t << 24 | focus_color
 		end
 	end
 end
@@ -67,11 +94,18 @@ function map.draw(x, y)
 		local n = lines[i]
 		local xx = - n * 72 + 288
 		for j = 1, n do
-			local list = hex_id[i][j]
-			if list then
+			local id = hex_id[i][j]
+			if id then
+				local list = hex_drawlist[id]
 				for _, obj in ipairs(list) do
 					local o, dx, dy = table.unpack(obj)
 					BATCH:add(o, dx + xx, dy + y)
+				end
+				if id == focus.sector then
+					local c = update_focus_color()
+					if c then
+						BATCH:add(mask.mask(SPRITES.hex, c), xx, y)
+					end
 				end
 			else
 				BATCH:add(SPRITES.hex, xx, y)

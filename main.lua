@@ -227,7 +227,7 @@ local mouse_x = 0
 local mouse_y = 0
 local focus_region_name
 
-local function test_func(region_name, flag,  x, y, w, h)
+local function test_func_(region_name, flag,  x, y, w, h)
 	if flag then
 		return flag
 	end
@@ -241,7 +241,7 @@ local function test_func(region_name, flag,  x, y, w, h)
 				v:focus(nil)
 			end
 		end
-		return true
+		return c
 	end
 	if focus_region_name == region_name then
 		focus_region_name = nil
@@ -249,11 +249,27 @@ local function test_func(region_name, flag,  x, y, w, h)
 	region[region_name]:focus(nil)
 end
 
+local function focus_map_test(...)
+	local card = test_func_(...)
+	if type(card) == "table" and card.sector then
+		vmap.focus(card.sector)
+	end
+	if card ~= nil then
+		return true
+	end
+end
+
+local function test_func(...)
+	if test_func_(...) then
+		return true
+	end
+end
+
 local test = {
-	neutral = test_func,
-	homeworld = test_func,
-	colony = test_func,
-	hand = test_func,
+	neutral = focus_map_test,
+	homeworld = focus_map_test,
+	colony = focus_map_test,
+	hand = focus_map_test,
 }
 
 local hud_test_list = widget.test_list("hud", test)
