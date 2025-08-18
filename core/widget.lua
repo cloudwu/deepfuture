@@ -74,9 +74,20 @@ function widget.draw(batch, list, x, y, scale)
 	for _, obj in ipairs(list) do
 		local o, x, y = table.unpack(obj)
 		if type(o) == "function" then
-			o(x)
+			o(x, false)
 		else
 			batch:add(o, x, y)
+		end
+	end
+	batch:layer()
+end
+
+function widget.draw_focus(batch, list, x, y, scale)
+	batch:layer(scale or 1, x or 0 , y or 0)
+	for _, obj in ipairs(list) do
+		local o, x, y = table.unpack(obj)
+		if type(o) == "function" then
+			o(x, true)
 		end
 	end
 	batch:layer()

@@ -149,7 +149,8 @@ do
 		return scale_w > scale_h and scale_h or scale_w
 	end
 	
-	local function draw_region(self, what, n)
+	local function update_region(self, what, n)
+		region[what]:animation_update()
 		if region[what]:update(self.w, self.h) then
 			local scale = calc_scale(self, n)
 			local offx = card_w * scale + 3
@@ -157,47 +158,73 @@ do
 			for _, obj in ipairs(region[what]) do
 				obj.x = x
 				obj.scale = scale
+				obj.focus_target.scale = 1
 				x = x + offx
 			end
 		end
-		region[what]:draw(self.x, self.y)
 	end
 	
-	function hud:neutral()
-		draw_region(self, "neutral",6)
-	end
-
-	function hud:homeworld()
-		draw_region(self, "homeworld",4)
-	end
-
-	function hud:colony()
-		draw_region(self, "colony",4)
-	end
-	
-	function hud:hand()
-		if region.hand:update(self.w, self.h) then
-			local n = #desktop.hand
-			local x = 0
-			if n == 0 then
-				return
-			end
-			local w = card_w * n + 3 * (n - 1)
-			local offx
-			if w > self.w then
-				offx = (self.w - card_w) / (n - 1)
-				w = self.w
-			else
-				offx = card_w + 3
-			end
-			for _, obj in ipairs(region.hand) do
-				obj.x = x
-				obj.scale = 1
-				x = x + offx
-			end
+	function hud:neutral(focus)
+		if focus then
+			region.neutral:draw_focus(self.x, self.y)
+		else
+			update_region(self, "neutral",6)
+			region.neutral:draw(self.x, self.y)
 		end
+	end
 
-		region.hand:draw(self.x, self.y)
+	function hud:homeworld(focus)
+		if focus then
+			region.homeworld:draw_focus(self.x, self.y)
+		else
+			update_region(self, "homeworld",4)
+			region.homeworld:draw(self.x, self.y)
+		end
+	end
+
+	function hud:colony(focus)
+		if focus then
+			region.colony:draw_focus(self.x, self.y)
+		else
+			update_region(self, "colony",4)
+			region.colony:draw(self.x, self.y)
+		end
+	end
+	
+	function hud:hand(focus)
+		if focus then
+			region.hand:draw_focus(self.x, self.y)
+		else
+			region.hand:animation_update()
+			if region.hand:update(self.w, self.h) then
+				local n = #desktop.hand
+				local x = 0
+				if n == 0 then
+					return
+				end
+				local w = card_w * n + 3 * (n - 1)
+				local offx
+				if w > self.w then
+					offx = (self.w - card_w) / (n - 1)
+					w = self.w
+				else
+					x = (self.w - w) / 2
+					offx = card_w + 3
+				end
+				local dy = self.h - card_h
+				if dy >= 0 then
+					dy = - 20
+				end
+				for _, obj in ipairs(region.hand) do
+					obj.x = x
+					obj.scale = 1
+					obj.focus_target.y = dy
+					x = x + offx
+				end
+			end
+
+			region.hand:draw(self.x, self.y)
+		end
 	end
 end
 
@@ -211,6 +238,7 @@ end
 
 function callback.frame(count)
 	widget.draw(batch, hud_draw_list)
+	widget.draw_focus(batch, hud_draw_list)
 end
 
 function callback.char(c)
@@ -220,24 +248,22 @@ end
 local mouse_x = 0
 local mouse_y = 0
 
-function callback.mouse_move(x, y)
-	mouse_x = x
-	mouse_y = y
-	
-end
-
 local function test_func(region_name, flag,  x, y, w, h)
-	region[region_name]:focus(nil)
 	if flag then
 		return flag
 	end
-	if x >= 0 and x < w and y >= 0 and y < h then
-		local c = region[region_name]:test(mouse_x, mouse_y, x, y)
-		if c then
-			region[region_name]:focus(c)
-			return true
+	local c = region[region_name]:test(mouse_x, mouse_y, x, y)
+	if c then
+		for k,v in pairs(region) do
+			if k == region_name then
+				v:focus(c)
+			else
+				v:focus(nil)
+			end
 		end
+		return true
 	end
+	region[region_name]:focus(nil)
 end
 
 local test = {
@@ -249,10 +275,15 @@ local test = {
 
 local hud_test_list = widget.test_list("hud", test)
 
-function callback.mouse_button(btn, down)
-	if down == 1 then
-		widget.test(mouse_x, mouse_y, batch, hud_test_list)
-	end
+function callback.mouse_move(x, y)
+	mouse_x = x
+	mouse_y = y
+	widget.test(mouse_x, mouse_y, batch, hud_test_list)
 end
+
+--function callback.mouse_button(btn, down)
+--	if down == 1 then
+--	end
+--end
 
 return callback
