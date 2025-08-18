@@ -227,13 +227,14 @@ function callback.mouse_move(x, y)
 end
 
 local function test_func(region_name, flag,  x, y, w, h)
+	region[region_name]:focus(nil)
 	if flag then
 		return flag
 	end
 	if x >= 0 and x < w and y >= 0 and y < h then
 		local c = region[region_name]:test(mouse_x, mouse_y, x, y)
 		if c then
-			print(c)
+			region[region_name]:focus(c)
 			return true
 		end
 	end
