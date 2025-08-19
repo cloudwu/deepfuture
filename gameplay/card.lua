@@ -207,12 +207,8 @@ function card.discard(card)
 	GAME.discard[#GAME.discard + 1] = card._id
 end
 
-function card.draw_n()
-	return #GAME.draw
-end
-
-function card.discard_n()
-	return #GAME.discard
+function card.count()
+	return #GAME.draw , #GAME.discard
 end
 
 function card.cleanup()
