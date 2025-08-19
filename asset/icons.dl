@@ -55,4 +55,6 @@ image : icons/card.png
 --
 name : discard
 image : icons/discard.png
-
+--
+name : stack
+image : icons/stack.png

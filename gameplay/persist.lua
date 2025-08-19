@@ -64,17 +64,30 @@ do
 	local function write_kv(f, t, ident)
 		local keys = sort_keys(t)
 		for i = 1, #keys do	
+			local is_map
 			local k = keys[i]
 			local v = t[k]
 			local t = type(v)
 			if t == "string" then
 				v = quote(v)
 			elseif t == "table" then
-				v = tolist(v)
+				if #v == 0 then
+					if next(v) == nil then
+						v = "{}"
+					else
+						f:write(ident, k, ":\n")
+						write_kv(f, v, ident .. "\t")
+						is_map = true
+					end
+				else
+					v = tolist(v)
+				end
 			else
 				v = tostring(v)
 			end
-			f:write(ident, k, ":", v, "\n")
+			if not is_map then
+				f:write(ident, k, ":", v, "\n")
+			end
 		end
 	end
 

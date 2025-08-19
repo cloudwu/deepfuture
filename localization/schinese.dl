@@ -1,4 +1,6 @@
 schinese:
+  card.logo : "DEEP\nFUTURE"
+  card.number : "[stack]${draw} [discard]${discard}"
   hud.world : "母星"
   hud.colony : "殖民地"
   hud.mark : "${mark}"
@@ -14,7 +16,7 @@ schinese:
   suit.K : "[skull]"
   suit.H : "[hand]"
   suit.F : "[foot]"
-  card.corner : "${value_suit}"
+  card.corner : "${_marker}"
   card.world : "${sector} ${name}"
   card.title : "${era}. [planet]星球"
   card.adv : "${_suit} ${_name}.${era}"

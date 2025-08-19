@@ -7,12 +7,15 @@ local soluna = require "soluna"
 local text = require "soluna.text"
 local widget = require "core.widget"
 
+widget.scripts(require "visual.ui")
+
 local initial = require "gameplay.initial"
 local setup = require "gameplay.setup"
 local card = require "gameplay.card"
 local vcard = require "visual.card"
 local vmap = require "visual.map"
 local vregion = require "visual.region"
+local persist = require "gameplay.persist"
 
 local localization = require "core.localization"
 
@@ -57,6 +60,7 @@ local region = {
 	homeworld = vregion(),
 	colony = vregion(),
 	hand = vregion(),
+	discard = vregion(),
 }
 
 local function draw_hand(n)
@@ -89,6 +93,7 @@ local function setup_desktop()
 	desktop.neutral = setup.neutral(desktop.homeworld[1])
 	desktop.colony = {}
 	desktop.hand = draw_hand(5)
+	desktop.discard = { { type = "back" } }
 	local map = {}
 	desktop.map = map
 	for _, card in ipairs(desktop.neutral) do
@@ -96,7 +101,7 @@ local function setup_desktop()
 	end
 	map[desktop.homeworld[1].sector] = { "blue", 3 }
 	for what,r in pairs(region) do
-		local cards = desktop[what]
+		local cards = desktop[what] or error ("No desktop." .. what)
 		for i = 1, #cards do
 			r:add(cards[i])
 		end
@@ -117,7 +122,7 @@ hex_init()
 local hud = {}
 
 function hud:map()
-	vmap.draw(self.x + self.w - 532, self.y)
+	vmap.draw(self.x, self.y)
 end
 
 hud.mark_C1 = { mark = "[star]" }
@@ -180,6 +185,15 @@ do
 	function hud:colony()
 		update_region(self, "colony",4)
 		region.colony:draw(self.x, self.y)
+	end
+	
+	function hud:discard()
+		local discard = desktop.discard
+		discard = discard[#discard]
+		discard.draw = card.draw_n()
+		discard.discard = card.discard_n()
+		update_region(self, "discard",1)
+		region.discard:draw(self.x, self.y)
 	end
 	
 	function hud:hand()

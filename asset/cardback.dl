@@ -1,0 +1,16 @@
+id : card
+image : cardblank
+width : 200
+height : 280
+padding : 10
+justify : center
+logo :
+	text : card.logo
+	height : 100
+	size : 40
+	text_align : C
+cards :
+	text : card.number
+	height : 50
+	size : 30
+	text_align : C

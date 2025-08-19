@@ -7,10 +7,15 @@ local textconv = require "soluna.text"
 local localization = require "core.localization"
 
 local widget = {}
+local scripts = {}
+
+function widget.scripts(t)
+	scripts = t
+end
 
 local doms = cache.table(function(k)
 	local filename = "asset/"..k..".dl"
-	local dom = layout.load (filename)
+	local dom = layout.load (filename, scripts[k])
 	return dom
 end)
 

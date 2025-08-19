@@ -47,7 +47,6 @@ function setup.new_world()
 end
 
 function setup.neutral(homeworld)
-	-- todo : add cubes
 	local tmp = {}
 	local r = {}
 	while true do
@@ -65,6 +64,9 @@ function setup.neutral(homeworld)
 				r[#r+1] = world
 				card.putdown("neutral", world)
 			end
+		else
+			-- the same sector with homeworld
+			card.discard(world)
 		end
 	end
 	return r

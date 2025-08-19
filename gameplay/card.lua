@@ -26,8 +26,8 @@ local actions = {
 local DECK
 local HISTORY
 
-local function gen_value_suit(obj)
-	obj.value_suit = tostring(obj.value) .. "$(suit." .. obj.suit .. ")"
+local function gen_marker(obj)
+	obj._marker = tostring(obj.value) .. "$(suit." .. obj.suit .. ")"
 end
 
 local card_meta = {
@@ -50,7 +50,7 @@ function card.init_deck()
 				type = "blank",
 				era = 0,
 			}
-			gen_value_suit(card)
+			gen_marker(card)
 			init[id] = card; id = id + 1
 		end
 	end
@@ -136,6 +136,8 @@ function card.draw_type(type)
 		card = DECK[card]
 		if card.type == type then
 			return card
+		else
+			GAME.discard[#GAME.discard+1] = card
 		end
 	end
 end
@@ -163,7 +165,7 @@ function card.generate_newcard()
 		type = "blank",
 		era = HISTORY.era,
 	}
-	gen_value_suit(card)
+	gen_marker(card)
 
 	DECK[newcard] = card
 	return card, card1, card2
@@ -203,6 +205,14 @@ end
 
 function card.discard(card)
 	GAME.discard[#GAME.discard + 1] = card._id
+end
+
+function card.draw_n()
+	return #GAME.draw
+end
+
+function card.discard_n()
+	return #GAME.discard
 end
 
 function card.cleanup()

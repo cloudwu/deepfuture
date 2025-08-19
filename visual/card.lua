@@ -10,6 +10,7 @@ local BATCH
 local card_type = {
 	world = "worldcard",
 	blank = "blankcard",
+	back = "cardback",
 }
 
 local _, _, card_w, card_h = widget.get("blankcard", "card")
