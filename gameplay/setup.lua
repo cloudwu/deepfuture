@@ -1,25 +1,10 @@
 local card = require "gameplay.card"
 local name = require "gameplay.name"
+local flow = require "core.flow"
+local vdesktop = require "visual.desktop"
+local map = require "gameplay.map"
 
-local setup = {}
-
-function setup.draw_worlds()
-	-- init draw pile
-	card.setup()
-	local r = {}
-	for i = 1, 5 do
-		r[i] = card.draw_hand()
-	end
-	return r
-end
-
-function setup.choose_world(card)
-	card.pickup("hand", card)
-	card.putdown("homeworld", card)
-	card.drophand()
-end
-
-function setup.new_world()
+local function new_world()
 	local world, card1, card2 = card.generate_newcard()
 	
 	-- todo: for multiple players, check sector
@@ -46,30 +31,88 @@ function setup.new_world()
 	return world, card1, card2, card3, card4
 end
 
-function setup.neutral(homeworld)
-	local tmp = {}
-	local r = {}
-	while true do
-		local world = card.draw_type "world"
-		if world == nil then
-			-- no more worlds
-			break
-		end
-		if world.sector ~= homeworld.sector then
-			if tmp[world.value] then
-				card.discard(world)
-				return r
-			else
-				tmp[world.value] = true
-				r[#r+1] = world
-				card.putdown("neutral", world)
-			end
-		else
-			-- the same sector with homeworld
-			card.discard(world)
-		end
-	end
-	return r
+local function sleep()
+	flow.sleep(5)
 end
 
-return setup
+local function draw_card()
+	local card = card.draw_card()
+	if card == nil then
+		return
+	end
+	vdesktop.add("deck", card)
+	vdesktop.transfer("deck", card, "float")
+	sleep()
+	return card
+end
+
+local function set_neutral(homeworld)
+	local sec = homeworld.sector
+	local n1, n2 = card.count()
+	local tmp = {}
+	local moving = {}
+	for i = 1, n1 + n2 do
+		local c = draw_card()
+		if c == nil then
+			break
+		end
+		if c.type ~= "world" or c.sector == sec or tmp[c.value] then
+			card.discard(c)
+			moving[c] = "deck"
+			if tmp[c.value] then
+				break
+			end
+		else
+			tmp[c.value] = true
+			card.putdown("neutral", c)
+			moving[c] = "neutral"
+			map.add_neutral(c.sector, 3)
+		end
+		for card, to in pairs(moving) do
+			if not vdesktop.moving("float", card) then
+				vdesktop.transfer("float", card, to)
+				moving[card] = nil
+			end
+		end
+	end
+	
+	repeat
+		local more
+		for card, to in pairs(moving) do
+			if not vdesktop.moving("float", card) then
+				vdesktop.transfer("float", card, to)
+				moving[card] = nil
+			else
+				more = true
+			end
+		end
+		flow.sleep(0)
+	until not more
+end
+
+local function set_homeworld()
+	local homeworld = new_world()
+	vdesktop.add("deck", homeworld)
+	vdesktop.transfer("deck", homeworld, "homeworld")
+	map.add_player(homeworld.sector, 3)
+	sleep()
+	return homeworld
+end
+
+local function draw_worlds()
+	-- todo : config draw cards
+	for i = 1, 5 do
+		local c = card.draw_hand()
+		vdesktop.add("deck", c)
+		vdesktop.transfer("deck", c, "hand")
+		sleep()
+	end
+end
+
+return function ()
+	card.setup()
+	draw_worlds()
+	local homeworld = set_homeworld()
+	set_neutral( homeworld )
+	return "idle"
+end

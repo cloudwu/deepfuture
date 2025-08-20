@@ -71,6 +71,30 @@ local function transfer(self, obj, rx, ry)
 	q[#q+1] = obj
 end
 
+function region:clear()
+	local n = 1
+	while true do
+		local obj = self[n]
+		if not obj then
+			break
+		end
+		if obj._move == nil then
+			table.remove(self, n)
+		else
+			n = n + 1
+		end
+	end
+end
+
+function region:moving(c)
+	for i = 1, #self do
+		local obj = self[i]
+		if obj.card == c then
+			return obj._move ~= nil
+		end
+	end
+end
+
 function region:update(w, h, x, y)
 	local ww = self.w
 	local hh = self.h

@@ -129,6 +129,14 @@ function card.draw_discard()
 	return DECK[card_id]
 end
 
+function card.draw_card()
+	local card_id = draw_card()
+	if card_id == nil then
+		return
+	end
+	return DECK[card_id]
+end
+
 function card.draw_type(type)
 	local n = #GAME.draw + #GAME.discard
 	for i = 1, n do

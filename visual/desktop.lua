@@ -14,7 +14,7 @@ local desktop = {
 
 local region = util.map (function(name)
 	return vregion(name) 
-end) { "neutral", "homeworld", "colony", "hand", "discard", "deck" } 
+end) { "neutral", "homeworld", "colony", "hand", "discard", "deck", "float" } 
 
 local hud = {}
 
@@ -105,25 +105,50 @@ do
 		update_region(self, "deck",1)
 		update_discard(self)
 		region.deck:draw(self.x, self.y)
+		region.deck:clear()
 		region.discard:draw(self.x, self.y)
 	end
 	
+	local function calc_offx(self, name)
+		local n = #region[name]
+		if n == 0 then
+			return
+		end
+		local x = 0
+		local w = card_w * n + 3 * (n - 1)
+		local offx
+		if w > self.w then
+			offx = (self.w - card_w) / (n - 1)
+			w = self.w
+		else
+			x = (self.w - w) / 2
+			offx = card_w + 3
+		end
+		return x, offx
+	end
+	
+	function hud:float()
+		region.float:animation_update()
+		if region.float:update(self.w, self.h, self.x, self.y) then
+			local x, offx = calc_offx(self, "float")
+			if x then
+				for _, obj in ipairs(region.float) do
+					obj.x = x
+					obj.scale = 1
+					obj.focus_target.y = dy
+					x = x + offx
+				end
+			end
+		end
+		region.float:draw(self.x, self.y)
+	end
+
 	function hud:hand()
 		region.hand:animation_update()
 		if region.hand:update(self.w, self.h, self.x, self.y) then
-			local n = #region.hand
-			local x = 0
-			if n == 0 then
+			local x, offx = calc_offx(self, "hand")
+			if x == nil then
 				return
-			end
-			local w = card_w * n + 3 * (n - 1)
-			local offx
-			if w > self.w then
-				offx = (self.w - card_w) / (n - 1)
-				w = self.w
-			else
-				x = (self.w - w) / 2
-				offx = card_w + 3
 			end
 			local dy = self.h - card_h
 			if dy >= 0 then
@@ -226,6 +251,10 @@ function M.card_count(draw, discard)
 		desktop.discard_pile = discard
 		vcard.flush(desktop.discard)
 	end
+end
+
+function M.moving(where, c)
+	return region[where]:moving(c)
 end
 
 function M.add(where, card)

@@ -6,7 +6,6 @@ local vdesktop = require "visual.desktop"
 widget.scripts(require "visual.ui")
 
 local initial = require "gameplay.initial"
-local setup = require "gameplay.setup"
 local card = require "gameplay.card"
 local map = require "gameplay.map"
 local persist = require "gameplay.persist"
@@ -43,33 +42,7 @@ function game.start()
 	return "setup"
 end
 
-local function sleep()
-	flow.sleep(5)
-end
-
-function game.setup()
-	local worlds = setup.draw_worlds()
-	for _, card in ipairs(worlds) do
-		vdesktop.add("deck", card)
-		vdesktop.transfer("deck", card, "hand")
-		sleep()
-	end
-	local homeworld = setup.new_world()
-	vdesktop.add("deck", homeworld)
-	vdesktop.transfer("deck", homeworld, "homeworld")
-	map.add_player(homeworld.sector, 3)
-	sleep()
-	
-	local n = setup.neutral( homeworld )
-
-	for _, card in ipairs(n) do
-		vdesktop.add("deck", card)
-		vdesktop.transfer("deck", card, "neutral")
-		map.add_neutral(card.sector, 3)
-		sleep()
-	end
-	return "idle"
-end
+game.setup = require "gameplay.setup"
 
 function game.idle()
 	return "idle"

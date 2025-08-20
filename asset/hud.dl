@@ -79,4 +79,16 @@ bottom :
 		hand :
 			flex:1
 			region : hand
+float :
+	position : absolute
+	left : 0
+	top : 0
+	height : 100%
+	width : 100%
+	justify : center
+	center :
+		height : 280
+		width : 100%
+		region : float
+
 
