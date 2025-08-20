@@ -1,5 +1,5 @@
 local widget = require "core.widget"
-local cache = require "core.cache"
+local util = require "core.util"
 
 local card = {}
 
@@ -19,7 +19,7 @@ local function flush_card(data)
 	return widget.draw_list(card_type[data.type], data, FONT_ID, SPRITES)
 end
 
-local card_draw_list = cache.table(flush_card)
+local card_draw_list = util.cache(flush_card)
 
 function card.flush(c)
 	card_draw_list[c] = flush_card(c)

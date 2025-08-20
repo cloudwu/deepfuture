@@ -2,27 +2,19 @@ local vregion = require "visual.region"
 local vmap = require "visual.map"
 local vcard = require "visual.card"
 local widget = require "core.widget"
+local util = require "core.util"
 
 local M = {}
 
 local desktop = {
-	hand = {},
-	homeworld = {},
-	neutral = {},
-	colony = {},
-	hand = {},
-	discard = {},
+	discard = { type = "back" },
 	draw_pile = 0,
 	discard_pile = 0,
 }
 
-local region = {
-	neutral = vregion(),
-	homeworld = vregion(),
-	colony = vregion(),
-	hand = vregion(),
-	discard = vregion(),
-}
+local region = util.map (function(name)
+	return vregion(name) 
+end) { "neutral", "homeworld", "colony", "hand", "discard" } 
 
 local hud = {}
 
@@ -62,7 +54,7 @@ do
 	local function update_region(self, what, n)
 		local r = region[what]
 		r:animation_update()
-		if r:update(self.w, self.h) then
+		if r:update(self.w, self.h, self.x, self.y) then
 			local scale = calc_scale(self, n)
 			local offx = card_w * scale + 3
 			local x = 0
@@ -95,7 +87,6 @@ do
 	
 	function hud:discard()
 		local discard = desktop.discard
-		discard = discard[#discard]
 		discard.draw = desktop.draw_pile
 		discard.discard = desktop.discard_pile
 		update_region(self, "discard",1)
@@ -104,8 +95,8 @@ do
 	
 	function hud:hand()
 		region.hand:animation_update()
-		if region.hand:update(self.w, self.h) then
-			local n = #desktop.hand
+		if region.hand:update(self.w, self.h, self.x, self.y) then
+			local n = #region.hand
 			local x = 0
 			if n == 0 then
 				return
@@ -217,18 +208,17 @@ function M.card_count(draw, discard)
 	if draw ~= desktop.draw_pile or discard ~= desktop.discard_pile then
 		desktop.draw_pile = draw
 		desktop.discard_pile = discard
-		local c = desktop.discard[#desktop.discard]
-		if c then
-			vcard.flush(c)
-		end
+		vcard.flush(desktop.discard)
 	end
 end
 
 function M.add(where, card)
-	local pile = desktop[where]
-	local r = region[where]
-	pile[#pile+1] = card
-	r:add(card)
+	region[where]:add(card)
+end
+
+function M.transfer(from, card, to)
+	local r = region[from]
+	r:transfer(card, to)
 end
 
 function M.init(args)
@@ -247,6 +237,7 @@ function M.init(args)
 	end
 	update_hud_draw_list()
 	hud_test_list = widget.test_list("hud", test)
+	region.discard:add(desktop.discard)
 end
 
 return M

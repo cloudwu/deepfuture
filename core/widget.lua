@@ -1,5 +1,5 @@
 local layout = require "soluna.layout"
-local cache = require "core.cache"
+local util = require "core.util"
 local mattext = require "soluna.material.text"
 local matquad = require "soluna.material.quad"
 local font = require "soluna.font"
@@ -13,7 +13,7 @@ function widget.scripts(t)
 	scripts = t
 end
 
-local doms = cache.table(function(k)
+local doms = util.cache(function(k)
 	local filename = "asset/"..k..".dl"
 	local dom = layout.load (filename, scripts[k])
 	return dom
@@ -21,7 +21,7 @@ end)
 
 local fontcobj = font.cobj()
 
-local layout_pos = cache.table(function(k)
+local layout_pos = util.cache(function(k)
 	return (layout.calc(doms[k]))
 end)
 

@@ -1,14 +1,15 @@
+local util = require "core.util"
 local vcard = require "visual.card"
 local region = {}; region.__index = region
 
 function region:add(c)
-	table.insert(self, {
+	self[#self+1] = {
 		card = c,
 		x = 0,
 		y = 0,
 		scale = 1,
-		focus_target = {}
-	})
+		focus_target = {},
+	}
 	self._dirty = true
 end
 
@@ -16,8 +17,9 @@ function region:focus(c)
 	self._focus = c
 end
 
-local FOCUS_TIME <const> = 12
+local FOCUS_TIME <const> = 30
 local FOCUS_TIME_FACTOR <const> = 1 / FOCUS_TIME * math.pi / 2;
+local TRANSFER = {}
 
 function region:animation_update()
 	for i = 1, #self do
@@ -34,6 +36,7 @@ function region:animation_update()
 			if obj._focus_time then
 				if obj._focus_time == 0 then
 					obj._focus_time = nil
+					obj._move = nil
 				else
 					obj._focus_time = obj._focus_time - 1
 				end
@@ -42,11 +45,68 @@ function region:animation_update()
 	end
 end
 
-function region:update(w, h)
+local function transfer(self, obj, rx, ry)
+	local x, y, scale
+	if obj._focus_time then
+		x, y, scale = focus_args(obj)
+	else
+		x, y, scale = obj.x, obj.y, obj.scale
+	end
+	obj._focus_time = FOCUS_TIME
+	obj.x = 0
+	obj.y = 0
+	obj.scale = 1
+	obj.focus_target = {}
+	obj._move = {
+		x = x + rx,
+		y = y + ry,
+		scale = scale,
+	}
+	
+	if self._focus == obj.card then
+		self._focus = nil
+	end
+	
+	local q = TRANSFER[obj._region]
+	q[#q+1] = obj
+end
+
+function region:update(w, h, x, y)
 	local ww = self.w
 	local hh = self.h
 	local dirty = self._dirty
 	self._dirty = nil
+	
+	if self._transfer then
+		self._transfer = nil
+		dirty = true
+		local n = 1
+		while true do
+			local obj = self[n]
+			if not obj then
+				break
+			end
+			if obj._region then
+				transfer(self, obj, x, y)
+				table.remove(self, n)
+			else
+				n = n + 1
+			end
+		end
+	end
+	
+	local q = TRANSFER[self._name]
+	if q[1] then
+		for i = 1, #q do
+			local obj = q[i]
+			obj._region = nil
+			obj._move.x = obj._move.x - x
+			obj._move.y = obj._move.y - y
+			self[#self + 1] = obj
+			q[i] = nil
+		end
+		dirty = true
+	end
 	
 	if ww == w and hh == h then
 		return dirty
@@ -61,11 +121,12 @@ end
 
 local function focus_args(obj)
 	local base_scale = obj.scale
-	local target_scale = obj.focus_target.scale
+	local target = obj._move or obj.focus_target
+	local target_scale = target.scale
 	local fac = math.sin(obj._focus_time * FOCUS_TIME_FACTOR)
 	local scale = target_scale and (base_scale + (target_scale - base_scale) * fac) or base_scale
-	local x = obj.focus_target.x and (obj.x + (obj.focus_target.x - obj.x) * fac) or obj.x
-	local y = obj.focus_target.y and (obj.y + (obj.focus_target.y - obj.y) * fac) or obj.y
+	local x = target.x and (obj.x + (target.x - obj.x) * fac) or obj.x
+	local y = target.y and (obj.y + (target.y - obj.y) * fac) or obj.y
 	return x, y, scale
 end
 
@@ -78,7 +139,18 @@ local function draw_card(obj)
 end
 
 local function test_card(obj, mx, my)
-	return vcard.test(mx, my, obj.x, obj.y, obj.scale)
+	return obj._move == nil and vcard.test(mx, my, obj.x, obj.y, obj.scale)
+end
+
+function region:transfer(card, new_region)
+	for i = 1, #self do
+		local obj = self[i]
+		if obj.card == card then
+			obj._region = new_region
+			self._transfer = true
+			return
+		end
+	end
 end
 
 function region:draw(x, y)
@@ -119,6 +191,8 @@ function region:test(mx, my, x, y)
 	return r
 end
 
-return function()
-	return setmetatable({}, region)
+return function(name)
+	assert(TRANSFER[name] == nil)
+	TRANSFER[name] = {}
+	return setmetatable({ _name = name }, region)
 end
