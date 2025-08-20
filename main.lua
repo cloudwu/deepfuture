@@ -45,7 +45,7 @@ function game.start()
 end
 
 local function sleep()
-	flow.sleep(12)
+	flow.sleep(5)
 end
 
 function game.setup()

@@ -29,7 +29,7 @@ end
 
 local function sleep(current, tick)
 	coroutine.yield()
-	for i = 1, tick do
+	for i = 1, tick-1 do
 		coroutine.yield "YIELD"
 	end
 	return "RESUME", current

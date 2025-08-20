@@ -134,6 +134,6 @@ schinese:
   adv.F.5.name : 飞船
   adv.F.5.stage : "$(EXPAND)"
   adv.F.5.desc : "移动1[people]到另一格"
-  adv.F.6.name : FTL
+  adv.F.6.name : 曲速
   adv.F.6.stage : "$(EXPAND)"
   adv.F.6.desc : "多移动一格"
