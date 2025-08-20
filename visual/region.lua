@@ -17,7 +17,7 @@ function region:focus(c)
 	self._focus = c
 end
 
-local FOCUS_TIME <const> = 30
+local FOCUS_TIME <const> = 20
 local FOCUS_TIME_FACTOR <const> = 1 / FOCUS_TIME * math.pi / 2;
 local TRANSFER = {}
 

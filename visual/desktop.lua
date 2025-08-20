@@ -14,7 +14,7 @@ local desktop = {
 
 local region = util.map (function(name)
 	return vregion(name) 
-end) { "neutral", "homeworld", "colony", "hand", "discard" } 
+end) { "neutral", "homeworld", "colony", "hand", "discard", "deck" } 
 
 local hud = {}
 
@@ -58,7 +58,7 @@ do
 			local scale = calc_scale(self, n)
 			local offx = card_w * scale + 3
 			local x = 0
-			for idx, obj in ipairs(region[what]) do
+			for idx, obj in ipairs(r) do
 				obj.x = x
 				obj.scale = scale
 				if idx > 3 then
@@ -67,6 +67,19 @@ do
 				obj.focus_target.scale = 1
 				x = x + offx
 			end
+		end
+	end
+
+	local function update_discard(self)
+		local r = region.discard
+		r:animation_update()
+		if r:update(self.w, self.h, self.x, self.y) then
+			local scale = calc_scale(self, 1)
+			local x = 0
+			local obj = r[1]
+			obj.scale = scale
+			obj.focus_target.scale = 1
+			obj.focus_target.x = obj.x - card_w * (1-scale)
 		end
 	end
 	
@@ -89,7 +102,9 @@ do
 		local discard = desktop.discard
 		discard.draw = desktop.draw_pile
 		discard.discard = desktop.discard_pile
-		update_region(self, "discard",1)
+		update_region(self, "deck",1)
+		update_discard(self)
+		region.deck:draw(self.x, self.y)
 		region.discard:draw(self.x, self.y)
 	end
 	
@@ -190,6 +205,7 @@ local test = {
 	homeworld = focus_map_test,
 	colony = focus_map_test,
 	hand = focus_map_test,
+	discard = focus_map_test,
 }
 
 local hud_test_list

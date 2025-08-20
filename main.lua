@@ -50,21 +50,22 @@ end
 function game.setup()
 	local worlds = setup.draw_worlds()
 	for _, card in ipairs(worlds) do
-		vdesktop.add("discard", card)
-		vdesktop.transfer("discard", card, "hand")
+		vdesktop.add("deck", card)
+		vdesktop.transfer("deck", card, "hand")
 		sleep()
 	end
 	local homeworld = setup.new_world()
-	vdesktop.add("discard", homeworld)
-	vdesktop.transfer("discard", homeworld, "homeworld")
+	vdesktop.add("deck", homeworld)
+	vdesktop.transfer("deck", homeworld, "homeworld")
 	map.add_player(homeworld.sector, 3)
 	sleep()
 	
 	local n = setup.neutral( homeworld )
 
 	for _, card in ipairs(n) do
-		vdesktop.add("discard", card)
-		vdesktop.transfer("discard", card, "neutral")
+		vdesktop.add("deck", card)
+		vdesktop.transfer("deck", card, "neutral")
+		map.add_neutral(card.sector, 3)
 		sleep()
 	end
 	return "idle"
