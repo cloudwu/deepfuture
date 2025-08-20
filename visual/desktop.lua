@@ -11,7 +11,7 @@ local desktop = {
 	neutral = {},
 	colony = {},
 	hand = {},
-	discard = { { type = "back" } },
+	discard = {},
 	draw_pile = 0,
 	discard_pile = 0,
 }
@@ -60,8 +60,9 @@ do
 	end
 	
 	local function update_region(self, what, n)
-		region[what]:animation_update()
-		if region[what]:update(self.w, self.h) then
+		local r = region[what]
+		r:animation_update()
+		if r:update(self.w, self.h) then
 			local scale = calc_scale(self, n)
 			local offx = card_w * scale + 3
 			local x = 0
@@ -213,17 +214,21 @@ function M.draw(count)
 end
 
 function M.card_count(draw, discard)
-	desktop.draw_pile = draw
-	desktop.discard_pile = discard
+	if draw ~= desktop.draw_pile or discard ~= desktop.discard_pile then
+		desktop.draw_pile = draw
+		desktop.discard_pile = discard
+		local c = desktop.discard[#desktop.discard]
+		if c then
+			vcard.flush(c)
+		end
+	end
 end
 
-function M.add(where, list)
+function M.add(where, card)
 	local pile = desktop[where]
 	local r = region[where]
-	for _, card in ipairs(list) do
-		pile[#pile+1] = card
-		r:add(card)
-	end
+	pile[#pile+1] = card
+	r:add(card)
 end
 
 function M.init(args)

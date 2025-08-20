@@ -1,6 +1,6 @@
 local soluna = require "soluna"
 local widget = require "core.widget"
---local flow = require "core.flow"
+local flow = require "core.flow"
 local vdesktop = require "visual.desktop"
 
 widget.scripts(require "visual.ui")
@@ -25,20 +25,6 @@ end
 
 local callback = {}
 
-local function setup_desktop()
-	vdesktop.add("hand", setup.draw_worlds())
-	-- todo : choose a world
-	local homeworld = setup.new_world()
-	vdesktop.add("homeworld", { homeworld })
-	local n = setup.neutral( homeworld )
-	vdesktop.add("neutral", n)
-
-	for _, card in ipairs(n) do
-		map.add_neutral(card.sector, 3)
-	end
-	map.add_player(homeworld.sector, 3)
-end
-
 localization.load("localization/schinese.dl", "schinese")
 soluna.set_window_title(localization.convert "app.title")
 
@@ -50,8 +36,45 @@ vdesktop.init {
 	height = args.height,
 }
 
-initial.new()
-setup_desktop()
+local game = {}
+
+function game.start()
+	initial.new()
+	vdesktop.add("discard", { type = "back" })
+	return "setup"
+end
+
+local function sleep()
+	flow.sleep(12)
+end
+
+function game.setup()
+	local worlds = setup.draw_worlds()
+	for _, card in ipairs(worlds) do
+		vdesktop.add("hand", card)
+		sleep()
+	end
+	local homeworld = setup.new_world()
+	vdesktop.add("homeworld", homeworld)
+	map.add_player(homeworld.sector, 3)
+	sleep()
+	
+	local n = setup.neutral( homeworld )
+
+	for _, card in ipairs(n) do
+		vdesktop.add("neutral", card)
+		map.add_neutral(card.sector, 3)
+		sleep()
+	end
+	return "idle"
+end
+
+function game.idle()
+	return "idle"
+end
+
+flow.load(game)
+flow.enter "start"
 
 callback.window_resize = vdesktop.flush
 callback.mouse_move = vdesktop.mouse_move
@@ -62,6 +85,7 @@ callback.mouse_move = vdesktop.mouse_move
 --end
 
 function callback.frame(count)
+	flow.update()
 	vdesktop.card_count(card.count())
 	map.update()
 	vdesktop.draw(count)

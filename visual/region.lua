@@ -9,6 +9,7 @@ function region:add(c)
 		scale = 1,
 		focus_target = {}
 	})
+	self._dirty = true
 end
 
 function region:focus(c)
@@ -44,9 +45,11 @@ end
 function region:update(w, h)
 	local ww = self.w
 	local hh = self.h
+	local dirty = self._dirty
+	self._dirty = nil
 	
 	if ww == w and hh == h then
-		return
+		return dirty
 	end
 	self.x = x
 	self.y = y

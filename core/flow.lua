@@ -1,3 +1,5 @@
+local coroutine = require "soluna.coroutine"
+
 local flow = {}
 
 local STATE
@@ -22,12 +24,11 @@ function flow.enter(state)
 end
 
 function flow.sleep(tick)
-	return "SLEEP", tick
+	coroutine.yield ("SLEEP", tick)
 end
 
-local function sleep(tick)
+local function sleep(current, tick)
 	coroutine.yield()
-	local current = CURRENT
 	for i = 1, tick do
 		coroutine.yield "YIELD"
 	end
@@ -42,8 +43,9 @@ function command.NEXT(state)
 end
 
 function command.SLEEP(tick)
+	local current = CURRENT.thread
 	CURRENT.thread = coroutine.create(sleep)
-	coroutine.resume(CURRENT.thread, tick)
+	coroutine.resume(CURRENT.thread, current, tick)
 end
 
 function command.YIELD()

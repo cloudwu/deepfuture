@@ -15,9 +15,15 @@ local card_type = {
 
 local _, _, card_w, card_h = widget.get("blankcard", "card")
 
-local card_draw_list = cache.table(function(data)
+local function flush_card(data)
 	return widget.draw_list(card_type[data.type], data, FONT_ID, SPRITES)
-end)
+end
+
+local card_draw_list = cache.table(flush_card)
+
+function card.flush(c)
+	card_draw_list[c] = flush_card(c)
+end
 
 function card.draw(c, x, y, scale)
 	if x then
