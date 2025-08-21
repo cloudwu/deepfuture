@@ -3,6 +3,7 @@ local vmap = require "visual.map"
 local vcard = require "visual.card"
 local widget = require "core.widget"
 local util = require "core.util"
+local focus = require "core.focus"
 
 local M = {}
 
@@ -185,45 +186,39 @@ end
 
 local mouse_x = 0
 local mouse_y = 0
-local focus_region_name
 
-local function test_func_(region_name, flag,  x, y, w, h)
+local function focus_map_test(region_name, flag,  x, y, w, h)
 	if flag then
 		return flag
 	end
 	local c = region[region_name]:test(mouse_x, mouse_y, x, y)
 	if c then
-		for k,v in pairs(region) do
-			if k == region_name then
-				v:focus(c)
-				focus_region_name = region_name
-			else
-				v:focus(nil)
-			end
-		end
+		focus.trigger(region_name, c)
 		return c
 	end
-	if focus_region_name == region_name then
-		focus_region_name = nil
-	end
-	region[region_name]:focus(nil)
+	-- lost focus
+	focus.trigger(region_name)
 end
 
-local function focus_map_test(...)
-	local card = test_func_(...)
-	if type(card) == "table" and card.sector then
-		vmap.focus(card.sector)
-	end
-	if card ~= nil then
-		return true
+local function map_focus(region_name, card)
+	local r = region[region_name]
+	if card then
+		r:focus(card)
+		if card.sector then
+			vmap.focus(card.sector)
+		end
+	else
+		r:focus(nil)
 	end
 end
 
-local function test_func(...)
-	if test_func_(...) then
-		return true
-	end
-end
+local focus_func = {
+	neutral = map_focus,
+	homeworld = map_focus,
+	colony = map_focus,
+	hand = map_focus,
+	discard = map_focus,
+}
 
 local test = {
 	neutral = focus_map_test,
@@ -239,10 +234,11 @@ function M.mouse_move(x, y)
 	mouse_x = x
 	mouse_y = y
 	widget.test(mouse_x, mouse_y, batch, hud_test_list)
+	focus.dispatch(focus_func)
 end
 
 function M.draw(count)
-	widget.draw(batch, hud_draw_list, focus_region_name)
+	widget.draw(batch, hud_draw_list, focus.region())
 end
 
 function M.card_count(draw, discard)

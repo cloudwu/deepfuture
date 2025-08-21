@@ -58,3 +58,9 @@ image : icons/discard.png
 --
 name : stack
 image : icons/stack.png
+--
+name : lbutton
+image : icons/lbutton.png
+--
+name : rbutton
+image : icons/rbutton.png
