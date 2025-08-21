@@ -8,21 +8,25 @@ desktop :
 	map :
 		width : 50%
 		minWidth: 532
-		direction : column
-		justify : center
+		direction : row
+		blank :
+			flex : 1
 		map :
-			direction : row
-			height : 590
-			left:
-				flex : 1
+			width : 532
+			height : 100%
+			direction : column
+			justify : center
 			map :
-				region : map
 				width : 532
-				tips :
-					position : absolute
-					width : 40%
-					height : 20%
-					region : tips
+				height : 590
+				region : map
+			tips :
+				position : absolute
+				top : 0
+				left : 0
+				width : 40%
+				height : 20%
+				region : tips
 	info :
 		width : 50%
 		minWidth: 430

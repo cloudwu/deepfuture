@@ -42,7 +42,7 @@ local persist = require "gameplay.persist"
 
 return function ()
 	draw_hands()
-	persist.save "game.txt"
+--	persist.save "game.txt"
 	choose_action()
 	return "idle"
 end
