@@ -14,7 +14,7 @@ function widget.scripts(t)
 end
 
 local doms = util.cache(function(k)
-	local filename = "asset/"..k..".dl"
+	local filename = "asset/layout/"..k..".dl"
 	local dom = layout.load (filename, scripts[k])
 	return dom
 end)
