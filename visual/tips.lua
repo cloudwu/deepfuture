@@ -13,7 +13,7 @@ local BATCH
 local TIPS_TEXT
 
 local fontbox = {
-	size = 12,
+	size = 14,
 	color = 0,
 	align = "LT",
 }

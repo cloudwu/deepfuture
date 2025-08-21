@@ -29,6 +29,9 @@ image : icons/cube.png
 name : planet
 image : icons/planet.png
 --
+name : tech
+image : icons/atom.png
+--
 name : sword
 image : icons/sword.png
 --
@@ -64,3 +67,15 @@ image : icons/lbutton.png
 --
 name : rbutton
 image : icons/rbutton.png
+--
+name : blankcard
+image : icons/blank.png
+--
+name : worldcard
+image : icons/world.png
+--
+name : techcard
+image : icons/tech.png
+--
+name : civcard
+image : icons/civ.png

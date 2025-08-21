@@ -3,6 +3,7 @@ local flow = require "core.flow"
 local focus = require "core.focus"
 local vdesktop = require "visual.desktop"
 local vtips = require "visual.tips"
+local map = require "gameplay.map"
 
 local function sleep()
 	flow.sleep(5)
@@ -21,6 +22,7 @@ local function choose_action()
 	local ux = {}
 	local desc = {
 		action = nil,
+		desc = nil,
 	}
 	function ux.hand(_, c)
 		if not c then
@@ -29,6 +31,11 @@ local function choose_action()
 		end
 		
 		desc.action = "$(action." .. c.suit .. ")"
+		if c.suit == "H" and map.is_safe() then
+			desc.desc = "$(action." .. c.suit .. ".desc.safe)"
+		else
+			desc.desc = "$(action." .. c.suit .. ".desc)"
+		end
 		vtips.set("tips.action.choose", desc)
 	end
 	
