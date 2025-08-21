@@ -1,5 +1,18 @@
 schinese:
   app.title : "Deep Future"
+  tips.setup.homeworld : "[lbutton]选择[blue] ${world} [n]作为母星"
+  tips.setup.invalid : "请选择星球卡，这是一张${type}"
+  tips.action.choose : "[lbutton]选择行动[blue]${action}[n]"
+  action.S : "[sun]$(POWER)"
+  action.M : "[moon]$(SETTLE)"
+  action.K : "[skull]$(ADVANCE)"
+  action.R : "[heart]$(GROW)"
+  action.H : "[hand]$(BATTLE)"
+  action.F : "[foot]$(EXPAND)"
+  card.type.world : "星球卡"
+  card.type.blank : "空白卡"
+  card.type.tech : "科技卡"
+  card.type.civ : "文明卡"
   card.logo : "DEEP\nFUTURE"
   card.number : "[stack]${draw} [discard]${discard}"
   hud.world : 母星

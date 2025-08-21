@@ -1,6 +1,7 @@
 local vregion = require "visual.region"
 local vmap = require "visual.map"
 local vcard = require "visual.card"
+local vtips = require "visual.tips"
 local widget = require "core.widget"
 local util = require "core.util"
 local focus = require "core.focus"
@@ -57,7 +58,7 @@ do
 		r:animation_update()
 		if r:update(self.w, self.h, self.x, self.y) then
 			local scale = calc_scale(self, n)
-			local offx = card_w * scale + 3
+			local offx = n <= 1 and 0 or (card_w * scale + 3)
 			local x = 0
 			for idx, obj in ipairs(r) do
 				obj.x = x
@@ -165,6 +166,10 @@ do
 
 		region.hand:draw(self.x, self.y)
 	end
+	
+	function hud:tips()
+		vtips.draw(self)
+	end
 end
 
 local function set_hud(w, h)
@@ -180,6 +185,7 @@ local hud_draw_list
 local update_hud_draw_list
 local batch
 
+-- todo : call update_hud_draw_list when changing localization
 function M.flush(w, h)
 	update_hud_draw_list(w, h)
 end
@@ -263,9 +269,10 @@ function M.transfer(from, card, to)
 end
 
 function M.init(args)
+	vcard.init(args)
+	vmap.init(args)
+	vtips.init(args)
 	batch = args.batch
-	vcard.init(batch, args.font_id, args.sprites)
-	vmap.init(batch, args.font_id, args.sprites)
 	local font_id = args.font_id
 	local sprites = args.sprites
 	local width = args.width

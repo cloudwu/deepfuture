@@ -118,10 +118,10 @@ function map.draw(x, y)
 	BATCH:layer()
 end
 
-function map.init(batch, font_id, sprites)
-	BATCH = assert(batch)
-	FONT_ID = assert(font_id)
-	SPRITES = assert(sprites)
+function map.init(args)
+	BATCH = assert(args.batch)
+	FONT_ID = assert(args.font_id)
+	SPRITES = assert(args.sprites)
 end
 
 return map

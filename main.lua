@@ -1,6 +1,7 @@
 local soluna = require "soluna"
 local widget = require "core.widget"
 local flow = require "core.flow"
+local focus = require "core.focus"
 local vdesktop = require "visual.desktop"
 
 widget.scripts(require "visual.ui")
@@ -43,6 +44,7 @@ function game.start()
 end
 
 game.setup = require "gameplay.setup"
+game.player = require "gameplay.player"
 
 function game.idle()
 	return "idle"
@@ -54,10 +56,15 @@ flow.enter "start"
 callback.window_resize = vdesktop.flush
 callback.mouse_move = vdesktop.mouse_move
 
---function callback.mouse_button(btn, down)
---	if down == 1 then
---	end
---end
+local mouse_btn = {
+	[0] = "left",
+	[1] = "right",
+	[2] = "mid",
+}
+
+function callback.mouse_button(btn, state)
+	focus.mouse_button(mouse_btn[btn], state == 1)
+end
 
 function callback.frame(count)
 	flow.update()

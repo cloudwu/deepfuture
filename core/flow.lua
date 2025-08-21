@@ -43,6 +43,9 @@ function command.NEXT(state)
 end
 
 function command.SLEEP(tick)
+	if tick <= 0 then
+		return
+	end
 	local current = CURRENT.thread
 	CURRENT.thread = coroutine.create(sleep)
 	coroutine.resume(CURRENT.thread, current, tick)

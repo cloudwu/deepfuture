@@ -45,6 +45,17 @@ function region:animation_update()
 	end
 end
 
+local function focus_args(obj)
+	local base_scale = obj.scale
+	local target = obj._move or obj.focus_target
+	local target_scale = target.scale
+	local fac = math.sin(obj._focus_time * FOCUS_TIME_FACTOR)
+	local scale = target_scale and (base_scale + (target_scale - base_scale) * fac) or base_scale
+	local x = target.x and (obj.x + (target.x - obj.x) * fac) or obj.x
+	local y = target.y and (obj.y + (target.y - obj.y) * fac) or obj.y
+	return x, y, scale
+end
+
 local function transfer(self, obj, rx, ry)
 	local x, y, scale
 	if obj._focus_time then
@@ -141,17 +152,6 @@ function region:update(w, h, x, y)
 	self.h = h
 	
 	return true
-end
-
-local function focus_args(obj)
-	local base_scale = obj.scale
-	local target = obj._move or obj.focus_target
-	local target_scale = target.scale
-	local fac = math.sin(obj._focus_time * FOCUS_TIME_FACTOR)
-	local scale = target_scale and (base_scale + (target_scale - base_scale) * fac) or base_scale
-	local x = target.x and (obj.x + (target.x - obj.x) * fac) or obj.x
-	local y = target.y and (obj.y + (target.y - obj.y) * fac) or obj.y
-	return x, y, scale
 end
 
 local function draw_card(obj)

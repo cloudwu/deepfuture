@@ -18,6 +18,11 @@ desktop :
 			map :
 				region : map
 				width : 532
+				tips :
+					position : absolute
+					width : 40%
+					height : 20%
+					region : tips
 	info :
 		width : 50%
 		minWidth: 430

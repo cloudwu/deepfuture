@@ -51,10 +51,10 @@ function card.layer(...)
 	BATCH:layer(...)
 end
 
-function card.init(batch, font_id, sprites)
-	BATCH = assert(batch)
-	FONT_ID = assert(font_id)
-	SPRITES = assert(sprites)
+function card.init(args)
+	BATCH = assert(args.batch)
+	FONT_ID = assert(args.font_id)
+	SPRITES = assert(args.sprites)
 end
 
 return card

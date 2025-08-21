@@ -1,7 +1,9 @@
 local card = require "gameplay.card"
 local name = require "gameplay.name"
+local focus = require "core.focus"
 local flow = require "core.flow"
 local vdesktop = require "visual.desktop"
+local vtips = require "visual.tips"
 local map = require "gameplay.map"
 
 local function new_world()
@@ -46,6 +48,21 @@ local function draw_card()
 	return card
 end
 
+local function wait_for_moving(moving)
+	repeat
+		local more
+		for card, to in pairs(moving) do
+			if not vdesktop.moving("float", card) then
+				vdesktop.transfer("float", card, to)
+				moving[card] = nil
+			else
+				more = true
+			end
+		end
+		flow.sleep(0)
+	until not more
+end
+
 local function set_neutral(homeworld)
 	local sec = homeworld.sector
 	local n1, n2 = card.count()
@@ -76,31 +93,82 @@ local function set_neutral(homeworld)
 		end
 	end
 	
-	repeat
-		local more
-		for card, to in pairs(moving) do
-			if not vdesktop.moving("float", card) then
-				vdesktop.transfer("float", card, to)
-				moving[card] = nil
-			else
-				more = true
-			end
-		end
-		flow.sleep(0)
-	until not more
+	wait_for_moving(moving)
 end
 
-local function set_homeworld()
-	local homeworld = new_world()
-	vdesktop.add("deck", homeworld)
-	vdesktop.transfer("deck", homeworld, "homeworld")
-	map.add_player(homeworld.sector, 3)
-	sleep()
+local function choose_world()
+	local ux = {}
+	local desc = {
+		world = nil,
+		type = nil,
+	}
+	local homeworld
+	function ux.hand(_, c)
+		if not c then
+			vtips.set()
+			return
+		end
+
+		if c.type == "world" then
+			desc.world = c.sector .. " " .. c.name
+			vtips.set("tips.setup.homeworld", desc)
+			if focus.click "left" then
+				homeworld = c
+			end
+		else
+			desc.type = string.format("$(card.type.%s)", c.type)
+			vtips.set("tips.setup.invalid", desc)
+		end
+	end
+	
+	repeat
+		focus.dispatch(ux)
+		flow.sleep(0)
+	until homeworld
+	vtips.set()
+	return homeworld
+end
+
+local function set_homeworld(hands)
+	local homeworld = choose_world()
+--	local homeworld = new_world()
+
+	local moving = {}
+	for _, c in pairs(hands) do
+		if c == homeworld then
+			vdesktop.transfer("hand", c, "homeworld")
+			card.pickup("hand", c)
+			card.putdown("homeworld", c)
+			map.add_player(homeworld.sector, 3)
+			moving[c] = "homeworld"
+		else
+			vdesktop.transfer("hand", c, "deck")
+			card.pickup("hand", c)
+			card.putdown("discard", c)
+			moving[c] = "deck"
+		end
+		sleep()
+	end
+	
+	wait_for_moving(moving)
+
 	return homeworld
 end
 
 local function draw_worlds()
-	-- todo : config draw cards
+	local h = {}
+	for i = 1, 5 do
+		local c = card.draw_hand()
+		h[i] = c
+		vdesktop.add("deck", c)
+		vdesktop.transfer("deck", c, "hand")
+		sleep()
+	end
+	return h
+end
+
+--[[
+local function draw_hands()
 	for i = 1, 5 do
 		local c = card.draw_hand()
 		vdesktop.add("deck", c)
@@ -108,11 +176,14 @@ local function draw_worlds()
 		sleep()
 	end
 end
+]]
 
 return function ()
 	card.setup()
-	draw_worlds()
-	local homeworld = set_homeworld()
+	local hands = draw_worlds()
+	local homeworld = set_homeworld(hands)
 	set_neutral( homeworld )
-	return "idle"
+	-- todo : to game
+--	draw_hands()
+	return "player"
 end
