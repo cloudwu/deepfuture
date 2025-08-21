@@ -38,8 +38,11 @@ local function choose_action()
 	end
 end
 
+local persist = require "gameplay.persist"
+
 return function ()
 	draw_hands()
+	persist.save "game.txt"
 	choose_action()
 	return "idle"
 end

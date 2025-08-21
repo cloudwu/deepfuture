@@ -101,9 +101,6 @@ do
 	end
 	
 	function hud:discard()
-		local discard = desktop.discard
-		discard.draw = desktop.draw_pile
-		discard.discard = desktop.discard_pile
 		update_region(self, "deck",1)
 		update_discard(self)
 		region.deck:draw(self.x, self.y)
@@ -251,7 +248,10 @@ function M.card_count(draw, discard)
 	if draw ~= desktop.draw_pile or discard ~= desktop.discard_pile then
 		desktop.draw_pile = draw
 		desktop.discard_pile = discard
-		vcard.flush(desktop.discard)
+		local c = desktop.discard
+		c.draw = draw
+		c.discard = discard
+		vcard.flush(c)
 	end
 end
 

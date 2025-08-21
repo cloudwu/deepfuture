@@ -59,7 +59,7 @@ function localization.convert(str, args)
 				return tag
 			end
 		end
-		return tbl	
+		return tbl
 	end
 	local s = t:gsub("$(%b{})", subargs)
 	local function subtext(tag)
