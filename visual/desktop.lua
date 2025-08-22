@@ -6,6 +6,13 @@ local widget = require "core.widget"
 local util = require "core.util"
 local focus = require "core.focus"
 
+local DRAWLIST = {}
+local TESTLIST = {}
+local update_draw_list
+local update_desc_list
+local BATCH
+local DESC
+
 local M = {}
 
 local desktop = {
@@ -16,11 +23,12 @@ local desktop = {
 
 local region = util.map (function(name)
 	return vregion.cards(name) 
-end) { "neutral", "homeworld", "colony", "hand", "discard", "deck", "float" } 
+end) { "neutral", "homeworld", "colony", "hand", "discard", "deck", "float", "card" } 
 
 region.background = vregion.rect()
 
 local hud = {}
+local describe = {}
 
 function hud:map()
 	vmap.draw(self.x, self.y)
@@ -171,16 +179,22 @@ do
 			vtips.draw(self)
 		end
 	end
-end
 
-local describe = {}
+	function describe:tips()
+		vtips.draw(self)
+	end
 
-function describe:tips()
-	vtips.draw(self)
-end
+	function describe:background()
+		region.background:update(self.w, self.h, self.x, self.y)
+	end
 
-function describe:background()
-	region.background:update(self.w, self.h, self.x, self.y)
+	function describe:card()
+		local c = region.card[1]
+		if c then
+			c.scale = self.w / card_w
+			region.card:draw(self.x, self.y)
+		end
+	end
 end
 
 local layouts = { "hud", "describe" }
@@ -198,12 +212,6 @@ local function set_hud(w, h)
 		})
 	end
 end
-
-local DRAWLIST = {}
-local TESTLIST = {}
-local update_draw_list
-local BATCH
-local DESC
 
 -- todo : call update_draw_list when changing localization
 function M.flush(w, h)
@@ -254,10 +262,14 @@ local test = {
 local mouse_x = 0
 local mouse_y = 0
 
-function M.describe(on)
-	DESC = on
+function M.describe(text)
+	DESC = not not text
 	focus.clear()
-	if not on then
+	if text then
+		describe.text = text
+		update_desc_list()
+	else
+		describe.text = nil
 		widget.test(mouse_x, mouse_y, BATCH, TESTLIST.hud)
 	end
 end
@@ -299,6 +311,10 @@ function M.add(where, card)
 	region[where]:add(card)
 end
 
+function M.clear(where)
+	region[where]:clear()
+end
+
 function M.transfer(from, card, to)
 	local r = region[from]
 	r:transfer(card, to)
@@ -321,6 +337,9 @@ function M.init(args)
 			local name = layouts[i]
 			DRAWLIST[name] = widget.draw_list(name, layouts[name], font_id, sprites)
 		end
+	end
+	function update_desc_list()
+		DRAWLIST.describe = widget.draw_list("describe", layouts.describe, font_id, sprites)
 	end
 	update_draw_list()
 	TESTLIST.hud = widget.test_list("hud", test)

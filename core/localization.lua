@@ -61,17 +61,23 @@ function localization.convert(str, args)
 		end
 		return tbl
 	end
-	local s = t:gsub("$(%b{})", subargs)
-	local function subtext(tag)
-		tag = tag:sub(2, -2)
-		local t = TEXT[tag]
-		if t then
-			return t
-		else
-			return tag
+	local function replacement(text)
+		local s = text:gsub("$(%b{})", subargs)
+		local function subtext(tag)
+			tag = tag:sub(2, -2)
+			local text = TEXT[tag]
+			if text then
+				return text
+			else
+				return tag
+			end
 		end
+		return (s:gsub("$(%b())", subtext))
 	end
-	return (s:gsub("$(%b())", subtext))
+	repeat
+		t = replacement(t)
+	until not t:find "${"
+	return t
 end
 
 return localization

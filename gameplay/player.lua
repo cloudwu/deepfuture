@@ -44,14 +44,13 @@ local function choose_action()
 		elseif focus_state.lost then
 			vtips.set()
 		end
-		local c = focus.click "right"
+		local c, where = focus.click "right"
 		if c then
-			local args = {
+			vtips.set()
+			show_desc {
 				region = where,
 				card = c,
 			}
-			vtips.set()
-			show_desc()
 		end
 		flow.sleep(0)
 	end

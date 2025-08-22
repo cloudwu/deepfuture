@@ -117,7 +117,10 @@ local function choose_world()
 		elseif focus_state.lost == "hand" then
 			vtips.set()
 		end
-		homeworld = focus.click ("left", "hand")
+		local c, from = focus.click ("left", "hand")
+		if from == "hand" and c.type == "world" then
+			homeworld = c
+		end
 		flow.sleep(0)
 	until homeworld
 	vtips.set()

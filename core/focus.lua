@@ -73,7 +73,7 @@ function focus.click(btn, region)
 	end
 	local state = FOCUS_CLICK[btn]
 	if state and state.click then
-		return FOCUS_OBJECT
+		return FOCUS_OBJECT, FOCUS_ACTIVE
 	end
 end
 

@@ -5,14 +5,29 @@ direction : row
 justify : center
 workspace :
 	width : 100%
-	maxWidth : 1280
+	maxWidth : 1200
 	height : 100%
-	background : 0x40000000
+	background : 0xE08080FF
+	padding : 30
 	tips :
-		position : absolute
-		top : 10
-		left : 10
-		width : 40%
-		height : 20%
+		flex : 0.2
 		region : tips
-		
+	workspace :
+		flex : 1
+		direction : row
+		card :
+			flex : 0.4
+			card :
+				direction : row
+				justify : center
+				card :
+					width : 60%
+					minWidth : 200
+					aspectRatio : 0.714
+					region : card
+		desc :
+			flex : 0.6
+			text : desc.text
+			size : 24
+			text_align : T
+			env : text
