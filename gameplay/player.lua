@@ -2,7 +2,7 @@ local card = require "gameplay.card"
 local flow = require "core.flow"
 local focus = require "core.focus"
 local vdesktop = require "visual.desktop"
-local vtips = require "visual.tips"
+local vtips = require "visual.tips".layer "hud"
 local map = require "gameplay.map"
 local show_desc = require "gameplay.desc"
 

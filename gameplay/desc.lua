@@ -1,7 +1,7 @@
 local flow = require "core.flow"
 local focus = require "core.focus"
 local vdesktop = require "visual.desktop"
-local vtips = require "visual.tips"
+local vtips = require "visual.tips" .layer "desc"
 
 local function suit_text(s)
 	if s == nil then
@@ -42,7 +42,6 @@ return function (args)
 	local c = args.card
 	vdesktop.clear "card"
 	vdesktop.add("card", c)
-	print_r(c.sector)
 	local desc = {
 		detail = "$(desc.text." .. args.region .. "." .. c.type.. ")",
 		type = "$(card.type." .. c.type .. ")",
@@ -59,6 +58,8 @@ return function (args)
 	end
 	gen_adv(c, desc)
 	vdesktop.describe(desc)
+	-- todo
+	vtips.push()
 	vtips.set "tips.desc.return"
 	while true do
 		if focus.click "right" or focus.click "left" then
@@ -67,5 +68,5 @@ return function (args)
 		flow.sleep(0)
 	end
 	vdesktop.describe(false)
-	vtips.set()
+	vtips.pop()
 end

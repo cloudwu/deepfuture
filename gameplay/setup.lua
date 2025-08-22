@@ -3,7 +3,7 @@ local name = require "gameplay.name"
 local focus = require "core.focus"
 local flow = require "core.flow"
 local vdesktop = require "visual.desktop"
-local vtips = require "visual.tips"
+local vtips = require "visual.tips".layer "hud"
 local map = require "gameplay.map"
 
 local function new_world()

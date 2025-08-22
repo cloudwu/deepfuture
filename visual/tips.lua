@@ -45,7 +45,37 @@ function tips.draw(region)
 	BATCH:add(tips_cache[TIPS_TEXT], region.x, region.y)
 end
 
-function tips.flush(args)
+local M = {}
+
+local LAYER = {}
+
+local function new_layer(name)
+	local layer = {}
+	function layer.push()
+		table.insert(LAYER, 1, name)
+	end
+	function layer.pop()
+		local last = table.remove(LAYER,1)
+		assert(last == name, "Invalid layer")
+	end
+	for k, func in pairs(tips) do
+		layer[k] = function(...)
+			if name ~= LAYER[1] then
+				return
+			end
+			func(...)
+		end
+	end
+	return layer
+end
+
+local LAYER_OBJECT = util.cache(new_layer)
+
+function M.layer(name)
+	return LAYER_OBJECT[name]
+end
+
+function M.flush(args)
 	if args then
 		fontbox.size = args.size or fontbox.size
 		fontbox.color = args.color or fontbox.color
@@ -54,10 +84,10 @@ function tips.flush(args)
 	tips_cache = util.cache(tips_cache)	-- clear cache
 end
 
-function tips.init(args)
+function M.init(args)
 	BATCH = assert(args.batch)
 	FONT_ID = assert(args.font_id)
 	SPRITES = assert(args.sprites)
 end
 
-return tips
+return M

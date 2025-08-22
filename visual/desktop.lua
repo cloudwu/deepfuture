@@ -12,6 +12,7 @@ local update_draw_list
 local update_desc_list
 local BATCH
 local DESC
+local VTIPS = {}
 
 local M = {}
 
@@ -175,13 +176,11 @@ do
 	end
 	
 	function hud:tips()
-		if not DESC then
-			vtips.draw(self)
-		end
+		VTIPS.hud.draw(self)
 	end
 
 	function describe:tips()
-		vtips.draw(self)
+		VTIPS.desc.draw(self)
 	end
 
 	function describe:background()
@@ -324,6 +323,9 @@ function M.init(args)
 	vcard.init(args)
 	vmap.init(args)
 	vtips.init(args)
+	VTIPS.hud = vtips.layer "hud"
+	VTIPS.desc = vtips.layer "desc"
+	VTIPS.hud.push()
 	BATCH = args.batch
 	local font_id = args.font_id
 	local sprites = args.sprites
