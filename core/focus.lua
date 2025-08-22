@@ -8,6 +8,14 @@ local FOCUS_CLICK = {
 	right = {},
 }
 
+function focus.clear()
+	if FOCUS_ACTIVE then
+		FOCUS_LOST = FOCUS_ACTIVE
+		FOCUS_ACTIVE = nil
+		FOCUS_OBJECT = nil
+	end
+end
+
 function focus.trigger(region, object)
 	if object then
 		if FOCUS_ACTIVE ~= region then
@@ -32,7 +40,7 @@ do
 				state.focus = FOCUS_OBJECT
 			else
 				if state.focus == FOCUS_OBJECT then
-					state.click = FOCUS_OBJECT
+					state.click = true
 					state.focus = nil
 				end
 			end
@@ -44,29 +52,36 @@ function focus.region()
 	return FOCUS_ACTIVE
 end
 
-function focus.click(btn)
+function focus.get(state)
+	state.lost = FOCUS_LOST
+	if not FOCUS_ACTIVE then
+		state.object = nil
+		return false
+	end
+	if state.active == FOCUS_ACTIVE and
+		state.object == FOCUS_OBJECT then
+		return false
+	end
+	state.active = FOCUS_ACTIVE
+	state.object = FOCUS_OBJECT
+	return true
+end
+
+function focus.click(btn, region)
+	if region and region ~= FOCUS_ACTIVE then
+		return
+	end
 	local state = FOCUS_CLICK[btn]
-	if state then
-		return state.click == FOCUS_OBJECT
+	if state and state.click then
+		return FOCUS_OBJECT
 	end
 end
 
-function focus.dispatch(f)
-	if FOCUS_LOST then
-		local lost = f[FOCUS_LOST]
-		if lost then
-			lost(FOCUS_LOST)
-		end
-	end
-	if FOCUS_ACTIVE then
-		local active = f[FOCUS_ACTIVE]
-		if active then
-			active(FOCUS_ACTIVE, FOCUS_OBJECT)
-		end
-	end
+function focus.frame()
 	for k,v in pairs(FOCUS_CLICK) do
 		v.click = nil
 	end
+	FOCUS_LOST = nil
 end
 
 return focus

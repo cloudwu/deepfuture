@@ -97,32 +97,27 @@ local function set_neutral(homeworld)
 end
 
 local function choose_world()
-	local ux = {}
 	local desc = {
 		world = nil,
 		type = nil,
 	}
 	local homeworld
-	function ux.hand(_, c)
-		if not c then
-			vtips.set()
-			return
-		end
-
-		if c.type == "world" then
-			desc.world = c.sector .. " " .. c.name
-			vtips.set("tips.setup.homeworld", desc)
-			if focus.click "left" then
-				homeworld = c
-			end
-		else
-			desc.type = string.format("$(card.type.%s)", c.type)
-			vtips.set("tips.setup.invalid", desc)
-		end
-	end
+	local focus_state = {}
 	
 	repeat
-		focus.dispatch(ux)
+		if focus.get(focus_state) and focus_state.active == "hand" then
+			local c = focus_state.object
+			if c.type == "world" then
+				desc.world = c.sector .. " " .. c.name
+				vtips.set("tips.setup.homeworld", desc)
+			else
+				desc.type = string.format("$(card.type.%s)", c.type)
+				vtips.set("tips.setup.invalid", desc)
+			end
+		elseif focus_state.lost == "hand" then
+			vtips.set()
+		end
+		homeworld = focus.click ("left", "hand")
 		flow.sleep(0)
 	until homeworld
 	vtips.set()

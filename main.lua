@@ -45,6 +45,8 @@ end
 
 game.setup = require "gameplay.setup"
 game.player = require "gameplay.player"
+game.action = require "gameplay.action"
+game.desc = require "gameplay.desc"
 
 function game.idle()
 	return "idle"

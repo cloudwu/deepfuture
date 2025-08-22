@@ -169,22 +169,33 @@ do
 	end
 end
 
+local describe = {}
+
+local layouts = { "hud", "describe" }
+layouts.hud = hud
+layouts.describe = describe
+
 local function set_hud(w, h)
-	widget.set("hud", {
-		screen = {
-			width = w,
-			height = h,
-		}
-	})
+	for i = 1, #layouts do
+		local name = layouts[i]
+		widget.set(name, {
+			screen = {
+				width = w,
+				height = h,
+			}
+		})
+	end
 end
 
-local hud_draw_list
-local update_hud_draw_list
-local batch
+local DRAWLIST = {}
+local update_draw_list
+local hud_test_list
+local BATCH
+local DESC
 
--- todo : call update_hud_draw_list when changing localization
+-- todo : call update_draw_list when changing localization
 function M.flush(w, h)
-	update_hud_draw_list(w, h)
+	update_draw_list(w, h)
 end
 
 local mouse_x = 0
@@ -204,6 +215,9 @@ local function focus_map_test(region_name, flag,  x, y, w, h)
 end
 
 local function map_focus(region_name, card)
+	if region_name == nil then
+		return
+	end
 	local r = region[region_name]
 	if card then
 		r:focus(card)
@@ -215,13 +229,7 @@ local function map_focus(region_name, card)
 	end
 end
 
-local focus_func = {
-	neutral = map_focus,
-	homeworld = map_focus,
-	colony = map_focus,
-	hand = map_focus,
-	discard = map_focus,
-}
+local focus_state = {}
 
 local test = {
 	neutral = focus_map_test,
@@ -231,17 +239,33 @@ local test = {
 	discard = focus_map_test,
 }
 
-local hud_test_list
+function M.describe(on)
+	DESC = on
+	if on then
+		focus.clear()
+	else
+		widget.test(mouse_x, mouse_y, BATCH, hud_test_list)
+	end
+end
 
 function M.mouse_move(x, y)
 	mouse_x = x
 	mouse_y = y
-	widget.test(mouse_x, mouse_y, batch, hud_test_list)
-	focus.dispatch(focus_func)
+	if not DESC then
+		widget.test(mouse_x, mouse_y, BATCH, hud_test_list)
+	end
 end
 
 function M.draw(count)
-	widget.draw(batch, hud_draw_list, focus.region())
+	if focus.get(focus_state) then
+		map_focus(focus_state.active, focus_state.object)
+	end
+	map_focus(focus_state.lost)
+	widget.draw(BATCH, DRAWLIST.hud, focus.region())
+	if DESC then
+		widget.draw(BATCH, DRAWLIST.describe)
+	end
+	focus.frame()
 end
 
 function M.card_count(draw, discard)
@@ -272,18 +296,21 @@ function M.init(args)
 	vcard.init(args)
 	vmap.init(args)
 	vtips.init(args)
-	batch = args.batch
+	BATCH = args.batch
 	local font_id = args.font_id
 	local sprites = args.sprites
 	local width = args.width
 	local height = args.height
-	function update_hud_draw_list(w, h)
+	function update_draw_list(w, h)
 		w = w or width
 		h = h or height
 		set_hud(w, h)
-		hud_draw_list = widget.draw_list("hud", hud, font_id, sprites)
+		for i = 1, #layouts do
+			local name = layouts[i]
+			DRAWLIST[name] = widget.draw_list(name, layouts[name], font_id, sprites)
+		end
 	end
-	update_hud_draw_list()
+	update_draw_list()
 	hud_test_list = widget.test_list("hud", test)
 	region.discard:add(desktop.discard)
 end

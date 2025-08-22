@@ -1,0 +1,10 @@
+id : screen
+background : 0x20000000
+region : background
+direction : row
+justify : center
+workspace :
+	width : 100%
+	maxWidth : 1280
+	height : 100%
+	background : 0x40000000
