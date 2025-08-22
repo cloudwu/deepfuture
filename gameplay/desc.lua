@@ -52,7 +52,7 @@ return function (args)
 		era = c.era,
 		payment = gen_payment(c),
 	}
-	if c.shut then
+	if c.suit then
 		desc.suit = "$(suit." .. c.suit .. ")"
 		desc.action = "$(action." .. c.suit .. ")"
 		desc.action_desc = "$(action." .. c.suit .. ".detail)"
