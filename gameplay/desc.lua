@@ -47,14 +47,16 @@ return function (args)
 		detail = "$(desc.text." .. args.region .. "." .. c.type.. ")",
 		type = "$(card.type." .. c.type .. ")",
 		place = "$(desc.place.".. args.region .. ")",
-		suit = "$(suit." .. c.suit .. ")",
-		action = "$(action." .. c.suit .. ")",
-		action_desc = "$(action." .. c.suit .. ".detail)",
 		sector = c.sector,
 		name = c.name,
 		era = c.era,
 		payment = gen_payment(c),
 	}
+	if c.shut then
+		desc.suit = "$(suit." .. c.suit .. ")"
+		desc.action = "$(action." .. c.suit .. ")"
+		desc.action_desc = "$(action." .. c.suit .. ".detail)"
+	end
 	gen_adv(c, desc)
 	vdesktop.describe(desc)
 	vtips.set "tips.desc.return"

@@ -38,14 +38,14 @@ local function choose_action()
 					desc.desc = "$(action." .. c.suit .. ".desc)"
 				end
 				vtips.set("tips.action.choose", desc)
-			elseif focus_state.object then
+			elseif where ~= "discard" and focus_state.object then
 				vtips.set("tips." .. where)
 			end
 		elseif focus_state.lost then
 			vtips.set()
 		end
 		local c, where = focus.click "right"
-		if c then
+		if c and where ~= "discard" then
 			vtips.set()
 			show_desc {
 				region = where,

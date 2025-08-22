@@ -38,14 +38,14 @@ schinese:
   action.K.detail : "对你的母星或殖民地进行一次提升，或向母星添加一张新的科技卡，亦或提升一张母星中未完成的科技卡"
   action.R : "[heart]$(GROW)"
   action.R.desc : "增加 2 [people]人口"
-  action.R.detail : "在你所控制的星区增加 2 个[people]人口"
+  action.R.detail : "在你所控制的星区中增加 2 个[people]人口"
   action.H : "[hand]$(BATTLE)"
   action.H.desc : "攻击邻接星区"
   action.H.desc.safe : "推进任一进度 C/M/S/X"
-  action.H.detail : "选择一个你所控制的星区和它的邻接星区，以 1:1 消除任意数量你和敌人的[people]人口。数量可以为 0 或全部。如果你没有邻接任何敌对星区，则推进一格任一进度条"
+  action.H.detail : "选择一个你所控制的星区和它的邻接敌对星区，以 1:1 消除任意数量你和敌人的[people]人口。数量可以为 0 或全部。如果你没有邻接任何敌对星区，则推进一格任意进度条"
   action.F : "[foot]$(EXPAND)"
   action.F.desc : "向邻接星区派遣[people]人口"
-  action.F.detail : "向邻接空置星区派遣至少一个[people]人口，不可以因此失去出发星区的控制"
+  action.F.detail : "向邻接空置星区派遣至少一个[people]人口，不可以因此失去对出发星区的控制"
   phase.payment : 支付
   phase.challenge : 挑战
   card.type.world : "[worldcard]星球卡"
