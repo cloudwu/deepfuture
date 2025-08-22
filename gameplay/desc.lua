@@ -49,7 +49,7 @@ return function (args)
 		place = "$(desc.place.".. args.region .. ")",
 		suit = "$(suit." .. c.suit .. ")",
 		action = "$(action." .. c.suit .. ")",
-		action_desc = "$(action." .. c.suit .. ".desc)",
+		action_desc = "$(action." .. c.suit .. ".detail)",
 		sector = c.sector,
 		name = c.name,
 		era = c.era,
