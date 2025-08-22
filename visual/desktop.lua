@@ -15,8 +15,10 @@ local desktop = {
 }
 
 local region = util.map (function(name)
-	return vregion(name) 
+	return vregion.cards(name) 
 end) { "neutral", "homeworld", "colony", "hand", "discard", "deck", "float" } 
+
+region.background = vregion.rect()
 
 local hud = {}
 
@@ -165,11 +167,21 @@ do
 	end
 	
 	function hud:tips()
-		vtips.draw(self)
+		if not DESC then
+			vtips.draw(self)
+		end
 	end
 end
 
 local describe = {}
+
+function describe:tips()
+	vtips.draw(self)
+end
+
+function describe:background()
+	region.background:update(self.w, self.h, self.x, self.y)
+end
 
 local layouts = { "hud", "describe" }
 layouts.hud = hud
@@ -188,8 +200,8 @@ local function set_hud(w, h)
 end
 
 local DRAWLIST = {}
+local TESTLIST = {}
 local update_draw_list
-local hud_test_list
 local BATCH
 local DESC
 
@@ -198,14 +210,12 @@ function M.flush(w, h)
 	update_draw_list(w, h)
 end
 
-local mouse_x = 0
-local mouse_y = 0
-
-local function focus_map_test(region_name, flag,  x, y, w, h)
+local function focus_map_test(region_name, flag, mx, my)
 	if flag then
 		return flag
 	end
-	local c = region[region_name]:test(mouse_x, mouse_y, x, y)
+	local r = region[region_name] or error ("No region " .. region_name)
+	local c = r:test(mx, my)
 	if c then
 		focus.trigger(region_name, c)
 		return c
@@ -221,10 +231,11 @@ local function map_focus(region_name, card)
 	local r = region[region_name]
 	if card then
 		r:focus(card)
+		-- todo :
 		if card.sector then
 			vmap.focus(card.sector)
 		end
-	else
+	elseif r then
 		r:focus(nil)
 	end
 end
@@ -237,23 +248,24 @@ local test = {
 	colony = focus_map_test,
 	hand = focus_map_test,
 	discard = focus_map_test,
+	background = focus_map_test,
 }
+
+local mouse_x = 0
+local mouse_y = 0
 
 function M.describe(on)
 	DESC = on
-	if on then
-		focus.clear()
-	else
-		widget.test(mouse_x, mouse_y, BATCH, hud_test_list)
+	focus.clear()
+	if not on then
+		widget.test(mouse_x, mouse_y, BATCH, TESTLIST.hud)
 	end
 end
 
 function M.mouse_move(x, y)
 	mouse_x = x
 	mouse_y = y
-	if not DESC then
-		widget.test(mouse_x, mouse_y, BATCH, hud_test_list)
-	end
+	widget.test(mouse_x, mouse_y, BATCH, DESC and TESTLIST.desc or TESTLIST.hud)
 end
 
 function M.draw(count)
@@ -311,7 +323,8 @@ function M.init(args)
 		end
 	end
 	update_draw_list()
-	hud_test_list = widget.test_list("hud", test)
+	TESTLIST.hud = widget.test_list("hud", test)
+	TESTLIST.desc = widget.test_list("describe", test)
 	region.discard:add(desktop.discard)
 end
 

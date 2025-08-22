@@ -7,6 +7,7 @@ schinese:
   tips.neutral : "$(tips.explain)"
   tips.colony : "$(tips.explain)"
   tips.explain : "[rbutton]解释这张卡"
+  tips.desc.return : "[lbutton][rbutton]返回"
   action.S : "[sun]$(POWER)"
   action.S.desc : "抽取 2 张[card]牌"
   action.M : "[moon]$(SETTLE)"

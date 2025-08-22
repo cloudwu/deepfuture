@@ -8,3 +8,11 @@ workspace :
 	maxWidth : 1280
 	height : 100%
 	background : 0x40000000
+	tips :
+		position : absolute
+		top : 10
+		left : 10
+		width : 40%
+		height : 20%
+		region : tips
+		

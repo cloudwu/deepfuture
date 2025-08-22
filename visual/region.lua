@@ -196,7 +196,7 @@ function region:draw(x, y)
 	vcard.layer()
 end
 
-function region:test(mx, my, x, y)
+function region:test(mx, my)
 	local r
 	local focus
 	for i = #self, 1, -1 do
@@ -215,8 +215,34 @@ function region:test(mx, my, x, y)
 	return r
 end
 
-return function(name)
+local M = {}
+
+function M.cards(name)
 	assert(TRANSFER[name] == nil)
 	TRANSFER[name] = {}
 	return setmetatable({ _name = name }, region)
 end
+
+local rect_region = {}; rect_region.__index = rect_region
+
+function rect_region:focus(on)
+end
+
+function rect_region:update(w, h, x, y)
+	self._x1 = x
+	self._y1 = y
+	self._x2 = x + w
+	self._y2 = y + h
+end
+
+function rect_region:test(mx, my)
+	if mx >= self._x1 and my >= self._y1 and mx < self._x2 and my < self._y2 then
+		return self
+	end
+end
+
+function M.rect()
+	return setmetatable({ _x1 = 0, _y1 = 0, _x2 = 0, _y2 = 0 }, rect_region)
+end
+
+return M

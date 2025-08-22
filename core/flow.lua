@@ -14,17 +14,13 @@ end
 
 function flow.enter(state, args)
 	assert(STATE, "Call flow.load() first")
-	local last_thread = CURRENT.thread
+	assert(CURRENT.thread == nil, "Running state")
 	local f = STATE[state] or error ("Missing state " .. state)
-	local last_state = CURRENT.state
 	CURRENT.state = state
 	CURRENT.thread = coroutine.create(function()
-		local next_state = f(last_state, args)
+		local next_state = f(args)
 		return "NEXT", next_state
 	end)
-	if last_thread then
-		coroutine.yield("CLOSE", last_thread)
-	end
 end
 
 function flow.sleep(tick)
@@ -40,10 +36,6 @@ local function sleep(current, tick)
 end
 
 local command = {}
-
-function command.CLOSE(thread)
-	coroutine.close(thread)
-end
 
 function command.NEXT(state)
 	CURRENT.thread = nil
