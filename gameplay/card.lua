@@ -235,18 +235,50 @@ local function gen_adv_desc(adv)
 	if adv == nil then
 		return
 	end
-	local prefix = "$(adv."..adv.suit.."."..adv.value.."."
-	adv._suit = "$(suit."..adv.suit..")"
-	adv._name = prefix .. "name)"
-	local stage = advancement.find(adv.suit, adv.value).stage
-	adv._stage = "[[$(".. stage .. ")]"
-	adv._stage_focus = "[blue]" .. adv._stage .. "n"
-	adv._stage_normal = adv._stage
-	adv._desc = prefix .. "desc)"
+	if adv.value == nil then
+		assert(adv.suit, "Missing adv.suit")
+		adv._suit = "$(suit."..adv.suit..")"
+		adv._name = ""
+		adv._stage = ""
+		adv._desc = ""
+	else
+		local prefix = "$(adv."..adv.suit.."."..adv.value.."."
+		adv._suit = "$(suit."..adv.suit..")"
+		adv._name = prefix .. "name)." .. adv.era
+		local stage = advancement.find(adv.suit, adv.value).stage
+		adv._stage = "[[$(".. stage .. ")]"
+		adv._stage_focus = "[blue]" .. adv._stage .. "n"
+		adv._stage_normal = adv._stage
+		adv._desc = prefix .. "desc)"
+	end
+end
+
+function card.add_adv_suit(c, suit)
+	local adv = { suit = suit }
+	local index
+	if c.adv1 == nil then
+		index = "adv1"
+	elseif c.adv2 == nil then
+		index = "adv2"
+	elseif c.adv3 == nil then
+		index = "adv3"
+	else
+		return
+	end
+	c[index] = adv
+	gen_adv_desc(adv)
+	return index
+end
+
+function card.add_adv_value(c, adv_index, value, era)
+	local adv = c[adv_index] or error ("Invalid adv " .. adv_index)
+	adv.value = value
+	adv.era = era
+	gen_adv_desc(adv)
 end
 
 function card.gen_desc(c)
-	if c.type == "world" then
+	if c.type == "world" or c.type == "tech" then
 		gen_adv_desc(c.adv1)
 		gen_adv_desc(c.adv2)
 		gen_adv_desc(c.adv3)

@@ -138,13 +138,10 @@ local function new_world(hands)
 	
 	local advsuit = card.draw_discard()
 	local advtype = card.draw_discard()
+	
+	local index = card.add_adv_suit(newcard, advsuit.suit)
+	card.add_adv_value(newcard, index, advtype.value, newcard.era)
 
-	newcard.adv1 = {
-		suit = advsuit.suit,
-		value = advtype.value,
-		era = newcard.era,
-	}
-	card.gen_desc(newcard)
 	card.putdown("hand", newcard)
 	
 	-- clone from blank

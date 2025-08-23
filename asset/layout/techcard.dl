@@ -1,20 +1,22 @@
 id : card
-image : cardworld
+image : cardblank
 width : 200
 height : 280
 padding : 10
+title :
+	text : card.tech.name
+	size : 18
+	flex : 0.1
+	text_align : C
 content :
-	position : absolute
-	width : 100%
-	height : 80%
-	bottom : 0
+	flex : .9
+	margin : 5
 	title :
-		text : card.world.title
+		text : card.tech.title
 		size : 18
-		left : 5
-		height : 20%
+		flex : 0.2
 	advancement :
-		height : 80%
+		flex : 0.8
 		padding : 10
 		justify: space-between
 		adv :
@@ -63,12 +65,3 @@ corner :
 	position : absolute
 	width : 40
 	height : 40
-world :
-	direction: row
-	position : absolute
-	width : 50%
-	height : 40
-	right : 10
-	text : card.world.name
-	text_align : C
-	size : 14

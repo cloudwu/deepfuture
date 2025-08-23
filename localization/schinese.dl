@@ -78,9 +78,11 @@ schinese:
   suit.H : "[hand]"
   suit.F : "[foot]"
   card.corner : "${_marker}"
-  card.world : "${sector} ${name}"
-  card.title : "${era}. [planet]星球"
-  card.adv : "${_suit} ${_name}.${era}"
+  card.world.name : "${sector} ${name}"
+  card.world.title : "${era}. [planet]星球"
+  card.tech.name : "${name}"
+  card.tech.title : "${era}. [tech]科技"
+  card.adv : "${_suit} ${_name}"
   card.desc : "${_stage} ${_desc}"
   START : 开始
   ADVANCE : 提升

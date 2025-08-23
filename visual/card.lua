@@ -11,6 +11,7 @@ local BATCH
 local card_type = {
 	world = "worldcard",
 	blank = "blankcard",
+	tech = "techcard",
 	back = "cardback",
 }
 
