@@ -7,8 +7,8 @@ local initial = {}
 local function random_adv_value(c)
 	local r = math.random(3)
 	local index = "adv"..r
-	local advtype = card.draw_discard()
-	card.add_adv_value(c, index, advtype.value, 0)
+	local value = rules.init.set or card.draw_discard().value
+	card.add_adv_value(c, index, value, 0)
 end
 
 local function gen_random_adv(n)

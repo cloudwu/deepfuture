@@ -1,6 +1,7 @@
 init :
 	worlds : 12
-	random : 50
+	random : 60
+	set : 1
 setup :
 	draw : 5
 # turn on for debug	

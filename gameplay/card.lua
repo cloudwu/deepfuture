@@ -247,7 +247,7 @@ local function gen_adv_desc(adv)
 		adv._name = prefix .. "name)." .. adv.era
 		local stage = advancement.find(adv.suit, adv.value).stage
 		adv._stage = "[[$(".. stage .. ")]"
-		adv._stage_focus = "[blue]" .. adv._stage .. "n"
+		adv._stage_focus = "[blue]" .. adv._stage .. "[n]"
 		adv._stage_normal = adv._stage
 		adv._desc = prefix .. "desc)"
 	end
@@ -283,6 +283,10 @@ function card.gen_desc(c)
 		gen_adv_desc(c.adv2)
 		gen_adv_desc(c.adv3)
 	end
+end
+
+function card.complete(c)
+	return c.adv1 and c.adv1.value and c.adv2 and c.adv2.value and c.adv3 and c.adv3.value
 end
 
 -- todo: load deck

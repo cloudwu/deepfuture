@@ -2,6 +2,8 @@ local flow = require "core.flow"
 local focus = require "core.focus"
 local vdesktop = require "visual.desktop"
 local vtips = require "visual.tips" .layer "desc"
+local card = require "gameplay.card"
+local advancement = require "gameplay.advancement"
 
 local function suit_text(s)
 	if s == nil then
@@ -20,15 +22,17 @@ end
 local function gen_adv_(c, stage, desc)
 	local stage = "adv"..stage
 	local s = c[stage]
-	if s then
+	if s and s.value then
 		desc[stage] = "$(desc." .. stage .. ")"
+		desc[stage.."_discard"] = "$(desc." .. stage .. ".discard)"
 		local prefix = "$(adv.".. s.suit .. "." .. s.value .. "."
 		desc[stage.."_name"] = prefix .. "name)"
 		desc[stage.."_era"] = s.era
-		desc[stage.."_stage"] = prefix .. "stage)"
+		desc[stage.."_stage"] = "$(" .. advancement.find(s.suit, s.value).stage .. ")"
 		desc[stage.."_desc"] = prefix .. "detail)"
 	else
 		desc[stage] = ""
+		desc[stage.."_discard"] = ""
 	end
 end
 
@@ -36,6 +40,18 @@ local function gen_adv(c, desc)
 	for i = 1, 3 do
 		gen_adv_(c, i, desc)
 	end
+	if c.type ~= "tech" or not card.complete(c) then
+		return
+	end
+end
+
+local function gen_effect(c)
+	if c.type ~= "tech" or not card.complete(c) then
+		return
+	end
+	local index = "adv" .. n
+	local adv = c[index]
+	return "  " .. adv._stage_focus .. " " .. "$(adv." .. adv.suit .. "." .. adv.value .. ".detail)"
 end
 
 local M = {}
@@ -44,8 +60,12 @@ function M.action(args)
 	local c = args.card
 	vdesktop.clear "card"
 	vdesktop.add("card", c)
+	local card_type = c.type
+	if card_type == "tech" and card.complete(c) then
+		card_type = card_type .. ".complete"
+	end
 	local desc = {
-		detail = "$(desc.text." .. args.region .. "." .. c.type.. ")",
+		detail = "$(desc.text." .. args.region .. "." .. card_type .. ")",
 		type = "$(card.type." .. c.type .. ")",
 		place = "$(desc.place.".. args.region .. ")",
 		sector = c.sector,
