@@ -57,7 +57,9 @@ local function choose_action()
 end
 
 return function ()
+	vdesktop.set_text("phase", "$(phase.start)")
 	draw_hands()
+	vdesktop.set_text("phase", "$(phase.action)")
 	choose_action()
 	return "idle"
 end

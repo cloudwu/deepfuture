@@ -44,6 +44,16 @@ desktop :
 				width : 40%
 				height : 20%
 				region : tips
+			phase :
+				position : absolute
+				top : 0
+				right : 0
+				width : 40%
+				height : 50
+				text : hud.phase
+				size : 20
+				text_align : R
+				env : text.phase
 	info :
 		width : 50%
 		minWidth: 430

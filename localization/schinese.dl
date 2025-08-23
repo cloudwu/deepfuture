@@ -47,6 +47,9 @@ schinese:
   action.F : "[foot]$(EXPAND)"
   action.F.desc : "向邻接星区派遣[people]人口"
   action.F.detail : "向邻接空置星区派遣至少一个[people]人口，不可以因此失去对出发星区的控制"
+  phase.setup : 布局
+  phase.start : 开始
+  phase.action : 行动
   phase.payment : 支付
   phase.challenge : 挑战
   card.type.world : "[worldcard]星球卡"
@@ -57,6 +60,7 @@ schinese:
   card.number : "[stack]${draw} [discard]${discard}"
   hud.world : 母星
   hud.colony : 殖民地
+  hud.phase : "${text}阶段"
   hud.mark : "${mark}"
   hud.C : C
   hud.M : M

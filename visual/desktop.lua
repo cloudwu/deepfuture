@@ -261,6 +261,17 @@ local test = {
 local mouse_x = 0
 local mouse_y = 0
 
+function M.set_text(key, text)
+	key = "text." .. key
+	local env = hud[key]
+	if env == nil then
+		hud[key] = { text = text }
+	else
+		env.text = text
+	end
+	update_draw_list()
+end
+
 function M.describe(text)
 	DESC = not not text
 	focus.clear()

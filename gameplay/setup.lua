@@ -264,6 +264,7 @@ local function draw_hands()
 end
 
 return function ()
+	vdesktop.set_text("phase", "$(phase.setup)")
 	card.setup()
 	local hands = draw_hands()
 	local homeworld = set_homeworld(hands)
