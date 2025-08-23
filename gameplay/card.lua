@@ -240,6 +240,8 @@ local function gen_adv_desc(adv)
 	adv._name = prefix .. "name)"
 	local stage = advancement.find(adv.suit, adv.value).stage
 	adv._stage = "[[$(".. stage .. ")]"
+	adv._stage_focus = "[blue]" .. adv._stage .. "n"
+	adv._stage_normal = adv._stage
 	adv._desc = prefix .. "desc)"
 end
 

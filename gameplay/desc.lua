@@ -38,7 +38,9 @@ local function gen_adv(c, desc)
 	end
 end
 
-return function (args)
+local M = {}
+
+function M.action(args)
 	local c = args.card
 	vdesktop.clear "card"
 	vdesktop.add("card", c)
@@ -70,3 +72,5 @@ return function (args)
 	vdesktop.describe(false)
 	vtips.pop()
 end
+
+return M

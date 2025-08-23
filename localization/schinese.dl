@@ -81,7 +81,7 @@ schinese:
   card.world : "${sector} ${name}"
   card.title : "${era}. [planet]星球"
   card.adv : "${_suit} ${_name}.${era}"
-  card.desc : "[blue]${_stage}[n] ${_desc}"
+  card.desc : "${_stage} ${_desc}"
   START : 开始
   ADVANCE : 提升
   EXPAND : 扩张

@@ -35,7 +35,7 @@ local function choose_action()
 		local c, where = focus.click "right"
 		if c and where ~= "discard" then
 			vtips.set()
-			show_desc {
+			show_desc.action {
 				region = where,
 				card = c,
 			}

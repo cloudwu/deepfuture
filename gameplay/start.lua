@@ -5,7 +5,7 @@ local vcard = require "visual.card"
 local focus = require "core.focus"
 local vtips = require "visual.tips".layer "hud"
 --local map = require "gameplay.map"
---local show_desc = require "gameplay.desc"
+local show_desc = require "gameplay.desc"
 local rules = require "core.rules".phase
 
 local function draw_hands()
