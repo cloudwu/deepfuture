@@ -310,6 +310,10 @@ function M.add(where, card)
 	region[where]:add(card)
 end
 
+function M.replace(where, from, to)
+	region[where]:replace(from, to)
+end
+
 function M.clear(where)
 	region[where]:clear()
 end

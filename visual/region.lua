@@ -13,6 +13,15 @@ function region:add(c)
 	self._dirty = true
 end
 
+function region:replace(from, to)
+	for i, card in ipairs(self) do
+		if card.card == from then
+			card.card = to
+			return
+		end
+	end
+end
+
 function region:focus(c)
 	self._focus = c
 end

@@ -1,7 +1,8 @@
 schinese:
   app.title : "Deep Future"
-  tips.setup.homeworld : "[lbutton]选择[blue] ${world} [n]作为母星"
+  tips.setup.homeworld : "[lbutton]选择 [blue]${world}[n] 作为母星"
   tips.setup.invalid : "请选择$(card.type.world)，这是${type}"
+  tips.setup.newworld : "[lbutton]创建一张[blue]新的$(card.type.world)[n]作为母星"
   tips.action.choose : "[lbutton]选择行动[blue]${action}[n]\n - ${desc}\n$(tips.explain)"
   tips.homeworld : "$(tips.explain)"
   tips.neutral : "$(tips.explain)"
@@ -73,7 +74,7 @@ schinese:
   card.world : "${sector} ${name}"
   card.title : "${era}. [planet]星球"
   card.adv : "${_suit} ${_name}.${era}"
-  card.desc : "[blue][[${_stage}] [n]${_desc}"
+  card.desc : "[blue]${_stage}[n] ${_desc}"
   START : 开始
   ADVANCE : 提升
   EXPAND : 扩张

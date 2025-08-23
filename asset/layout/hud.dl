@@ -20,6 +20,23 @@ desktop :
 				width : 532
 				height : 590
 				region : map
+				buttons :
+					position : absolute
+					bottom : 0
+					right : 0
+					width : 80
+					height : 100
+					direction : column
+					gap : 5
+					button :
+						flex : 1
+						region : button3
+					button :
+						flex : 1
+						region : button1
+					button :
+						flex : 1
+						region : button2
 			tips :
 				position : absolute
 				top : 0
