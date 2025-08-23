@@ -1,6 +1,7 @@
 local persist = require "gameplay.persist"
 local math = math
 local table = table
+local advancement = require "gameplay.advancement"
 
 local card = {}
 
@@ -230,7 +231,8 @@ local function gen_adv_desc(adv)
 	local prefix = "$(adv."..adv.suit.."."..adv.value.."."
 	adv._suit = "$(suit."..adv.suit..")"
 	adv._name = prefix .. "name)"
-	adv._stage = "[[".. prefix .. "stage)]"
+	local stage = advancement.find(adv.suit, adv.value).stage
+	adv._stage = "[[$(".. stage .. ")]"
 	adv._desc = prefix .. "desc)"
 end
 

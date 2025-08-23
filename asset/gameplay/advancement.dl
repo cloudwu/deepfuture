@@ -1,0 +1,161 @@
+computation :
+	suit : S
+	value : 1
+	stage : START
+engineering :
+	suit : S
+	value : 2
+	stage : ADVANCE
+communication : 
+	suit : S
+	value : 3
+	stage : EXPAND
+weapons :
+	suit : S
+	value : 4
+	stage : BATTLE
+industry :
+	suit : S
+	value : 5
+	stage : POWER
+energy :
+	suit : S
+	value : 6
+	stage : POWER
+art :
+	suit : M
+	value : 1
+	stage : START
+leisure :
+	suit : M
+	value : 2
+	stage : SETTLE
+philosophy :
+	suit : M
+	value : 3
+	stage : ADVANCE
+literature :
+	suit : M
+	value : 4
+	stage : ADVANCE
+government :
+	suit : M
+	value : 5
+	stage : SETTLE
+society :
+	suit : M
+	value : 6
+	stage : SETTLE
+infrastrcture :
+	suit : R
+	value : 1
+	stage : START
+labor :
+	suit : R
+	value : 2
+	stage : POWER
+machinery :
+	suit : R
+	value : 3
+	stage : BATTLE
+medicine :
+	suit : R
+	value : 4
+	stage : SETTLE
+biology :
+	suit : R
+	value : 5
+	stage : GROW
+genetics :
+	suit : R
+	value : 6
+	stage : GROW
+history :
+	suit : K
+	value : 1
+	stage : START
+education :
+	suit : K
+	value : 2
+	stage : GROW
+ecology :
+	suit : K
+	value : 3
+	stage : SETTLE
+astronomy :
+	suit : K
+	value : 4
+	stage : EXPAND
+chemistry :
+	suit : K
+	value : 5
+	stage : ADVANCE
+physics :
+	suit : K
+	value : 6
+	stage : ADVANCE
+economy :
+	suit : H
+	value : 1
+	stage : START
+diplomacy :
+	suit : H
+	value : 2
+	stage : BATTLE
+agriculture :
+	suit : H
+	value : 3
+	stage : GROW
+construction :
+	suit : H
+	value : 4
+	stage : GROW
+military :
+	suit : H
+	value : 5
+	stage : BATTLE
+defense :
+	suit : H
+	value : 6
+	stage : BATTLE
+exploration :
+	suit : F
+	value : 1
+	stage : START
+religion :
+	suit : F
+	value : 2
+	stage : EXPAND
+empire :
+	suit : F
+	value : 3
+	stage : POWER
+devices :
+	suit : F
+	value : 4
+	stage : POWER
+spacecraft :
+	suit : F
+	value : 5
+	stage : EXPAND
+ftl :
+	suit : F
+	value : 6
+	stage : EXPAND
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+	

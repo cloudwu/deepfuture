@@ -6,6 +6,7 @@ local vdesktop = require "visual.desktop"
 local vtips = require "visual.tips".layer "hud"
 local vcard = require "visual.card"
 local map = require "gameplay.map"
+local rules = require "core.rules".phase
 
 local function sleep()
 	flow.sleep(5)
@@ -251,10 +252,11 @@ end
 
 local function draw_hands()
 	local h = {}
-	for i = 1, 5 do
+	for i = 1, rules.setup.draw do
 		local c = card.draw_hand()
--- for debug
---		c = no_world_card(c)
+		if rules.setup.no_worlds then
+			c = no_world_card(c)
+		end
 		h[i] = c
 		vdesktop.add("deck", c)
 		vdesktop.transfer("deck", c, "hand")

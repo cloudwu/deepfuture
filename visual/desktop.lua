@@ -334,6 +334,14 @@ function M.transfer(from, card, to)
 	r:transfer(card, to)
 end
 
+function M.hands()
+	local r = {}
+	for i, c in ipairs(region.hand) do
+		r[i] = c.card
+	end
+	return r
+end
+
 function M.init(args)
 	vcard.init(args)
 	vmap.init(args)

@@ -5,17 +5,42 @@ local vdesktop = require "visual.desktop"
 local vtips = require "visual.tips".layer "hud"
 local map = require "gameplay.map"
 local show_desc = require "gameplay.desc"
+local rules = require "core.rules".phase
 
 local function sleep()
 	flow.sleep(5)
 end
 
 local function draw_hands()
-	for i = 1, 5 do
-		local c = card.draw_hand()
-		vdesktop.add("deck", c)
-		vdesktop.transfer("deck", c, "hand")
-		sleep()
+	local hands = vdesktop.hands()
+	local draw = rules.start.draw - #hands
+	if draw > 0 then
+		-- draw to 5 cards
+		for i = 1, draw do
+			local c = card.draw_hand()
+			vdesktop.add("deck", c)
+			vdesktop.transfer("deck", c, "hand")
+			sleep()
+		end
+	end
+	local discard = #hands - rules.start.hand_limit
+	if discard > 0 then
+		-- discard random card
+		local discard_cards = {}
+		for i = 1, discard do
+			local n = math.random(#hands)
+			local c = table.remove(hands, n)
+			discard_cards[i] = c
+			card.pickup("hand", c)
+			card.discard(c)
+			vdesktop.transfer("hand", c, "float")
+			sleep()
+		end
+		flow.sleep(60)
+		for i = 1, discard do
+			vdesktop.transfer("float", discard_cards[i], "deck")
+			sleep()
+		end
 	end
 end
 
@@ -56,9 +81,20 @@ local function choose_action()
 	end
 end
 
+local check = { disable = {} }
+
+-- check settle
+function check:M()
+	
+end
+
+local function check_action()
+end
+
 return function ()
 	vdesktop.set_text("phase", "$(phase.start)")
 	draw_hands()
+
 	vdesktop.set_text("phase", "$(phase.action)")
 	choose_action()
 	return "idle"
