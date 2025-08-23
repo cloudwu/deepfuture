@@ -7,43 +7,6 @@ local map = require "gameplay.map"
 local show_desc = require "gameplay.desc"
 local rules = require "core.rules".phase
 
-local function sleep()
-	flow.sleep(5)
-end
-
-local function draw_hands()
-	local hands = vdesktop.hands()
-	local draw = rules.start.draw - #hands
-	if draw > 0 then
-		-- draw to 5 cards
-		for i = 1, draw do
-			local c = card.draw_hand()
-			vdesktop.add("deck", c)
-			vdesktop.transfer("deck", c, "hand")
-			sleep()
-		end
-	end
-	local discard = #hands - rules.start.hand_limit
-	if discard > 0 then
-		-- discard random card
-		local discard_cards = {}
-		for i = 1, discard do
-			local n = math.random(#hands)
-			local c = table.remove(hands, n)
-			discard_cards[i] = c
-			card.pickup("hand", c)
-			card.discard(c)
-			vdesktop.transfer("hand", c, "float")
-			sleep()
-		end
-		flow.sleep(60)
-		for i = 1, discard do
-			vdesktop.transfer("float", discard_cards[i], "deck")
-			sleep()
-		end
-	end
-end
-
 local function choose_action()
 	local desc = {
 		action = nil,
@@ -81,19 +44,27 @@ local function choose_action()
 	end
 end
 
-local check = { disable = {} }
+local check = {}
 
 -- check settle
-function check:M()
+function check.M(hands)
 	
 end
 
-local function check_action()
+-- check grow
+function check.R(hands)
+end
+
+local function check_action(hands)
+	local disable = {}
+	for suit, f in pairs(check) do
+		disable[suit] = f(hands)
+	end
+	return disable
 end
 
 return function ()
-	vdesktop.set_text("phase", "$(phase.start)")
-	draw_hands()
+	local disable = check_action(hands)
 
 	vdesktop.set_text("phase", "$(phase.action)")
 	choose_action()

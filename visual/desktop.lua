@@ -256,6 +256,7 @@ local test = {
 	hand = focus_map_test,
 	discard = focus_map_test,
 	background = focus_map_test,
+	float = focus_map_test,
 }
 
 local mouse_x = 0
@@ -332,14 +333,6 @@ end
 function M.transfer(from, card, to)
 	local r = region[from]
 	r:transfer(card, to)
-end
-
-function M.hands()
-	local r = {}
-	for i, c in ipairs(region.hand) do
-		r[i] = c.card
-	end
-	return r
 end
 
 function M.init(args)

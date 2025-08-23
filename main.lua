@@ -38,20 +38,21 @@ vdesktop.init {
 
 local game = {}
 
-function game.start()
+function game.init()
 	initial.new()
 	return "setup"
 end
 
 game.setup = require "gameplay.setup"
-game.player = require "gameplay.player"
+game.start = require "gameplay.start"
+game.action = require "gameplay.action"
 
 function game.idle()
 	return "idle"
 end
 
 flow.load(game)
-flow.enter "start"
+flow.enter "init"
 
 callback.window_resize = vdesktop.flush
 callback.mouse_move = vdesktop.mouse_move
@@ -68,7 +69,7 @@ end
 
 function callback.frame(count)
 	flow.update()
-	vdesktop.card_count(card.count())
+	vdesktop.card_count(card.count "draw", card.count "discard")
 	map.update()
 	vdesktop.draw(count)
 end

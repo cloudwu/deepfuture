@@ -1,5 +1,6 @@
 local widget = require "core.widget"
 local util = require "core.util"
+local mask = require "soluna.material.mask"
 
 local card = {}
 
@@ -12,6 +13,8 @@ local card_type = {
 	blank = "blankcard",
 	back = "cardback",
 }
+
+local mask_color <const> = 0x2000ff00
 
 local _, _, card_w, card_h = widget.get("blankcard", "card")
 
@@ -26,13 +29,24 @@ function card.flush(c)
 end
 
 function card.draw(c, x, y, scale)
+	local color = c._active
 	if x then
 		BATCH:layer(scale or 1, x, y)
 		widget.draw(BATCH, card_draw_list[c])
+		if color then
+			BATCH:add(mask.mask(SPRITES.cardblank, color))
+		end
 		BATCH:layer()
 	else
 		widget.draw(BATCH, card_draw_list[c])
+		if color then
+			BATCH:add(mask.mask(SPRITES.cardblank, color))
+		end
 	end
+end
+
+function card.mask(c, color)
+	c._active = color and mask_color
 end
 
 function card.test(mx, my, x, y, scale)

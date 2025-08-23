@@ -216,8 +216,15 @@ function card.discard(card)
 	GAME.discard[#GAME.discard + 1] = card._id
 end
 
-function card.count()
-	return #GAME.draw , #GAME.discard
+function card.count(type)
+	return #GAME[type]
+end
+
+function card.discard_random_hand()
+	local n = math.random(#GAME.hand)
+	local id = table.remove(GAME.hand, n)
+	GAME.discard[#GAME.discard+1] = id
+	return DECK[id]
 end
 
 function card.cleanup()

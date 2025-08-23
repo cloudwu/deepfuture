@@ -40,10 +40,9 @@ end
 
 local function set_neutral(homeworld)
 	local sec = homeworld.sector
-	local n1, n2 = card.count()
 	local tmp = {}
 	local moving = {}
-	for i = 1, n1 + n2 do
+	for i = 1, card.count "draw" + card.count "discard" do
 		local c = draw_card()
 		if c == nil then
 			break
@@ -71,7 +70,13 @@ local function set_neutral(homeworld)
 	wait_for_moving(moving)
 end
 
-local function choose_world()
+local function clear_mask(hands)
+	for _, c in ipairs(hands) do
+		vcard.mask(c)
+	end
+end
+
+local function choose_world(hands)
 	local desc = {
 		world = nil,
 		type = nil,
@@ -95,6 +100,7 @@ local function choose_world()
 		local c, from = focus.click ("left", "hand")
 		if from == "hand" and c.type == "world" then
 			homeworld = c
+			clear_mask(hands)
 		end
 		flow.sleep(0)
 	until homeworld
@@ -109,7 +115,7 @@ local function clone_card(from, to)
 	return to
 end
 
-local function new_world()
+local function new_world(hands)
 	local focus_state = {}
 	
 	repeat
@@ -120,6 +126,7 @@ local function new_world()
 		end
 		flow.sleep(0)
 	until focus.click ("left", "hand")
+	clear_mask(hands)
 	vtips.set()
 	local newcard, card1, card2 = card.generate_newcard()
 	local sec1 = card.draw_discard()
@@ -204,14 +211,26 @@ local function new_world()
 end
 
 local function choose(hands)
+	local have_world
 	for _, c in pairs(hands) do
 		if c.type == "world" then
-			-- at least one world card
-			return choose_world()
+			vcard.mask(c, true)
+			have_world = true
 		end
 	end
+	
+	if have_world then
+		-- at least one world card
+		return choose_world(hands)
+	end
+
 	-- no world card in hand
-	local c =  new_world()
+	
+	for _, c in pairs(hands) do
+		vcard.mask(c, true)
+	end
+	
+	local c =  new_world(hands)
 	hands[#hands+1] = c
 	return c
 end
@@ -271,5 +290,5 @@ return function ()
 	local hands = draw_hands()
 	local homeworld = set_homeworld(hands)
 	set_neutral( homeworld )
-	return "player"
+	return "start"
 end
