@@ -60,10 +60,30 @@ end
 
 local M = {}
 
-function M.action(args)
+local function show_card(args)
 	local c = args.card
 	vdesktop.clear "card"
 	vdesktop.add("card", c)
+	return c
+end
+
+local function wait_for_return(desc)
+	vdesktop.describe(desc)
+	-- todo
+	vtips.push()
+	vtips.set "tips.desc.return"
+	while true do
+		if focus.click "right" or focus.click "left" then
+			break
+		end
+		flow.sleep(0)
+	end
+	vdesktop.describe(false)
+	vtips.pop()
+end
+
+function M.action(args)
+	local c = show_card(args)
 	local card_type = c.type
 	if card_type == "tech" and card.complete(c) then
 		card_type = card_type .. ".complete"
@@ -83,18 +103,23 @@ function M.action(args)
 		desc.action_desc = "$(action." .. c.suit .. ".detail)"
 	end
 	gen_adv(c, desc)
-	vdesktop.describe(desc)
-	-- todo
-	vtips.push()
-	vtips.set "tips.desc.return"
-	while true do
-		if focus.click "right" or focus.click "left" then
-			break
-		end
-		flow.sleep(0)
-	end
-	vdesktop.describe(false)
-	vtips.pop()
+	wait_for_return(desc)
+end
+
+function M.start(args)
+	local c = show_card(args)
+	local s = c["adv"..args.adv_index]
+	local prefix = "$(adv.".. advancement.name(s.suit, s.value).. "."
+	
+	local desc = {
+		type = "$(card.type." .. c.type .. ")",
+		place = "$(desc.place.".. args.region .. ")",
+		detail = "$(desc.start." .. args.region .. "." .. c.type .. ")",
+		adv_name = prefix .. "name)",
+		adv_era = s.era,
+		adv_desc = prefix .. "detail)",
+	}
+	wait_for_return(desc)
 end
 
 return M

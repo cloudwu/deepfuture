@@ -79,6 +79,13 @@ function card.layer(...)
 	BATCH:layer(...)
 end
 
+function card.adv_info(c, index)
+	local adv = c["adv" .. index]
+	if adv then
+		return adv._name, adv._desc
+	end
+end
+
 function card.init(args)
 	BATCH = assert(args.batch)
 	FONT_ID = assert(args.font_id)

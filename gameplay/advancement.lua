@@ -3,7 +3,7 @@ local util = require "core.util"
 local track = require "gameplay.track"
 local map = require "gameplay.map"
 
-global pairs, tonumber
+global pairs, tonumber, print
 
 local advancement = {}
 
@@ -68,7 +68,8 @@ function adv_check.economy(draw_pile, discard_pile)
 end
 
 function adv_check.exploration()
-	return map.can_move()
+	local r = map.can_move()
+	return r
 end
 
 function advancement.check(what, ...)

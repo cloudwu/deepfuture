@@ -1,6 +1,6 @@
 init :
 	worlds : 12
-	random : 100
+	random : 30
 	set : 1
 setup :
 	draw : 5

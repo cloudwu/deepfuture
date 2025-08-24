@@ -3,6 +3,7 @@ local vmap = require "visual.map"
 local vcard = require "visual.card"
 local vtips = require "visual.tips"
 local vtrack = require "visual.track"
+local vbutton = require "visual.button"
 local widget = require "core.widget"
 local util = require "core.util"
 local focus = require "core.focus"
@@ -230,6 +231,9 @@ local function map_focus(region_name, card)
 		return
 	end
 	local r = region[region_name]
+	if r == nil then
+		return
+	end
 	if card then
 		r:focus(card)
 		-- todo :
@@ -329,11 +333,26 @@ function M.transfer(from, card, to)
 	r:transfer(card, to)
 end
 
+local function update_test_list()
+	TESTLIST.hud = widget.test_list("hud", test)
+end
+
+function M.button_enable(name, obj)
+	vbutton.enable(name, obj)
+	vbutton.register {
+		draw = hud,
+		test = test,
+	}
+	update_draw_list()
+	update_test_list()
+end
+
 function M.init(args)
 	vcard.init(args)
 	vmap.init(args)
 	vtips.init(args)
 	vtrack.init(args)
+	vbutton.init(args)
 	VTIPS.hud = vtips.layer "hud"
 	VTIPS.desc = vtips.layer "desc"
 	VTIPS.hud.push()
@@ -355,7 +374,7 @@ function M.init(args)
 		DRAWLIST.describe = widget.draw_list("describe", layouts.describe, font_id, sprites)
 	end
 	update_draw_list()
-	TESTLIST.hud = widget.test_list("hud", test)
+	update_test_list()
 	TESTLIST.desc = widget.test_list("describe", test)
 	region.discard:add(desktop.discard)
 end

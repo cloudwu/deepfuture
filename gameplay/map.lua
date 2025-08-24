@@ -4,7 +4,7 @@ local config = require "core.rules".ui
 local util = require "core.util"
 local rules = require "core.rules".map
 
-global pairs, assert
+global pairs, assert, print
 
 local map = {}
 

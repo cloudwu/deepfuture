@@ -79,6 +79,16 @@ function focus.click(btn, region)
 	end
 end
 
+function focus.press(btn, region)
+	if region and region ~= FOCUS_ACTIVE then
+		return
+	end
+	local state = FOCUS_CLICK[btn]
+	if state and state.focus then
+		return state.focus, FOCUS_ACTIVE
+	end
+end
+
 function focus.frame()
 	for k,v in pairs(FOCUS_CLICK) do
 		v.click = nil
