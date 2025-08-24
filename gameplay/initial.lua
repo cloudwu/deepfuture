@@ -1,6 +1,9 @@
 local card = require "gameplay.card"
 local name = require "gameplay.name"
 local rules = require "core.rules".phase
+local math = math
+
+global error
 
 local initial = {}
 

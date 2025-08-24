@@ -8,6 +8,8 @@ local vtips = require "visual.tips".layer "hud"
 local show_desc = require "gameplay.desc"
 local rules = require "core.rules".phase
 
+global none
+
 local function draw_hands()
 	local draw = rules.start.draw - card.count "hand"
 	if draw > 0 then
@@ -62,6 +64,7 @@ end
 return function ()
 	vdesktop.set_text("phase", "$(phase.start)")
 	draw_hands()
+	local advs = card.find_stage("START", { "hand", "homeworld", "colony" })
 	-- todo : start effect
 	discard_hand_limit()
 

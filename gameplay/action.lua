@@ -7,6 +7,8 @@ local map = require "gameplay.map"
 local show_desc = require "gameplay.desc"
 local rules = require "core.rules".phase
 
+global pairs
+
 local function choose_action()
 	local desc = {
 		action = nil,
@@ -64,7 +66,7 @@ local function check_action(hands)
 end
 
 return function ()
-	local disable = check_action(hands)
+--	local disable = check_action(hands)
 
 	vdesktop.set_text("phase", "$(phase.action)")
 	choose_action()

@@ -1,5 +1,7 @@
 local settings = require "soluna".settings()
 
+global tostring, tonumber
+
 local version = {}
 
 local ver = tostring(settings.version)

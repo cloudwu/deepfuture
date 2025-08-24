@@ -7,6 +7,9 @@ local vtips = require "visual.tips".layer "hud"
 local vcard = require "visual.card"
 local map = require "gameplay.map"
 local rules = require "core.rules".phase
+local string = string
+
+global pairs, ipairs, tostring
 
 local function sleep()
 	flow.sleep(5)

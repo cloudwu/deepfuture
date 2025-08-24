@@ -1,6 +1,10 @@
 local datalist = require "soluna.datalist"
 local file = require "soluna.file"
 local version = require "gameplay.version"
+local table = table
+local io = io
+
+global assert, pcall, pairs, ipairs, type, tostring, next, print
 
 local SUPPORT_VERSION <const> = "0.1.0"
 

@@ -1,6 +1,8 @@
 local persist = require "gameplay.persist"
 local vmap = require "visual.map"
 
+global pairs, assert
+
 local map = {}
 
 local galaxy = {}

@@ -3,6 +3,8 @@ local math = math
 local table = table
 local advancement = require "gameplay.advancement"
 
+global tostring, setmetatable, ipairs, pairs, print, print_r, error, assert
+
 local card = {}
 
 --[[
@@ -87,10 +89,9 @@ function card.setup()
 	GAME = persist.init("game", game)	
 end
 
-local print = print
-
 local function draw_card()
 	local _ENV = GAME
+	global draw, discard, seen
 	local n = #draw
 	if n == 0 then
 		n = #discard
@@ -222,8 +223,8 @@ function card.discard(card)
 	GAME.discard[#GAME.discard + 1] = card._id
 end
 
-function card.count(type)
-	return #GAME[type]
+function card.count(pile)
+	return #GAME[pile]
 end
 
 function card.discard_random_hand()
@@ -251,11 +252,34 @@ local function gen_adv_desc(adv)
 		local prefix = "$(adv."..adv.suit.."."..adv.value.."."
 		adv._suit = "$(suit."..adv.suit..")"
 		adv._name = prefix .. "name)." .. adv.era
-		local stage = advancement.find(adv.suit, adv.value).stage
+		local stage = advancement.stage(adv.suit, adv.value)
 		adv._stage = "[[$(".. stage .. ")]"
 		adv._stage_focus = "[blue]" .. adv._stage .. "[n]"
 		adv._stage_normal = adv._stage
 		adv._desc = prefix .. "desc)"
+	end
+end
+
+local function get_stage(c, n)
+	local adv = c["adv" .. n]
+	if adv == nil or adv.value == nil then
+		return
+	end
+	return advancement.stage(adv.suit, adv.value)
+end
+
+function card.stage(pile, index, n)
+	local card_id = GAME[pile][index]
+	if card_id == nil then
+		return
+	end
+	local c = DECK[card_id]
+	if pile == "hand" then
+		if c.type == "tech" and card.complete(c) then
+			return get_stage(c, n), c
+		end
+	else
+		return get_stage(c, n), c
 	end
 end
 
@@ -293,6 +317,34 @@ end
 
 function card.complete(c)
 	return c.adv1 and c.adv1.value and c.adv2 and c.adv2.value and c.adv3 and c.adv3.value
+end
+
+local function find_advancements_from(result, stage_name, region)
+	local n = card.count(region)
+	for i = 1, n do
+		for j = 1, 3 do
+			local stage, c = card.stage(region, i, j)
+			if stage == stage_name then
+				local adv_index = "adv" .. j
+				local adv = c[adv_index]
+				local obj = {
+					adv = adv_index,
+					name = advancement.name(adv.suit, adv.value),
+					card = c,
+				}
+				result[#result+1] = obj
+			end
+		end
+	end
+end
+
+function card.find_stage(stage_name, regions)
+	local r = {}
+	for _, region in ipairs(regions) do
+		find_advancements_from(r, stage_name, region)
+	end
+	
+	return r
 end
 
 -- todo: load deck
