@@ -4,7 +4,7 @@ local rules = require "core.rules".track
 local ui = require "core.rules".ui.track
 local util = require "core.util"
 
-global pairs
+global pairs, error
 
 local track = {}
 
@@ -24,12 +24,21 @@ local update = util.dirty_update(function()
 	vtrack.flush()
 end)
 
+function track.check(type, diff)
+	local pos = TRACK[type] or error ("Invalid track type " .. type)
+	if diff > 0 then
+		return pos <= rules[type].min
+	else
+		return pos - diff >= (rules[type].loss or rules[type].max)
+	end
+end
+
 function track.setup()
 	local t = {}
 	for key, v in pairs(rules) do
 		t[key] = v.init
 	end
-	TRACK = t
+	TRACK = persist.init("track", t)
 	update()
 end
 

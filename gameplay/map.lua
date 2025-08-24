@@ -10,7 +10,7 @@ local map = {}
 
 local galaxy = {}
 local frontier = {}
-local SAFE
+local colony = {}
 
 local COLOR = {
 	neutral = config.map.neutral,
@@ -75,11 +75,12 @@ local function init_connection()
 end
 init_connection()
 
+-- todo: persisit load
+
 function map.init()
-	-- todo: persisit
-	galaxy = {}
+	galaxy = persist.init("galaxy", {})
 	frontier = {}
-	SAFE = nil
+	colony = {}
 end
 
 local function add_people(sec, n, camp)
@@ -99,7 +100,8 @@ local function add_people(sec, n, camp)
 	assert(s.camp == camp)
 	vmap.set(sec, COLOR[camp], last)
 	util.dirty_trigger(map.update)
-	SAFE = nil
+	util.dirty_trigger(map.is_safe)
+	util.dirty_trigger(map.can_move)
 	return r
 end
 
@@ -112,7 +114,11 @@ function map.add_player(sec, n)
 	return add_people(sec, n, "player")
 end
 
-local function check_safe()
+function map.settle(sec)
+	colony[sec] = true
+end
+
+map.is_safe = util.dirty_update(function()
 	for player in pairs(frontier) do
 		local conn = connection[player]
 		for sec in pairs(conn) do
@@ -123,17 +129,39 @@ local function check_safe()
 		end
 	end
 	return true
-end
+end)
 
-function map.is_safe()
-	if SAFE == nil then
-		SAFE = check_safe()
+map.update = util.dirty_update(vmap.update)
+
+map.can_move = util.dirty_update(function()
+	local only_colony_sec
+	for k in pairs(colony) do
+		if only_colony_sec then
+			only_colony_sec = nil
+			break
+		else
+			only_colony_sec = k
+		end
 	end
-	return SAFE
-end
-
-map.update = util.dirty_update(function()
-	vmap.update()
+	for player in pairs(frontier) do
+		if player ~= only_colony_sec or galaxy[player].n > 1 then
+			-- only_colony_sec don't allow move the last people
+			local conn = connection[player]
+			for sec in pairs(conn) do
+				if sec ~= 0 then	-- skip blackhole
+					local s = galaxy[sec]
+					if not s then
+						-- empty
+						return true
+					end
+					if s.camp == "player" and s.n < LIMIT then
+						return true
+					end
+				end
+			end
+		end
+	end
+	return false
 end)
 
 return map

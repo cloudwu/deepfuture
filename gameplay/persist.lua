@@ -36,6 +36,8 @@ do
 	local function quote(s)
 		if s:find "%A" then
 			return datalist.quote(s)
+		elseif s == "" then
+			return '""'
 		else
 			return s
 		end
@@ -67,7 +69,13 @@ do
 
 	local function write_kv(f, t, ident)
 		local keys = sort_keys(t)
-		for i = 1, #keys do	
+		local n = #keys
+		if n == 0 then
+			f:write "{}\n"
+			return
+		end
+		f:write "\n"
+		for i = 1, n do	
 			local is_map
 			local k = keys[i]
 			local v = t[k]
@@ -77,9 +85,9 @@ do
 			elseif t == "table" then
 				if #v == 0 then
 					if next(v) == nil then
-						v = "{}"
+						v = "{}\n"
 					else
-						f:write(ident, k, ":\n")
+						f:write(ident, k, ":")
 						write_kv(f, v, ident .. "\t")
 						is_map = true
 					end
@@ -96,7 +104,7 @@ do
 	end
 
 	local function write_object(f, key, object)
-		f:write(key, ":\n")
+		f:write(key, ":")
 		write_kv(f, object, "\t")
 	end
 
@@ -107,7 +115,7 @@ do
 			if type(list[1]) == "table" then
 				f:write(key, ":\n")
 				for _, item in ipairs(list) do
-					f:write("\t---\n")
+					f:write("\t---")
 					write_kv(f, item, "\t")
 				end
 			else

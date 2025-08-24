@@ -1,3 +1,4 @@
+local persist = require "gameplay.persist"
 local card = require "gameplay.card"
 local flow = require "core.flow"
 local vdesktop = require "visual.desktop"
@@ -62,13 +63,37 @@ local function discard_hand_limit()
 end
 
 local function set_card(advs, set)
-	for _, adv in ipairs(advs) do
-		vcard.mask(adv.card, set)
-		vcard.focus_adv(adv.card, adv.index, set)
+	if set then
+		for _, adv in ipairs(advs) do
+			if adv.enable then
+				vcard.mask(adv.card, set)
+				vcard.focus_adv(adv.card, adv.index, set)
+			end
+		end
+	else
+		for _, adv in ipairs(advs) do
+			vcard.mask(adv.card)
+			vcard.focus_adv(adv.card, adv.index)
+		end
 	end
 end
 
+local function check_adv(advs)
+	local n = 0
+	for _, adv in ipairs(advs) do
+		local enable = card.check_adv(adv.name)
+		adv.enable = enable
+		if enable then
+			n = n + 1
+		end
+	end
+	return n
+end
+
 local function choose_cards(advs)
+	if check_adv(advs) == 0 then
+		return
+	end
 	set_card(advs, true)
 	while true do
 		flow.sleep(0)
@@ -79,6 +104,9 @@ end
 return function ()
 	vdesktop.set_text("phase", "$(phase.start)")
 	draw_hands()
+	
+--	persist.save "game.txt"
+
 	local advs = card.find_stage("START", { "hand", "homeworld", "colony" })
 	if #advs > 0 then
 		choose_cards(advs)

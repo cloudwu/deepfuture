@@ -246,6 +246,7 @@ local function set_homeworld(hands)
 			card.pickup("hand", c)
 			card.putdown("homeworld", c)
 			map.add_player(homeworld.sector, 3)
+			map.settle(homeworld.sector)
 			moving[c] = "homeworld"
 		else
 			vdesktop.transfer("hand", c, "deck")

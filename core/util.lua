@@ -34,17 +34,22 @@ local dirty_flag = {}
 
 function util.dirty_update(f)
 	local function update(...)
-		if dirty_flag[update] then
-			dirty_flag[update] = nil
-			return f(...)
+		if dirty_flag[update] == nil then
+			local r = f(...)
+			if r == nil then
+				r = true
+			end
+			dirty_flag[update] = r
+			return r
 		end
 	end
-	dirty_flag[update] = true
 	return update
 end
 
 function util.dirty_trigger(update)
-	dirty_flag[update] = true
+	dirty_flag[update] = nil
 end
+
+
 
 return util

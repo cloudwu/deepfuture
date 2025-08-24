@@ -86,7 +86,7 @@ function card.setup()
 		end
 	end
 	game.seen = 0 -- seen cards of drawpile
-	GAME = persist.init("game", game)	
+	GAME = persist.init("game", game)
 end
 
 local function draw_card()
@@ -345,6 +345,29 @@ function card.find_stage(stage_name, regions)
 	end
 	
 	return r
+end
+
+local check_adv = {}
+
+function check_adv.computation()
+	return GAME.draw, GAME.discard
+end
+
+function check_adv.history()
+	return GAME.draw, GAME.seen
+end
+
+function check_adv.economy()
+	return GAME.draw, GAME.discard
+end
+
+function card.check_adv(adv_name)
+	local f = check_adv[adv_name]
+	if f then
+		return advancement.check(adv_name, f())
+	else
+		return advancement.check(adv_name)
+	end
 end
 
 -- todo: load deck
