@@ -2,6 +2,7 @@ local persist = require "gameplay.persist"
 local vmap = require "visual.map"
 local config = require "core.rules".ui
 local util = require "core.util"
+local rules = require "core.rules".map
 
 global pairs, assert
 
@@ -15,6 +16,8 @@ local COLOR = {
 	neutral = config.map.neutral,
 	player = config.map.player, 
 }
+
+local LIMIT <const> = rules.sector.limit
 
 local connection = {
 	[11] = { 63, 14, 12 },
@@ -88,9 +91,9 @@ local function add_people(sec, n, camp)
 	local last = s.n
 	local r = 0
 	last = last + n
-	if last > 5 then
-		r = last - 5
-		last = 5
+	if last > LIMIT then
+		r = last - LIMIT
+		last = LIMIT
 	end
 	s.n = last
 	assert(s.camp == camp)

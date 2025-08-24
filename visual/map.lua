@@ -12,6 +12,8 @@ local SPRITES
 local BATCH
 
 local focus_color <const> = config.map.focus_color
+local token <const> = config.map.token
+local tokens_width <const> = config.map.tokens_width
 local lines = { 1, 2, 3, 4, 3, 4, 3, 4, 3, 4, 3, 2, 1 }
 local hex_id = {
 	{ 11 },
@@ -34,10 +36,12 @@ local hex_people = {}
 
 local function people_icons(color, n)
 	local r =  color
-	if n <= 3 then
-		r = r .. ("[people]"):rep(n)
+	if n <= tokens_width then
+		r = r .. (token:rep(n))
 	else
-		r = r .. "[people][people]\n" .. ("[people]"):rep(n-2)
+		local line1 = n // 2
+		local line2 = n - line1
+		r = r .. (token:rep(line1)) .. "\n" .. (token:rep(line2))
 	end
 	return r
 end

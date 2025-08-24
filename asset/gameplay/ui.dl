@@ -13,3 +13,5 @@ map :
 	focus_color : 0x00ff00
 	neutral : "[black]"
 	player  : "[blue]"
+	token : "[people]"
+	tokens_width : 3
