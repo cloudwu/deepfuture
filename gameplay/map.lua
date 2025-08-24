@@ -1,6 +1,7 @@
 local persist = require "gameplay.persist"
 local vmap = require "visual.map"
 local config = require "core.rules".ui
+local util = require "core.util"
 
 global pairs, assert
 
@@ -8,7 +9,6 @@ local map = {}
 
 local galaxy = {}
 local frontier = {}
-local dirty = true
 local SAFE
 
 local COLOR = {
@@ -76,7 +76,6 @@ function map.init()
 	-- todo: persisit
 	galaxy = {}
 	frontier = {}
-	dirty = true
 	SAFE = nil
 end
 
@@ -96,7 +95,7 @@ local function add_people(sec, n, camp)
 	s.n = last
 	assert(s.camp == camp)
 	vmap.set(sec, COLOR[camp], last)
-	dirty = true
+	util.dirty_trigger(map.update)
 	SAFE = nil
 	return r
 end
@@ -130,11 +129,8 @@ function map.is_safe()
 	return SAFE
 end
 
-function map.update()
-	if dirty then
-		vmap.update()
-		dirty = false
-	end
-end
+map.update = util.dirty_update(function()
+	vmap.update()
+end)
 
 return map

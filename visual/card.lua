@@ -3,7 +3,7 @@ local util = require "core.util"
 local mask = require "soluna.material.mask"
 local config = require "core.rules".ui
 
-global assert
+global assert, print
 
 local card = {}
 
@@ -63,6 +63,16 @@ function card.test(mx, my, x, y, scale)
 		tx, ty = BATCH:point(mx, my)
 	end
 	return tx >= 0 and tx < card_w and ty >= 0 and ty < card_h
+end
+
+function card.focus_adv(c, index, enable)
+	local adv = c["adv" .. index]
+	if enable then
+		adv._stage = adv._stage_focus
+	else
+		adv._stage = adv._stage_normal
+	end
+	card.flush(c)
 end
 
 function card.layer(...)

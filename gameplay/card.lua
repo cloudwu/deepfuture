@@ -328,7 +328,7 @@ local function find_advancements_from(result, stage_name, region)
 				local adv_index = "adv" .. j
 				local adv = c[adv_index]
 				local obj = {
-					adv = adv_index,
+					index = j,
 					name = advancement.name(adv.suit, adv.value),
 					card = c,
 				}

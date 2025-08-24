@@ -6,6 +6,7 @@ local vdesktop = require "visual.desktop"
 local vtips = require "visual.tips".layer "hud"
 local vcard = require "visual.card"
 local map = require "gameplay.map"
+local track = require "gameplay.track"
 local rules = require "core.rules".phase
 local string = string
 
@@ -287,6 +288,7 @@ end
 return function ()
 	vdesktop.set_text("phase", "$(phase.setup)")
 	card.setup()
+	track.setup()
 	local hands = draw_hands()
 	local homeworld = set_homeworld(hands)
 	set_neutral( homeworld )

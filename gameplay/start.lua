@@ -61,16 +61,19 @@ local function discard_hand_limit()
 	end
 end
 
-local function set_mask(advs, color)
+local function set_card(advs, set)
 	for _, adv in ipairs(advs) do
-		
+		vcard.mask(adv.card, set)
+		vcard.focus_adv(adv.card, adv.index, set)
 	end
 end
 
 local function choose_cards(advs)
+	set_card(advs, true)
 	while true do
 		flow.sleep(0)
 	end
+	set_card(advs, nil)
 end
 
 return function ()

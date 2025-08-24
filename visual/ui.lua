@@ -20,7 +20,7 @@ local colors = {
 
 local scripts = {}
 
-function scripts.hud(name)
+function scripts.track(name)
 	local r = {}
 	local n = 1
 	r[n] = "name"

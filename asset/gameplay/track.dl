@@ -1,0 +1,23 @@
+C :
+	min : 1
+	max : 13
+	init : 13
+	win : 1
+M :
+	min : 1
+	max : 13
+	init : 7
+	win : 1
+	loss : 13
+S :
+	min : 1
+	max : 13
+	init : 7
+	win : 1
+	loss : 13
+X :
+	min : 1
+	max : 13
+	init : 7
+	win : 1
+	loss : 13

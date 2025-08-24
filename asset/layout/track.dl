@@ -1,0 +1,19 @@
+id : track
+gap : 2
+padding : 5
+track:
+	flex : 1
+	direction : row
+	children : C
+track:
+	flex : 1
+	direction : row
+	children : M
+track:
+	flex : 1
+	direction : row
+	children : S
+track:
+	flex : 1
+	direction : row
+	children : X

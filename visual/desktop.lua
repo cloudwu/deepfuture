@@ -2,6 +2,7 @@ local vregion = require "visual.region"
 local vmap = require "visual.map"
 local vcard = require "visual.card"
 local vtips = require "visual.tips"
+local vtrack = require "visual.track"
 local widget = require "core.widget"
 local util = require "core.util"
 local focus = require "core.focus"
@@ -36,18 +37,6 @@ local describe = {}
 function hud:map()
 	vmap.draw(self.x, self.y)
 end
-
-hud.mark_C1 = { mark = "[star]" }
-hud.mark_C13 = { mark = "[circle]" }
-hud.mark_M1 = { mark = "[star]" }
-hud.mark_M7 = { mark = "[circle]" }
-hud.mark_M13 = { mark = "[cross]" }
-hud.mark_S1 = { mark = "[star]" }
-hud.mark_S7 = { mark = "[circle]" }
-hud.mark_S13 = { mark = "[cross]" }
-hud.mark_X1 = { mark = "[star]" }
-hud.mark_X7 = { mark = "[circle]" }
-hud.mark_X13 = { mark = "[cross]" }
 
 do
 	local _, _, card_w, card_h = widget.get("blankcard", "card")
@@ -178,6 +167,10 @@ do
 	
 	function hud:tips()
 		VTIPS.hud.draw(self)
+	end
+	
+	function hud:track()
+		vtrack.draw(self.x, self.y, self.w, self.h)
 	end
 
 	function describe:tips()
@@ -340,6 +333,7 @@ function M.init(args)
 	vcard.init(args)
 	vmap.init(args)
 	vtips.init(args)
+	vtrack.init(args)
 	VTIPS.hud = vtips.layer "hud"
 	VTIPS.desc = vtips.layer "desc"
 	VTIPS.hud.push()

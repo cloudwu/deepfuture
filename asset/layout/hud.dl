@@ -67,25 +67,8 @@ desktop :
 			height : 120
 			gap : 2
 			track :
-				gap : 2
-				padding : 5
 				minWidth : 360
-				track:
-					flex : 1
-					direction : row
-					children : C
-				track:
-					flex : 1
-					direction : row
-					children : M
-				track:
-					flex : 1
-					direction : row
-					children : S
-				track:
-					flex : 1
-					direction : row
-					children : X
+				region : track
 			discard :
 				flex : 1
 				region : discard
