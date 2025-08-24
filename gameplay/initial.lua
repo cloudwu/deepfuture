@@ -60,7 +60,6 @@ function initial.new()
 		name.world(world)
 		card.discard(world)
 	end
-	card.debug()
 	if rules.init.random then
 		gen_random_adv(rules.init.random)
 	end

@@ -1,5 +1,5 @@
 schinese:
-  app.title : "Deep Future"
+  app.title : "深远未来"
   tips.setup.homeworld : "[lbutton]选择 [blue]${world}[n] 作为母星"
   tips.setup.invalid : "请选择$(card.type.world)，这是${type}"
   tips.setup.newworld : "[lbutton]创建一张[blue]新的$(card.type.world)[n]作为母星\n - 因为无法选择$(card.type.world)"
@@ -49,7 +49,7 @@ schinese:
   action.R.detail : "在你所控制的星区中增加 2 个[people]人口"
   action.H : "[hand]$(BATTLE)"
   action.H.desc : "攻击邻接星区"
-  action.H.desc.safe : "推进任一进度 C/M/S/X"
+  action.H.desc.safe : "没有敌人邻接，推进任意进度条"
   action.H.detail : "选择一个你所控制的星区和它的邻接敌对星区，以 1:1 消除任意数量你和敌人的[people]人口。数量可以为 0 或全部。如果你没有邻接任何敌对星区，则将任意进度条推进一格"
   action.F : "[foot]$(EXPAND)"
   action.F.desc : "向邻接星区派遣[people]人口"

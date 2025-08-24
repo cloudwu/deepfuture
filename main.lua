@@ -11,21 +11,24 @@ local card = require "gameplay.card"
 local map = require "gameplay.map"
 local persist = require "gameplay.persist"
 local localization = require "core.localization"
+local config = require "core.rules".ui
 
 local args = ...
+
+local LANG <const> = "schinese"
 
 local function font_init()
 	local font = require "soluna.font"
 	local text = require "soluna.text"
 	local sysfont = require "soluna.font.system"
-	font.import(assert(sysfont.ttfdata "微软雅黑"))
+	font.import(assert(sysfont.ttfdata (config.lang[LANG].font)))
 	text.init "asset/icons.dl"
 	return font.name ""
 end
 
 local callback = {}
 
-localization.load("localization/schinese.dl", "schinese")
+localization.load("localization/schinese.dl", LANG)
 soluna.set_window_title(localization.convert "app.title")
 
 vdesktop.init {
