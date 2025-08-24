@@ -1,6 +1,9 @@
 local widget = require "core.widget"
 local util = require "core.util"
 local mask = require "soluna.material.mask"
+local config = require "core.rules".ui
+
+global assert
 
 local card = {}
 
@@ -15,7 +18,7 @@ local card_type = {
 	back = "cardback",
 }
 
-local mask_color <const> = 0x2000ff00
+local mask_color <const> = config.card.mask
 
 local _, _, card_w, card_h = widget.get("blankcard", "card")
 

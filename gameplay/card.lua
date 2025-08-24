@@ -249,7 +249,7 @@ local function gen_adv_desc(adv)
 		adv._stage = ""
 		adv._desc = ""
 	else
-		local prefix = "$(adv."..adv.suit.."."..adv.value.."."
+		local prefix = "$(adv."..advancement.name(adv.suit, adv.value).."."
 		adv._suit = "$(suit."..adv.suit..")"
 		adv._name = prefix .. "name)." .. adv.era
 		local stage = advancement.stage(adv.suit, adv.value)

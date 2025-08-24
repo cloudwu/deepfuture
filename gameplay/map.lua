@@ -1,5 +1,6 @@
 local persist = require "gameplay.persist"
 local vmap = require "visual.map"
+local config = require "core.rules".ui
 
 global pairs, assert
 
@@ -11,8 +12,8 @@ local dirty = true
 local SAFE
 
 local COLOR = {
-	neutral = "black",
-	player = "blue",
+	neutral = config.map.neutral,
+	player = config.map.player, 
 }
 
 local connection = {

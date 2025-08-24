@@ -1,5 +1,7 @@
 local util = {}
 
+global type, getmetatable, setmetatable
+
 -- todo: flush all cache (change localization)
 function util.cache(f)
 	local meta

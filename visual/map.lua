@@ -1,12 +1,17 @@
 local widget = require "core.widget"
 local mask = require "soluna.material.mask"
+local config = require "core.rules".ui
+
 local map = {}
+local table = table
+
+global pairs, tostring, ipairs, assert
 
 local FONT_ID
 local SPRITES
 local BATCH
 
-local focus_color <const> = 0x00ff00
+local focus_color <const> = config.map.focus_color
 local lines = { 1, 2, 3, 4, 3, 4, 3, 4, 3, 4, 3, 2, 1 }
 local hex_id = {
 	{ 11 },
@@ -28,7 +33,7 @@ local hex_drawlist = {}
 local hex_people = {}
 
 local function people_icons(color, n)
-	local r = "["..color.."]"
+	local r =  color
 	if n <= 3 then
 		r = r .. ("[people]"):rep(n)
 	else

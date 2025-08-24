@@ -8,7 +8,7 @@ local vtips = require "visual.tips".layer "hud"
 local show_desc = require "gameplay.desc"
 local rules = require "core.rules".phase
 
-global none
+global print_r, ipairs
 
 local function draw_hands()
 	local draw = rules.start.draw - card.count "hand"
@@ -61,10 +61,25 @@ local function discard_hand_limit()
 	end
 end
 
+local function set_mask(advs, color)
+	for _, adv in ipairs(advs) do
+		
+	end
+end
+
+local function choose_cards(advs)
+	while true do
+		flow.sleep(0)
+	end
+end
+
 return function ()
 	vdesktop.set_text("phase", "$(phase.start)")
 	draw_hands()
 	local advs = card.find_stage("START", { "hand", "homeworld", "colony" })
+	if #advs > 0 then
+		choose_cards(advs)
+	end
 	-- todo : start effect
 	discard_hand_limit()
 

@@ -1,6 +1,8 @@
 local datalist = require "soluna.datalist"
 local file = require "soluna.file"
 
+global pairs, type, ipairs
+
 local localization = {}
 
 local TEXT

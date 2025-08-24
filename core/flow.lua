@@ -1,4 +1,7 @@
 local coroutine = require "soluna.coroutine"
+local debug = debug
+
+global assert, error
 
 local flow = {}
 

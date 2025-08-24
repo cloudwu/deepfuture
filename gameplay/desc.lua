@@ -38,7 +38,7 @@ local function gen_adv_(c, stage, desc)
 	if s and s.value then
 		desc[stage] = "$(desc." .. stage .. ")"
 		desc[stage.."_discard"] = "$(desc." .. stage .. ".discard)"
-		local prefix = "$(adv.".. s.suit .. "." .. s.value .. "."
+		local prefix = "$(adv.".. advancement.name(s.suit, s.value).. "."
 		desc[stage.."_name"] = prefix .. "name)"
 		desc[stage.."_era"] = s.era
 		desc[stage.."_stage"] = "$(" .. advancement.stage(s.suit, s.value) .. ")"

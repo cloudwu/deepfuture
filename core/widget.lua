@@ -5,6 +5,9 @@ local matquad = require "soluna.material.quad"
 local font = require "soluna.font"
 local textconv = require "soluna.text"
 local localization = require "core.localization"
+local table = table
+
+global pairs, ipairs, type
 
 local widget = {}
 local scripts = {}

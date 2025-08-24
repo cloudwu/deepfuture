@@ -46,7 +46,7 @@ society :
 	suit : M
 	value : 6
 	stage : SETTLE
-infrastrcture :
+infrastructure :
 	suit : R
 	value : 1
 	stage : START

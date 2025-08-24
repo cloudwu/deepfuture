@@ -1,6 +1,10 @@
 local util = require "core.util"
 local vcard = require "visual.card"
 local region = {}; region.__index = region
+local math = math
+local table = table
+
+global ipairs, assert, setmetatable
 
 function region:add(c)
 	self[#self+1] = {

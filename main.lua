@@ -3,6 +3,9 @@ local widget = require "core.widget"
 local flow = require "core.flow"
 local focus = require "core.focus"
 local vdesktop = require "visual.desktop"
+local utf8 = utf8
+
+global require, assert, print
 
 widget.scripts(require "visual.ui")
 

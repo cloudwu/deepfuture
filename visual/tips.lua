@@ -4,6 +4,9 @@ local util = require "core.util"
 local textconv = require "soluna.text"
 local font = require "soluna.font"
 local fontcobj = font.cobj()
+local table = table
+
+global assert, pairs
 
 local tips = {}
 

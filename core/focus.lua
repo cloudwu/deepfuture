@@ -1,5 +1,7 @@
 local focus = {}
 
+global pairs
+
 local FOCUS_ACTIVE
 local FOCUS_LOST
 local FOCUS_OBJECT

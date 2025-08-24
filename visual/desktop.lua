@@ -6,6 +6,8 @@ local widget = require "core.widget"
 local util = require "core.util"
 local focus = require "core.focus"
 
+global ipairs, error
+
 local DRAWLIST = {}
 local TESTLIST = {}
 local update_draw_list
@@ -145,7 +147,6 @@ do
 				for _, obj in ipairs(region.float) do
 					obj.x = x
 					obj.scale = 1
-					obj.focus_target.y = dy
 					x = x + offx
 				end
 			end
