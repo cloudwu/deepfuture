@@ -88,6 +88,7 @@ function card.setup()
 end
 
 local print = print
+
 local function draw_card()
 	local _ENV = GAME
 	local n = #draw
@@ -112,6 +113,11 @@ local function draw_card()
 	return table.remove(draw, 1)
 end
 
+function card.debug()
+	print_r("DRAW", GAME.draw)
+	print_r("DISCARD", GAME.discard)
+end
+
 function card.draw_hand()
 	local card_id = draw_card()
 	if card_id == nil then
@@ -127,7 +133,7 @@ function card.draw_discard()
 		return
 	end
 	GAME.discard[#GAME.discard+1] = card_id
-	return DECK[card_id]
+	return DECK[card_id] or error ("No card id " .. tostring(card_id))
 end
 
 function card.draw_card()
@@ -146,7 +152,7 @@ function card.draw_type(type)
 		if card.type == type then
 			return card
 		else
-			GAME.discard[#GAME.discard+1] = card
+			GAME.discard[#GAME.discard+1] = card._id
 		end
 	end
 end

@@ -27,10 +27,10 @@ local function gen_random_adv(n)
 		end
 		if c.type == "world" then
 			local advsuit = card.draw_discard()
-			local advtype = card.draw_discard()
 			local index = card.add_adv_suit(c, advsuit.suit)
 			if index then
-				card.add_adv_value(c, index, advtype.value, 0)
+				local value = rules.init.set or card.draw_discard().value
+				card.add_adv_value(c, index, value, 0)
 			end
 		elseif c.type == "tech" then
 			random_adv_value(c)
@@ -58,7 +58,9 @@ function initial.new()
 		local index = card.add_adv_suit(world, advsuit.suit)
 		card.add_adv_value(world, index, advtype.value, 0)
 		name.world(world)
+		card.discard(world)
 	end
+	card.debug()
 	if rules.init.random then
 		gen_random_adv(rules.init.random)
 	end

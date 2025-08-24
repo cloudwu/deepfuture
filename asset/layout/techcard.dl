@@ -14,9 +14,9 @@ content :
 	title :
 		text : card.tech.title
 		size : 18
-		flex : 0.2
+		height : 20%
 	advancement :
-		flex : 0.8
+		height : 70%
 		padding : 10
 		justify: space-between
 		adv :

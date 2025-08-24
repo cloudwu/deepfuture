@@ -14,7 +14,7 @@ content :
 		left : 5
 		height : 20%
 	advancement :
-		height : 80%
+		height : 70%
 		padding : 10
 		justify: space-between
 		adv :

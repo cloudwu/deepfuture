@@ -13,10 +13,20 @@ local function suit_text(s)
 	end
 end
 
+local function unique(t, obj)
+	if t[obj] == nil then
+		t[obj] = true
+		t[#t+1] = obj
+	end
+end
+
 local function gen_payment(c)
-	return suit_text(c.adv1) ..
-		suit_text(c.adv2) ..
-		suit_text(c.adv3)
+	local markers = {}
+	unique(markers, suit_text(c.adv1))
+	unique(markers, suit_text(c.adv2))
+	unique(markers, suit_text(c.adv3))
+	
+	return table.concat(markers)
 end
 
 local function gen_adv_(c, stage, desc)

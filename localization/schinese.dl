@@ -2,7 +2,7 @@ schinese:
   app.title : "Deep Future"
   tips.setup.homeworld : "[lbutton]选择 [blue]${world}[n] 作为母星"
   tips.setup.invalid : "请选择$(card.type.world)，这是${type}"
-  tips.setup.newworld : "[lbutton]创建一张[blue]新的$(card.type.world)[n]作为母星"
+  tips.setup.newworld : "[lbutton]创建一张[blue]新的$(card.type.world)[n]作为母星\n - 因为无法选择$(card.type.world)"
   tips.action.choose : "[lbutton]选择行动[blue]${action}[n]\n - ${desc}\n$(tips.explain)"
   tips.homeworld : "$(tips.explain)"
   tips.neutral : "$(tips.explain)"
@@ -12,24 +12,24 @@ schinese:
   tips.discard.focus : "[lbutton]丢弃这张卡\n - 这是一张从手牌中随机抽出的卡"
   tips.discard.invalid : "已经超出手牌上限 ${limit} ，必须随机丢弃超出的部分"
   desc.text : "这是一张${place}中的[blue]${type}[n]。\n\n${detail}"
-  desc.text.hand : "手牌中的任何一张牌都可以作为行动牌打出，这张牌可以用于[blue]${action}[n]行动。\n\n${suit}的基础能力是：${action_desc}。\n\n在[blue]$(phase.payment)[n]阶段，若母星区的卡牌上有${suit}符号，这张卡可以用来生产[cube]。\n\n在[blue]$(phase.challenge)[n]阶段，这张牌可以用来抵消${suit}类型的负面效果。\n\n"
-  desc.text.hand.world : "$(desc.text.hand)这张卡表示在星区 [blue]${sector}[n] 中的一颗可殖民[planet]星球[blue]${name}[n]，$(plant.era)。若你控制了星区 ${sector} ，这张卡可以用于$(action.M)。\n\n卡上标注的提升效果在手牌中时不提供任何效应。"
+  desc.text.hand : "[blue]$(phase.action)[n]阶段：作为行动牌打出，发起[blue]${action}[n]行动：\n - ${action_desc}[n]。\n\n[blue]$(phase.payment)[n]阶段：这张卡可让母星区中有${suit}类提升的卡牌避免挑战并产生[cube]。\n\n[blue]$(phase.challenge)[n]阶段：这张牌可用来抵消${suit}类型挑战所带来的负面效果。\n\n"
+  desc.text.hand.world : "$(desc.text.hand)这张卡表示在星区 [blue]${sector}[n] 中的一颗可殖民[planet]星球[blue]${name}[n]，$(plant.era)。若你控制了星区 ${sector} ，这张卡可以用于$(action.M)。\n\n注：卡上标注的提升效果在手牌中时不提供任何效应。"
   desc.text.hand.blank : "$(desc.text.hand)当手牌中没有其它[blue]$(card.type.world)[n]时，$(card.type.blank)可以用于$(action.M)。殖民后这张卡会变成一张$(card.type.world)。"
   desc.text.hand.tech.complete : "$(desc.tech.discard)\n\n$(desc.text.hand)"
-  desc.tech.discard : "这张创建于第 ${era} 纪元的卡已经完成，可在下列阶段使用：\n\n${adv1_discard}\n\n${adv2_discard}\n\n${adv3_discard}"
-  desc.text.hand.tech : "这张创建于第 ${era} 纪元的卡尚有提升空间。手牌中未完成的${type}无法产生任何效应。\n\n$(desc.text.hand)"
+  desc.tech.discard : "这张创建于第 ${era} 纪元的卡已经完成，可在下列阶段使用：\n${adv1_discard}\n${adv2_discard}\n${adv3_discard}"
+  desc.text.hand.tech : "这张创建于第 ${era} 纪元的卡尚有提升空间。手牌中未完成的${type}已提升的能力在这张卡完成前无法使用。\n\n$(desc.text.hand)"
   desc.text.hand.civ : ""
-  desc.text.homeworld.world : "它表示了你的母星[blue]${name}[n]，$(plant.era)，位于星区 [blue]${sector}[n] 。\n\n一旦失去对母星所在星区的控制，必须将一殖民地变为母星。届时没有其它殖民地会导致游戏失败。\n\n$(desc.payment)\n\n${adv1}${adv2}${adv3}"
-  desc.payment : "这张卡上的[blue]${payment}[n]表示：你可以在[blue]$(phase.payment)[n]阶段丢弃匹配${payment}的手牌生产[cube]。[cube]可在[blue]$(phase.challenge)[n]阶段抵消${payment}类型的负面效果。"
+  desc.text.homeworld.world : "它代表着你的母星[blue]${name}[n]，$(plant.era)，位于星区 [blue]${sector}[n] 。\n\n一旦失去对母星所在星区的控制，必须将一殖民地变为母星。届时没有其它殖民地会导致游戏失败。\n\n$(desc.payment)\n\n${adv1}${adv2}${adv3}"
+  desc.payment : "因为这张卡拥有[blue]${payment}[n]类型的提升，所以你可在[blue]$(phase.payment)[n]阶段通过丢弃有${payment}角标的手牌避免挑战并产生[cube]。[cube]可在[blue]$(phase.challenge)[n]阶段抵消${payment}类型挑战所带来的负面效果。"
   desc.text.homeworld.tech : ""
   desc.text.colony.world : ""
-  desc.text.neutral.world : "它表示了位于星区 [blue]${sector} [n]的中立[planet]星球[blue]${name}[n]，$(plant.era)。\n\n当你控制了星区 ${sector} 后，即可向其$(action.M)。\n\n成功殖民中立[planet]星球可以免费获得一次额外的[blue]$(action.S)[n]行动及[blue]$(action.K)[n]行动。\n\n可以忽略卡上标注的提升。对于中立星球上的提升不会有任何负面效果。"
-  desc.adv1:"• [blue]${adv1_name}[n] 是在第 ${adv1_era} 纪元获得的提升，它可在[blue]${adv1_stage}[n]阶段：${adv1_desc}。\n\n"
-  desc.adv2:"• [blue]${adv2_name}[n] 是在第 ${adv2_era} 纪元获得的提升，它可在[blue]${adv2_stage}[n]阶段：${adv2_desc}。\n\n"
-  desc.adv3:"• [blue]${adv3_name}[n] 是在第 ${adv3_era} 纪元获得的提升，它可在[blue]${adv3_stage}[n]阶段：${adv3_desc}。"
-  desc.adv1.discard:"• [blue]${adv1_stage}[n]：可发动[blue]${adv1_name}[n]（于第 ${adv1_era} 纪元获得）：${adv1_desc}。"
-  desc.adv2.discard:"• [blue]${adv2_stage}[n]：可发动[blue]${adv2_name}[n]（于第 ${adv2_era} 纪元获得）：${adv2_desc}。"
-  desc.adv3.discard:"• [blue]${adv3_stage}[n]：可发动[blue]${adv3_name}[n]（于第 ${adv3_era} 纪元获得）：${adv3_desc}。"
+  desc.text.neutral.world : "它代表当前在星区 [blue]${sector} [n]中存在中立[planet]星球[blue]${name}[n]，$(plant.era)。\n\n当你控制了星区 ${sector} 后，可向其$(action.M)。\n\n成功殖民中立[planet]星球后可以免费立即获得一次[blue]$(action.S)[n]行动及一次[blue]$(action.K)[n]行动。"
+  desc.adv1:"• [blue]${adv1_name}[n] （第 ${adv1_era} 纪元获得的提升）可在[blue]${adv1_stage}[n]阶段：${adv1_desc}。\n\n"
+  desc.adv2:"• [blue]${adv2_name}[n] （第 ${adv2_era} 纪元获得的提升）可在[blue]${adv2_stage}[n]阶段：${adv2_desc}。\n\n"
+  desc.adv3:"• [blue]${adv3_name}[n] （第 ${adv3_era} 纪元获得的提升）可在[blue]${adv3_stage}[n]阶段：${adv3_desc}。\n\n"
+  desc.adv1.discard:"• [blue]${adv1_stage}[n]：可发动[blue]${adv1_name}[n]（第 ${adv1_era} 纪元获得的提升）：${adv1_desc}。"
+  desc.adv2.discard:"• [blue]${adv2_stage}[n]：可发动[blue]${adv2_name}[n]（第 ${adv2_era} 纪元获得的提升）：${adv2_desc}。"
+  desc.adv3.discard:"• [blue]${adv3_stage}[n]：可发动[blue]${adv3_name}[n]（第 ${adv3_era} 纪元获得的提升）：${adv3_desc}。"
   desc.place.hand : "手牌"
   desc.place.homeworld : "桌面母星区"
   desc.place.colony : "桌面殖民地区"
@@ -40,7 +40,7 @@ schinese:
   action.S.detail : "抽取 2 张卡加入手牌"
   action.M : "[moon]$(SETTLE)"
   action.M.desc : "殖民[planet]星球"
-  action.M.detail : "如果你所控制的星区中有合适的星球，可以将其殖民。合适的星球指：1. 手牌中有位于你所控制星区中的$(card.type.world)；2. 你控制了中立星球所在星区；3. 手牌中没有$(card.type.world)，此时可以创建一个新的[planet]星球。如果没有合适的星球则不能执行该行动"
+  action.M.detail : "手牌中有$(card.type.world)位于你所控制星区，可将该卡放置到$(desc.place.colony)\n - 你控制了中立星球所在星区，可将$(desc.place.neutral)中对应$(card.type.world)移动到$(desc.place.colony)\n - 将手牌中的$(card.type.blank)转换为位于你所控制星区的$(card.type.world)并放置到$(desc.place.colony)。手牌中必须没有$(card.type.world)\n - 创建一张新的位于你所控制星区的$(card.type.world)放置到$(desc.place.colony)。手牌必须没有$(card.type.world)及$(card.type.blank)\n - 若无法在你所控制的星区中放置$(card.type.world)，不能发起$(action.M)行动"
   action.K : "[skull]$(ADVANCE)"
   action.K.desc : "提升[planet]星球或[tech]科技"
   action.K.detail : "对你的母星或殖民地进行一次提升，或向母星添加一张新的科技卡，亦或提升一张母星中未完成的科技卡"
@@ -96,108 +96,114 @@ schinese:
   POWER : 力量
   SETTLE : 殖民
   GROW : 发展
+  adv.track.use : "选择任意可用进度条后退一格"
+  adv.track.C1 : "推进进度条 C 一格，C 进度条走到顶是文化胜利的先决条件"
+  adv.track.C2 : "推进进度条 C 两格，C 进度条走到顶是文化胜利的先决条件"
+  adv.track.M1 : "推进进度条 M 一格，M 进度条走到顶是力量胜利的先决条件"
+  adv.track.X1 : "推进进度条 X 一格，X 进度条走到顶是外星胜利的先决条件"
+  adv.track.S1 : "推进进度条 S 一格，S 进度条走到顶是稳定胜利的先决条件"
   adv.S.1.name : 计算
   adv.S.1.desc : "抽[card]+1;弃1[discard]"
   adv.S.1.detail : "抽 1 张卡加入手牌，然后弃掉 1 张手牌"
   adv.S.2.name : 工程
   adv.S.2.desc : "M+1"
-  adv.S.2.detail : "推进进度条 M 一格，M 进度条走到顶是力量胜利的先决条件"
+  adv.S.2.detail : "$(adv.track.M1)"
   adv.S.3.name : 交流
   adv.S.3.desc : "M+1"
-  adv.S.3.detail : "推进进度条 M 一格，M 进度条走到顶是力量胜利的先决条件"
+  adv.S.3.detail : "$(adv.track.M1)"
   adv.S.4.name : 武器
   adv.S.4.desc : "M+1"
-  adv.S.4.detail : "推进进度条 M 一格，M 进度条走到顶是力量胜利的先决条件"
+  adv.S.4.detail : "$(adv.track.M1)"
   adv.S.5.name : 工业
   adv.S.5.desc : "弃1[discard];抽[card]+2"
   adv.S.5.detail : "先弃掉 1 张手牌，然后抽取 2 张卡加入手牌"
   adv.S.6.name : 能量
   adv.S.6.desc : "抽[card]+1"
-  adv.S.6.detail : "额外再抽 1 张卡加入手牌"
+  adv.S.6.detail : "抽 1 张卡加入手牌"
   adv.M.1.name : 艺术
   adv.M.1.desc : "C+1"
-  adv.M.1.detail : "推进进度条 C 一格，C 进度条走到顶是文化胜利的先决条件"
+  adv.M.1.detail : "$(adv.track.C1)"
   adv.M.2.name : 闲暇
   adv.M.2.desc : "C+2"
-  adv.M.2.detail : "推进进度条 C 两格，C 进度条走到顶是文化胜利的先决条件"
+  adv.M.2.detail : "$(adv.track.C2)"
   adv.M.3.name : 哲学
   adv.M.3.desc : "X+1"
-  adv.M.3.detail : "推进进度条 X 一格，X 进度条走到顶是外星胜利的先决条件"
+  adv.M.3.detail : "$(adv.track.X1)"
   adv.M.4.name : 文学
   adv.M.4.desc : "C+2"
-  adv.M.4.detail : "推进进度条 C 两格，C 进度条走到顶是文化胜利的先决条件"
+  adv.M.4.detail : "$(adv.track.C2)"
   adv.M.5.name : 政府
   adv.M.5.desc : "提升所殖民星球"
   adv.M.5.detail : "对本次殖民的星球立刻做一次提升"
   adv.M.6.name : 社会
   adv.M.6.desc : "殖民一个星球"
-  adv.M.6.detail : "殖民原本需要手牌中有合适的星球牌或没有任何星球牌。而这项提升可以打破这个规则：让殖民行动一定可以进行"
+  adv.M.6.detail : "无论手牌中是否有$(card.type.world)或$(card.type.blank)，都可创建一张新的$(card.type.world)或转换一张手牌中的$(card.type.blank)用于殖民。这能避免无法发起[blue]$(action.M)[n]行动"
   adv.R.1.name : 基建
   adv.R.1.desc : "减进度;放置[cube]"
-  adv.R.1.detail : "选择任意进度条后退一格，然后在母星增加一个[cube]"
+  adv.R.1.detail : "$(adv.track.use)，然后在母星增加一个[cube]"
   adv.R.2.name : 工作
   adv.R.2.desc : "S+1"
-  adv.R.2.detail : "推进进度条 S 一格，S 进度条走到顶是稳定胜利的先决条件"
+  adv.R.2.detail : "$(adv.track.C1)"
   adv.R.3.name : 机器
   adv.R.3.desc : "S+1"
-  adv.R.3.detail : "推进进度条 S 一格，S 进度条走到顶是稳定胜利的先决条件"
+  adv.R.3.detail : "$(adv.track.C1)"
   adv.R.4.name : 医学
   adv.R.4.desc : "S+1"
-  adv.R.4.detail : "推进进度条 S 一格，S 进度条走到顶是稳定胜利的先决条件"
+  adv.R.4.detail : "$(adv.track.C1)"
   adv.R.5.name : 生物
   adv.R.5.desc : "不同星区+1[people]"
   adv.R.5.detail : "另外再选择一个你所控制的星区，增加一个[people]人口"
   adv.R.6.name : 基因
   adv.R.6.desc : "+2[people]"
-  adv.R.6.detail : "选择一个增加了[people]人口的星区，额外增加两个[people]人口"
+  adv.R.6.detail : "选择一个增加了[people]人口的星区，再增加两个[people]人口"
   adv.K.1.name : 历史
   adv.K.1.desc : "查看抽牌堆+1"
   adv.K.1.detail : "额外查看一张抽牌堆顶的卡牌，可以叠加"
   adv.K.2.name : 教育
   adv.K.2.desc : "X+1"
-  adv.K.2.detail : "推进进度条 X 一格，X 进度条走到顶是外星胜利的先决条件"
+  adv.K.2.detail : "$(adv.track.X1)"
   adv.K.3.name : 生态
   adv.K.3.desc : "X+1"
-  adv.K.3.detail : "推进进度条 X 一格，X 进度条走到顶是外星胜利的先决条件"
+  adv.K.3.detail : "$(adv.track.X1)"
   adv.K.4.name : 天文
   adv.K.4.desc : "X+1"
-  adv.K.4.detail : "推进进度条 X 一格，X 进度条走到顶是外星胜利的先决条件"
+  adv.K.4.detail : "$(adv.track.X1)"
   adv.K.5.name : 化学
   adv.K.5.desc : "重抽提升"
-  adv.K.5.detail : "如果对抽出的花色或数值不满意，重抽一次。可以针对新创建科技卡时的花色"
+  adv.K.5.detail : "如果对抽出的提升类型或条目不满意，重抽一次。可以在创建新的科技卡过程中确定提升类型时使用"
   adv.K.6.name : 物理
   adv.K.6.desc : "科技提升选择+1"
-  adv.K.6.detail : "可以额外自主选择科技卡上提升的具体条目一次，最多叠加两次"
+  adv.K.6.detail : "可以额外选择科技卡上提升的条目一次，最多叠加两次"
   adv.H.1.name : 经济
   adv.H.1.desc : "减进度;抽[card]+2"
-  adv.H.1.detail : "选择任意进度条后退一格，然后额外抽取两张卡加入手牌"
+  adv.H.1.detail : "$(adv.track.use)，然后抽取两张卡加入手牌"
   adv.H.2.name : 外交
   adv.H.2.desc : "C+2"
-  adv.H.2.detail : "推进进度条 C 两格，C 进度条走到顶是文化胜利的先决条件"
+  adv.H.2.detail : "$(adv.track.C2)"
   adv.H.3.name : 农业
   adv.H.3.desc : "S+1"
-  adv.H.3.detail : "推进进度条 S 一格，S 进度条走到顶是稳定胜利的先决条件"
+  adv.H.3.detail : "$(adv.track.C1)"
   adv.H.4.name : 建设
   adv.H.4.desc : "C+2"
-  adv.H.4.detail : "推进进度条 C 两格，C 进度条走到顶是文化胜利的先决条件"
+  adv.H.4.detail : "$(adv.track.C2)"
   adv.H.5.name : 军事
   adv.H.5.desc : "开辟一对新战场"
   adv.H.5.detail : "额外指定一个我方星区和一个敌方星区加入战争，可以指定已选择过的星区"
   adv.H.6.name : 防御
   adv.H.6.desc : "移除敌对1[people]"
-  adv.H.6.detail : "在参战的敌方星区中移除 1 个敌人[people]"
+  adv.H.6.detail : "从参战的敌方星区中移除 1 个敌人[people]"
   adv.F.1.name : 探索
   adv.F.1.desc : "减进度;移动1[people]"
-  adv.F.1.detail : "选择任意进度条后退一格，然后将一个我方[people]人口移动一格。允许在移动后失去对出发前所在星区的控制"
+  adv.F.1.detail : "$(adv.track.use)，然后将一个我方[people]人口移动一格。移动之后失去对出发前所在星区的控制是允许的"
   adv.F.2.name : 宗教
   adv.F.2.desc : "C+2"
-  adv.F.2.detail : "推进进度条 C 两格，C 进度条走到顶是文化胜利的先决条件"
+  adv.F.2.detail : "$(adv.track.C2)"
   adv.F.3.name : 帝国
   adv.F.3.desc : "M+1"
-  adv.F.3.detail : "推进进度条 M 一格，M 进度条走到顶是力量胜利的先决条件"
+  adv.F.3.detail : "$(adv.track.M1)"
   adv.F.4.name : 谋略
   adv.F.4.desc : "C+2"
-  adv.F.4.detail : "推进进度条 C 两格，C 进度条走到顶是文化胜利的先决条件"
+  adv.F.4.detail : "$(adv.track.C2)"
   adv.F.5.name : 飞船
   adv.F.5.desc : "移动1[people]到另一格"
   adv.F.5.detail : "从出发地再移动1[people]到另一个不同的星区"
