@@ -1,6 +1,6 @@
 local focus = {}
 
-global pairs
+global pairs, print
 
 local FOCUS_ACTIVE
 local FOCUS_LOST
@@ -23,6 +23,10 @@ function focus.trigger(region, object)
 		if FOCUS_ACTIVE ~= region then
 			FOCUS_LOST = FOCUS_ACTIVE
 			FOCUS_ACTIVE = region
+			for k,v in pairs(FOCUS_CLICK) do
+				v.click = nil
+				v.focus = nil
+			end
 		end
 		FOCUS_OBJECT = object
 	elseif FOCUS_ACTIVE == region then

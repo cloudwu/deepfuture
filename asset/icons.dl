@@ -79,3 +79,6 @@ image : icons/tech.png
 --
 name : civcard
 image : icons/civ.png
+--
+name : token
+image : icons/coin.png

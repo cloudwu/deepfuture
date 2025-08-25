@@ -4,7 +4,7 @@ local rules = require "core.rules".track
 local ui = require "core.rules".ui.track
 local util = require "core.util"
 
-global pairs, error
+global pairs, error, print
 
 local track = {}
 
@@ -19,10 +19,25 @@ local update = util.dirty_update(function()
 		if r.loss then
 			vtrack.set(k, r.loss, ui.loss)
 		end
-		vtrack.set(k, v, ui.token)
+		vtrack.move(k, v)
 	end
 	vtrack.flush()
 end)
+
+function track.focus(type, enable)
+	if type == true then
+		for key in pairs(TRACK) do
+			vtrack.move(key, TRACK[key], true)
+		end
+	elseif not type then
+		-- unfocus
+		for key in pairs(TRACK) do
+			vtrack.move(key, TRACK[key])
+		end
+	else
+		vtrack.move(type, TRACK[type], enable)
+	end
+end
 
 function track.check(type, diff)
 	local pos = TRACK[type] or error ("Invalid track type " .. type)
@@ -31,6 +46,20 @@ function track.check(type, diff)
 	else
 		return pos - diff >= (rules[type].loss or rules[type].max)
 	end
+end
+
+function track.advance(type, n)
+	local pos = TRACK[type] or error ("Invalid track type " .. type)
+	local min = rules[type].min
+	if pos == min then
+		return
+	end
+	pos = pos - n
+	if pos <  min then
+		pos = min
+	end
+	TRACK[type] = pos
+	vtrack.move(type, pos)
 end
 
 function track.setup()

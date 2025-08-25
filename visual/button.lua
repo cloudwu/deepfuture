@@ -149,7 +149,7 @@ end
 function button.init(args)
 	BATCH = assert(args.batch)
 	FONT_ID = assert(args.font_id)
-	TEXT = mattext.block(font.cobj(), FONT_ID, config.font_size, config.font_color, "CV")
+	TEXT = mattext.block(font.cobj(), FONT_ID, config.size, config.color, "CV")
 	TEXT_DISABLE = mattext.block(font.cobj(), FONT_ID, config.font_size, config.font_disable, "CV")
 end
 

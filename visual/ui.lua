@@ -33,12 +33,14 @@ function scripts.track(name)
 	local mark_prefix = "mark_"..name
 	local c = 1
 	for i = 1, 13 do
+		local id = mark_prefix .. i
 		r[n] = "grid"
 		r[n+1] = table_to_list {
+			id = id,
 			text = "hud.mark",
-			env = mark_prefix .. i,
+			env = id,
 			text_align = "C",
-			size = 18,
+			size = config.track.size,
 			width = 25,
 			background = colors[c],
 		}

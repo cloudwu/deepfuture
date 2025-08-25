@@ -370,6 +370,13 @@ function card.check_adv(adv_name)
 	end
 end
 
+function card.adv_name(c, index)
+	local adv = c["adv"..index]
+	if adv then
+		return advancement.name(adv.suit, adv.value)
+	end
+end
+
 -- todo: load deck
 
 return card

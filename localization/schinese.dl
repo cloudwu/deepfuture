@@ -61,8 +61,8 @@ schinese:
   action.R.detail : "在你所控制的星区中增加 2 个[people]人口"
   action.H : "[hand]$(BATTLE)"
   action.H.desc : "攻击邻接星区"
-  action.H.desc.safe : "没有敌人邻接，推进任意进度条"
-  action.H.detail : "选择一个你所控制的星区和它的邻接敌对星区，以 1:1 消除任意数量你和敌人的[people]人口。数量可以为 0 或全部。如果你没有邻接任何敌对星区，则将任意进度条推进一格"
+  action.H.desc.safe : "没有敌人邻接，推进任意[token]"
+  action.H.detail : "选择一个你所控制的星区和它的邻接敌对星区，以 1:1 消除任意数量你和敌人的[people]人口。数量可以为 0 或全部。如果你没有邻接任何敌对星区，则将任意[token]推进一格"
   action.F : "[foot]$(EXPAND)"
   action.F.desc : "向邻接星区派遣[people]人口"
   action.F.detail : "向邻接空置星区派遣至少一个[people]人口，不可以因此失去对出发星区的控制"
@@ -108,12 +108,13 @@ schinese:
   POWER : 力量
   SETTLE : 殖民
   GROW : 发展
-  adv.track.use : "选择任意可用进度条后退一格"
-  adv.track.C1 : "推进进度条 C 一格，C 进度条走到顶是文化胜利的先决条件"
-  adv.track.C2 : "推进进度条 C 两格，C 进度条走到顶是文化胜利的先决条件"
-  adv.track.M1 : "推进进度条 M 一格，M 进度条走到顶是力量胜利的先决条件"
-  adv.track.X1 : "推进进度条 X 一格，X 进度条走到顶是外星胜利的先决条件"
-  adv.track.S1 : "推进进度条 S 一格，S 进度条走到顶是稳定胜利的先决条件"
+  adv.track.use : "退后[token]；"
+  adv.track.use.detail : "选择任意[token]后退一格（不可移动到[cross]位置）"
+  adv.track.C1 : "推进[token] C 一格，C [token]移动到[star]位置是文化胜利的先决条件"
+  adv.track.C2 : "推进[token] C 两格，C [token]走到[star]位置是文化胜利的先决条件"
+  adv.track.M1 : "推进[token] M 一格，M [token]走到[star]位置是力量胜利的先决条件"
+  adv.track.X1 : "推进[token] X 一格，X [token]走到[star]位置是外星胜利的先决条件"
+  adv.track.S1 : "推进[token] S 一格，S [token]走到[star]位置是稳定胜利的先决条件"
   adv.computation.name : 计算
   adv.computation.desc : "抽[card]+1;弃1[discard]"
   adv.computation.detail : "抽 1 张卡加入手牌，然后弃掉 1 张手牌。"
@@ -151,8 +152,8 @@ schinese:
   adv.society.desc : "殖民一个星球"
   adv.society.detail : "无论手牌中是否有$(card.type.world)或$(card.type.blank)，都可创建一张新的$(card.type.world)或转换一张手牌中的$(card.type.blank)用于殖民。这能避免无法发起[blue]$(action.M)[n]行动。"
   adv.infrastructure.name : 基建
-  adv.infrastructure.desc : "减进度;放置[cube]"
-  adv.infrastructure.detail : "$(adv.track.use)，然后在母星增加一个[cube]。"
+  adv.infrastructure.desc : "$(adv.track.use)放置[cube]"
+  adv.infrastructure.detail : "$(adv.track.use.detail)，然后在母星增加一个[cube]。"
   adv.labor.name : 工作
   adv.labor.desc : "S+1"
   adv.labor.detail : "$(adv.track.C1)"
@@ -187,8 +188,8 @@ schinese:
   adv.physics.desc : "科技提升选择+1"
   adv.physics.detail : "可以额外选择$(card.type.tech)上提升的条目一次，最多叠加两次。"
   adv.economy.name : 经济
-  adv.economy.desc : "减进度;抽[card]+2"
-  adv.economy.detail : "$(adv.track.use)，然后抽取两张卡加入手牌。"
+  adv.economy.desc : "$(adv.track.use)抽[card]+2"
+  adv.economy.detail : "$(adv.track.use.detail)，然后抽取两张卡加入手牌。"
   adv.diplomacy.name : 外交
   adv.diplomacy.desc : "C+2"
   adv.diplomacy.detail : "$(adv.track.C2)"
@@ -205,8 +206,8 @@ schinese:
   adv.defense.desc : "移除敌对1[people]"
   adv.defense.detail : "从参战的敌方星区中移除 1 个敌人[people]。"
   adv.exploration.name : 探索
-  adv.exploration.desc : "减进度;移动1[people]"
-  adv.exploration.detail : "$(adv.track.use)，然后将一个我方[people]人口移动一格。移动之后失去对出发前所在星区的控制是允许的。"
+  adv.exploration.desc : "$(adv.track.use)移动1[people]"
+  adv.exploration.detail : "$(adv.track.use.detail)，然后将一个我方[people]人口移动一格。移动之后失去对出发前所在星区的控制是允许的。"
   adv.religion.name : 宗教
   adv.religion.desc : "C+2"
   adv.religion.detail : "$(adv.track.C2)"
