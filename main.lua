@@ -14,6 +14,7 @@ local map = require "gameplay.map"
 local persist = require "gameplay.persist"
 local localization = require "core.localization"
 local config = require "core.rules".ui
+local test = require "gameplay.test"
 
 local args = ...
 
@@ -30,6 +31,7 @@ end
 
 local callback = {}
 
+test.init()
 localization.load("localization/schinese.dl", LANG)
 soluna.set_window_title(localization.convert "app.title")
 

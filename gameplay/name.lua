@@ -7,4 +7,9 @@ function name.world(card)
 	card.name = "WORLD"
 end
 
+function name.tech(card)
+	assert(card.type == "tech")
+	card.name = "NONAME"
+end
+
 return name

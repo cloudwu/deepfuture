@@ -106,9 +106,8 @@ function track.move(type, index, focus)
 	if obj.index and obj.index ~= index then
 		obj.last_index = obj.index
 		obj.index = index
-		if index ~= obj.last_index then
-			obj.time = MOVE_SPEED
-		end
+		obj.time = MOVE_SPEED
+		obj.reset = true
 	else
 		obj.index = index
 	end
@@ -132,14 +131,28 @@ local function calc_pos(pos, obj, type)
 	time = time - 1
 	if time == 0 then
 		obj.time = nil
+		obj.x = nil
+		obj.y = nil
 		return pos.x, pos.y
 	else
 		obj.time = time
 	end
-	local last = coord[type][obj.last_index]
+	if obj.reset then
+		obj.reset = nil
+		if obj.x == nil then
+			local last = coord[type][obj.last_index]
+			obj.last_x = last.x
+			obj.last_y = last.y
+		else
+			obj.last_x = obj.x
+			obj.last_y = obj.y
+		end
+	end
 	local f = sin(time * MOVE_FACTOR)
-	local x = last.x * f + pos.x * (1-f)
-	local y = last.y * f + pos.y * (1-f)
+	local x = obj.last_x * f + pos.x * (1-f)
+	local y = obj.last_y * f + pos.y * (1-f)
+	obj.x = x
+	obj.y = y
 	return x, y
 end
 

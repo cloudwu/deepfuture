@@ -38,6 +38,10 @@ function advancement.name(suit, value)
 	return name_cache[suit..value]
 end
 
+function advancement.config(name)
+	return rules[name]
+end
+
 local adv_check = {}
 local adv_focus = {}
 local adv_process = {}

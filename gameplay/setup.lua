@@ -8,6 +8,7 @@ local vcard = require "visual.card"
 local map = require "gameplay.map"
 local track = require "gameplay.track"
 local rules = require "core.rules".phase
+local test = require "gameplay.test"
 local string = string
 
 global pairs, ipairs, tostring
@@ -272,21 +273,19 @@ local function set_homeworld(hands)
 	return homeworld
 end
 
-local function no_world_card(c)
-	while c.type == "world" do
-		card.pickup("hand", c)
-		card.discard(c)
-		c = card.draw_hand()
-	end
-	return c
-end
-
 local function draw_hands()
 	local h = {}
-	for i = 1, rules.setup.draw do
-		local c = card.draw_hand()
-		if rules.setup.no_worlds then
-			c = no_world_card(c)
+	local n = card.count "hand"	-- test patch may add cards
+	local draw_n = rules.setup.draw
+	if draw_n < n then
+		draw_n = n
+	end
+	for i = 1, draw_n do
+		local c
+		if i <= n then
+			c = card.card("hand", i)
+		else
+			c = card.draw_hand()
 		end
 		h[i] = c
 		vdesktop.add("deck", c)
@@ -300,6 +299,7 @@ return function ()
 	vdesktop.set_text("phase", "$(phase.setup)")
 	card.setup()
 	track.setup()
+	test.patch "setup"
 	local hands = draw_hands()
 	local homeworld = set_homeworld(hands)
 	set_neutral( homeworld )

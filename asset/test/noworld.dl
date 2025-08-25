@@ -1,0 +1,17 @@
+# test no world initial
+
+setup :
+	---
+	type : drop		# drop hands
+	---
+	type : blank	# add 6 blank card
+	---
+	type : blank
+	---
+	type : blank
+	---
+	type : blank
+	---
+	type : blank
+	---
+	type : blank

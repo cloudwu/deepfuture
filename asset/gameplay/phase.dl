@@ -1,11 +1,7 @@
 init :
 	worlds : 12
-	random : 100
-	set : 1
 setup :
 	draw : 5
-# turn on for debug	
-#	no_worlds : true	
 start :
 	draw : 5
 	hand_limit : 10

@@ -1,0 +1,12 @@
+# test ART advancement
+
+setup :
+	---
+	type : world
+	name : TEST
+	sector : 66
+	marker : 1K
+	adv :
+		art
+		art
+		art

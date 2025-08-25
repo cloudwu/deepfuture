@@ -1,9 +1,10 @@
+local genname = require "gameplay.name"
 local persist = require "gameplay.persist"
 local math = math
 local table = table
 local advancement = require "gameplay.advancement"
 
-global tostring, setmetatable, ipairs, pairs, print, print_r, error, assert
+global tostring, setmetatable, ipairs, pairs, print, print_r, error, assert, tonumber, type
 
 local card = {}
 
@@ -185,6 +186,15 @@ function card.generate_newcard()
 
 	DECK[newcard] = card
 	return card, card1, card2
+end
+
+local function convert_adv(advname)
+	local c = advancement.config(advname)
+	return {
+		suit = c.suit,
+		value = c.value,
+		era = HISTORY.era,
+	}
 end
 
 function card.nextera()
@@ -375,6 +385,51 @@ function card.adv_name(c, index)
 	if adv then
 		return advancement.name(adv.suit, adv.value)
 	end
+end
+
+function card.test_newcard(args)
+	local newcard = #DECK + 1
+	local card = new_card {
+		_id = newcard,
+		type = args.type or "blank",
+		era = args.era or HISTORY.era,
+		value = 1,
+		suit = actions[1],
+		sector = args.sector or 11,
+	}
+	if args.marker then
+		card.value = tonumber(args.marker:sub(1,1))
+		card.suit = args.marker:sub(2,2)
+	end
+	gen_marker(card)
+	if args.adv then
+		if type(args.adv) == "string" then
+			card.adv1 = convert_adv(args.adv)
+		else
+			card.adv1 = convert_adv(args.adv[1])
+			card.adv2 = convert_adv(args.adv[2])
+			card.adv3 = convert_adv(args.adv[3])
+		end
+		gen_adv_desc(card.adv1)
+		gen_adv_desc(card.adv2)
+		gen_adv_desc(card.adv3)
+	end
+	
+	if args.name then
+		card.name = args.name
+	else
+		local f = genname[card.type]
+		if f then
+			f(card)
+		end
+	end
+	DECK[newcard] = card
+	return card
+end
+
+function card.card(where, index)
+	local c = GAME[where][index]
+	return DECK[c]
 end
 
 -- todo: load deck
