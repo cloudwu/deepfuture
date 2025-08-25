@@ -11,6 +11,7 @@ local advancement = require "gameplay.advancement"
 --local map = require "gameplay.map"
 local show_desc = require "gameplay.desc"
 local rules = require "core.rules".phase
+local test = require "gameplay.test"
 
 global print, ipairs, pairs, print_r, error, tostring
 
@@ -79,7 +80,11 @@ local function set_card(advs, set)
 				if not card_enable[adv.card] then
 					vcard.mask(adv.card)
 				end
-				vcard.focus_adv(adv.card, adv.index)
+				local use
+				if adv.use then
+					use = false
+				end
+				vcard.focus_adv(adv.card, adv.index, use)
 			end
 		end
 	else
@@ -297,7 +302,44 @@ local function choose_cards(advs)
 	set_card(advs, nil)
 end
 
+local function test_patch()
+	test.patch "start"
+	local hands = test.get_pile "hand"
+	local diff = vdesktop.sync("hand", hands)
+	if not diff then
+		return
+	end
+	for _, c in ipairs(diff.discard) do
+		print("START TEST DISCARD", c)
+		vdesktop.transfer("hand", c, "deck")
+		flow.sleep(5)
+	end
+	for _, c in ipairs(diff.draw) do
+		print("START TEST DRAW", c)
+		vdesktop.add("deck", c)
+		vdesktop.transfer("deck", c, "hand")
+		flow.sleep(5)
+	end
+end
+
+local function discard_used_cards(advs)
+	local cards = {}
+	for _, adv in ipairs(advs) do
+		if adv.use then
+			cards[adv.card] = true
+		end
+	end
+	for c in pairs(cards) do
+		if card.pickup("hand", c) then
+			card.discard(c)
+			vdesktop.transfer("hand", c, "deck")
+			flow.sleep(5)
+		end
+	end
+end
+
 return function ()
+	test_patch()
 	vdesktop.set_text("phase", "$(phase.start)")
 	draw_hands()
 	
@@ -306,8 +348,8 @@ return function ()
 	local advs = card.find_stage("START", { "hand", "homeworld", "colony" })
 	if #advs > 0 then
 		choose_cards(advs)
+		discard_used_cards(advs)
 	end
-	-- todo : start effect
 	discard_hand_limit()
 
 	return "action"

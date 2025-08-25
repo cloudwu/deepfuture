@@ -69,6 +69,8 @@ function card.focus_adv(c, index, enable)
 	local adv = c["adv" .. index]
 	if enable then
 		adv._stage = adv._stage_focus
+	elseif enable == false then
+		adv._stage = adv._stage_use
 	else
 		adv._stage = adv._stage_normal
 	end

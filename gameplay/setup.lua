@@ -11,7 +11,7 @@ local rules = require "core.rules".phase
 local test = require "gameplay.test"
 local string = string
 
-global pairs, ipairs, tostring
+global pairs, ipairs, tostring, print
 
 local function sleep()
 	flow.sleep(5)
@@ -284,6 +284,7 @@ local function draw_hands()
 		local c
 		if i <= n then
 			c = card.card("hand", i)
+			print("SETUP TEST DRAW", c)
 		else
 			c = card.draw_hand()
 		end

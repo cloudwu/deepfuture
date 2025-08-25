@@ -8,7 +8,7 @@ local widget = require "core.widget"
 local util = require "core.util"
 local focus = require "core.focus"
 
-global ipairs, error
+global ipairs, error, pairs
 
 local DRAWLIST = {}
 local TESTLIST = {}
@@ -345,6 +345,34 @@ function M.button_enable(name, obj)
 	}
 	update_draw_list()
 	update_test_list()
+end
+
+-- for test
+function M.sync(where, pile)
+	local r = region[where]
+	local draw = {}
+	local discard = {}
+	for i, c in ipairs(r) do
+		discard[c] = i
+	end
+	for _, c in ipairs(pile) do
+		if discard[c] then
+			discard[c] = nil
+		else
+			draw[#draw+1] = c
+		end
+	end
+	local list = {}
+	for c in pairs(discard) do
+		list[#list+1] = c
+	end
+	if #draw == 0 and #discard == 0 then
+		return
+	end
+	return {
+		draw = draw,
+		discard = list,
+	}
 end
 
 function M.init(args)

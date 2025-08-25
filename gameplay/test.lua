@@ -22,16 +22,37 @@ end
 
 local patch = {}
 
+local function add_hand(action)
+	if action.type == "drop" then
+		card.drophand()
+	else
+		-- add new card
+		local c = card.test_newcard(action)
+		card.putdown("hand", c)
+	end
+end
+
 function patch.setup(data)
 	for _, action in ipairs(data) do
-		if action.type == "drop" then
-			card.drophand()
-		else
-			-- add new card
-			local c = card.test_newcard(action)
-			card.putdown("hand", c)
-		end
+		add_hand(action)
 	end
+end
+
+function patch.start(data)
+	for _, action in ipairs(data) do
+		add_hand(action)
+	end
+end
+
+function test.get_pile(what)
+	local i = 1
+	local p = {}
+	repeat
+		local c = card.card(what, i)
+		p[i] = c
+		i = i + 1
+	until not c
+	return p
 end
 
 function test.patch(phase)

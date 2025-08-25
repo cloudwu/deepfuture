@@ -10,3 +10,12 @@ setup :
 		art
 		art
 		art
+start :
+	---
+	type : tech
+	name : TEST
+	adv :
+		art
+		art
+		art
+	
