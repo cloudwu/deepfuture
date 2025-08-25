@@ -32,14 +32,8 @@ image : icons/planet.png
 name : tech
 image : icons/atom.png
 --
-name : sword
+name : might
 image : icons/sword.png
---
-name : mask
-image : icons/mask.png
---
-name : balance
-image : icons/balance.png
 --
 name : start
 image : icons/start.png
@@ -85,3 +79,12 @@ image : icons/coin.png
 --
 name : eye
 image : icons/eye.png
+--
+name : xeno
+image : icons/alien.png
+--
+name : stable
+image : icons/balance.png
+--
+name : culture
+image : icons/mask.png

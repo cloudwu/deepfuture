@@ -25,9 +25,10 @@ function scripts.track(name)
 	local n = 1
 	r[n] = "name"
 	r[n+1] = table_to_list {
-		text = "hud." .. name,
+		text = "hud." .. name .. ".logo",
+		text_align = "C",
 		size = 18,
-		width = 25,
+		width = 24,
 	}
 	n = n + 2
 	local mark_prefix = "mark_"..name
@@ -47,6 +48,13 @@ function scripts.track(name)
 		c = 3-c
 		n = n + 2
 	end
+	r[n] = "logo"
+	r[n+1] = table_to_list {
+		text = "hud." .. name,
+		text_align = "C",
+		size = 16,
+		width = 24,
+	}
 	return r	
 end
 

@@ -26,4 +26,4 @@ button :
 	normal : 0xc0c0c0
 	font_color : 0
 	font_disable : 0x20000000
-	font_size : 20
+	font_size : 16

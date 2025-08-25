@@ -67,7 +67,7 @@ desktop :
 			height : 120
 			gap : 2
 			track :
-				minWidth : 360
+				minWidth : 380
 				region : track
 			discard :
 				flex : 1

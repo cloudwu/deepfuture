@@ -45,7 +45,7 @@ schinese:
   desc.start.desktop : "这张卡拥有一个在第 ${adv_era} 纪元获得的提升${adv_name}。当前正处于$(phase.start)阶段，所以你可以触发其对应的效果：\n\n[blue]${adv_name}[n] ${adv_desc}$(desc.start.multiple)"
   desc.start.homeworld.world : "$(desc.start.desktop)"
   desc.start.homeworld.tech : "$(desc.start.desktop)"
-  desc.start.colony.world : "$(desc.start.homeworld.world)\n\n殖民地提升带来的效果是一次性的，使用后卡片会被弃掉。"
+  desc.start.colony.world : "$(desc.start.homeworld.world)\n\n殖民地提升带来的效果是一次性的，使用后需弃掉这张卡。"
   plant.era : "该[planet]星球首次发现于第 ${era} 纪元"
   action.S : "[sun]$(POWER)"
   action.S.desc : "抽取 2 张[card]牌"
@@ -82,10 +82,14 @@ schinese:
   hud.colony : 殖民地
   hud.phase : "${text}阶段"
   hud.mark : "${mark}"
-  hud.C : C
-  hud.M : M
-  hud.S : S
-  hud.X : X
+  hud.C : "C"
+  hud.C.logo : "[culture]"
+  hud.M : "M"
+  hud.M.logo : "[might]"
+  hud.S : "S"
+  hud.S.logo : "[stable]"
+  hud.X : "X"
+  hud.X.logo : "[xeno]"
   hex.id : "[gray]${id}"
   hex.people : "${people}"
   suit.S : "[sun]"
@@ -110,11 +114,11 @@ schinese:
   GROW : 发展
   adv.track.use : "退后[token]；"
   adv.track.use.detail : "选择任意[token]后退一格（不可移动到[cross]位置）"
-  adv.track.C1 : "推进[token] C 一格，C [token]移动到[star]位置是文化胜利的先决条件"
-  adv.track.C2 : "推进[token] C 两格，C [token]走到[star]位置是文化胜利的先决条件"
-  adv.track.M1 : "推进[token] M 一格，M [token]走到[star]位置是力量胜利的先决条件"
-  adv.track.X1 : "推进[token] X 一格，X [token]走到[star]位置是外星胜利的先决条件"
-  adv.track.S1 : "推进[token] S 一格，S [token]走到[star]位置是稳定胜利的先决条件"
+  adv.track.C1 : "推进 C 条上的[token]一格，[token]抵达[star]位置是[culture]文化胜利的先决条件"
+  adv.track.C2 : "推进 C 条上的[token]两格，[token]抵达[star]位置是[culture]文化胜利的先决条件"
+  adv.track.M1 : "推进 M 条上的[token]一格，[token]抵达[star]位置是[might]力量胜利的先决条件"
+  adv.track.X1 : "推进 X 条上的[token]一格，[token]抵达[star]位置是[xeno]外星胜利的先决条件"
+  adv.track.S1 : "推进 S 条上的[token]一格，[token]抵达[star]位置是[stable]稳定胜利的先决条件"
   adv.computation.name : 计算
   adv.computation.desc : "抽[card]+1;弃1[discard]"
   adv.computation.detail : "抽 1 张卡加入手牌，然后弃掉 1 张手牌。"
