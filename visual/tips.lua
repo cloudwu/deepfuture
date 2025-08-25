@@ -58,6 +58,7 @@ local function new_layer(name)
 		table.insert(LAYER, 1, name)
 	end
 	function layer.pop()
+		TIPS_TEXT = nil
 		local last = table.remove(LAYER,1)
 		assert(last == name, "Invalid layer")
 	end

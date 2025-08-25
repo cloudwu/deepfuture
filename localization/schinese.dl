@@ -40,7 +40,7 @@ schinese:
   desc.place.neutral : "桌面中立区"
   desc.start.multiple : "\n\n如果卡上有多个可以用于$(phase.start)阶段的提升，全部都能生效。你可以决定生效的次序：使用[rbutton]切换优先生效的提升效果。"
   desc.start.hand.tech : "这张已完成的$(card.type.tech)拥有一个在第 ${adv_era} 纪元获得的提升${adv_name}。当前正处于$(phase.start)阶段，你可以弃掉这张卡获得提升带来的效果：\n\n${adv_desc}$(desc.start.multiple)"
-  desc.start.desktop : "这张卡拥有一个在第 ${adv_era} 纪元获得的提升${adv_name}。当前正处于$(phase.start)阶段，所以你可以触发其对应的效果：\n\n${adv_desc}$(desc.start.multiple)"
+  desc.start.desktop : "这张卡拥有一个在第 ${adv_era} 纪元获得的提升${adv_name}。当前正处于$(phase.start)阶段，所以你可以触发其对应的效果：\n\n[blue]${adv_name}[n] ${adv_desc}$(desc.start.multiple)"
   desc.start.homeworld.world : "$(desc.start.desktop)"
   desc.start.homeworld.tech : "$(desc.start.desktop)"
   desc.start.colony.world : "$(desc.start.homeworld.world)"
@@ -114,7 +114,7 @@ schinese:
   adv.track.S1 : "推进进度条 S 一格，S 进度条走到顶是稳定胜利的先决条件"
   adv.computation.name : 计算
   adv.computation.desc : "抽[card]+1;弃1[discard]"
-  adv.computation.detail : "抽 1 张卡加入手牌，然后弃掉 1 张手牌"
+  adv.computation.detail : "抽 1 张卡加入手牌，然后弃掉 1 张手牌。"
   adv.engineering.name : 工程
   adv.engineering.desc : "M+1"
   adv.engineering.detail : "$(adv.track.M1)"
@@ -126,10 +126,10 @@ schinese:
   adv.weapons.detail : "$(adv.track.M1)"
   adv.industry.name : 工业
   adv.industry.desc : "弃1[discard];抽[card]+2"
-  adv.industry.detail : "先弃掉 1 张手牌，然后抽取 2 张卡加入手牌"
+  adv.industry.detail : "先弃掉 1 张手牌，然后抽取 2 张卡加入手牌。"
   adv.energy.name : 能量
   adv.energy.desc : "抽[card]+1"
-  adv.energy.detail : "抽 1 张卡加入手牌"
+  adv.energy.detail : "抽 1 张卡加入手牌。"
   adv.art.name : 艺术
   adv.art.desc : "C+1"
   adv.art.detail : "$(adv.track.C1)"
@@ -144,13 +144,13 @@ schinese:
   adv.literature.detail : "$(adv.track.C2)"
   adv.government.name : 政府
   adv.government.desc : "提升所殖民星球"
-  adv.government.detail : "对本次殖民的星球立刻做一次提升"
+  adv.government.detail : "对本次殖民的星球立刻做一次提升。"
   adv.society.name : 社会
   adv.society.desc : "殖民一个星球"
-  adv.society.detail : "无论手牌中是否有$(card.type.world)或$(card.type.blank)，都可创建一张新的$(card.type.world)或转换一张手牌中的$(card.type.blank)用于殖民。这能避免无法发起[blue]$(action.M)[n]行动"
+  adv.society.detail : "无论手牌中是否有$(card.type.world)或$(card.type.blank)，都可创建一张新的$(card.type.world)或转换一张手牌中的$(card.type.blank)用于殖民。这能避免无法发起[blue]$(action.M)[n]行动。"
   adv.infrastructure.name : 基建
   adv.infrastructure.desc : "减进度;放置[cube]"
-  adv.infrastructure.detail : "$(adv.track.use)，然后在母星增加一个[cube]"
+  adv.infrastructure.detail : "$(adv.track.use)，然后在母星增加一个[cube]。"
   adv.labor.name : 工作
   adv.labor.desc : "S+1"
   adv.labor.detail : "$(adv.track.C1)"
@@ -162,13 +162,13 @@ schinese:
   adv.medicine.detail : "$(adv.track.C1)"
   adv.biology.name : 生物
   adv.biology.desc : "不同星区+1[people]"
-  adv.biology.detail : "另外再选择一个你所控制的星区，增加一个[people]人口"
+  adv.biology.detail : "另外再选择一个你所控制的星区，增加一个[people]人口。"
   adv.genetics.name : 基因
   adv.genetics.desc : "+2[people]"
-  adv.genetics.detail : "选择一个增加了[people]人口的星区，再增加两个[people]人口"
+  adv.genetics.detail : "选择一个增加了[people]人口的星区，再增加两个[people]人口。"
   adv.history.name : 历史
   adv.history.desc : "查看抽牌堆+1"
-  adv.history.detail : "额外查看一张抽牌堆顶的卡牌，可以叠加"
+  adv.history.detail : "额外查看一张抽牌堆顶的卡牌，可以叠加。"
   adv.education.name : 教育
   adv.education.desc : "X+1"
   adv.education.detail : "$(adv.track.X1)"
@@ -180,13 +180,13 @@ schinese:
   adv.astronomy.detail : "$(adv.track.X1)"
   adv.chemistry.name : 化学
   adv.chemistry.desc : "重抽提升"
-  adv.chemistry.detail : "如果对抽出的提升类型或条目不满意，重抽一次。可以在创建新的$(card.type.tech)过程中确定提升类型时使用"
+  adv.chemistry.detail : "如果对抽出的提升类型或条目不满意，重抽一次。可以在创建新的$(card.type.tech)过程中确定提升类型时使用。"
   adv.physics.name : 物理
   adv.physics.desc : "科技提升选择+1"
-  adv.physics.detail : "可以额外选择$(card.type.tech)上提升的条目一次，最多叠加两次"
+  adv.physics.detail : "可以额外选择$(card.type.tech)上提升的条目一次，最多叠加两次。"
   adv.economy.name : 经济
   adv.economy.desc : "减进度;抽[card]+2"
-  adv.economy.detail : "$(adv.track.use)，然后抽取两张卡加入手牌"
+  adv.economy.detail : "$(adv.track.use)，然后抽取两张卡加入手牌。"
   adv.diplomacy.name : 外交
   adv.diplomacy.desc : "C+2"
   adv.diplomacy.detail : "$(adv.track.C2)"
@@ -198,13 +198,13 @@ schinese:
   adv.construction.detail : "$(adv.track.C2)"
   adv.military.name : 军事
   adv.military.desc : "开辟一对新战场"
-  adv.military.detail : "额外指定一个我方星区和一个敌方星区加入战争，可以指定已选择过的星区"
+  adv.military.detail : "额外指定一个我方星区和一个敌方星区加入战争，可以指定已选择过的星区。"
   adv.defense.name : 防御
   adv.defense.desc : "移除敌对1[people]"
-  adv.defense.detail : "从参战的敌方星区中移除 1 个敌人[people]"
+  adv.defense.detail : "从参战的敌方星区中移除 1 个敌人[people]。"
   adv.exploration.name : 探索
   adv.exploration.desc : "减进度;移动1[people]"
-  adv.exploration.detail : "$(adv.track.use)，然后将一个我方[people]人口移动一格。移动之后失去对出发前所在星区的控制是允许的"
+  adv.exploration.detail : "$(adv.track.use)，然后将一个我方[people]人口移动一格。移动之后失去对出发前所在星区的控制是允许的。"
   adv.religion.name : 宗教
   adv.religion.desc : "C+2"
   adv.religion.detail : "$(adv.track.C2)"
@@ -216,8 +216,8 @@ schinese:
   adv.devices.detail : "$(adv.track.C2)"
   adv.spacecraft.name : 飞船
   adv.spacecraft.desc : "移动1[people]到另一格"
-  adv.spacecraft.detail : "从出发地再移动1[people]到另一个不同的星区"
+  adv.spacecraft.detail : "从出发地再移动1[people]到另一个不同的星区。"
   adv.ftl.name : 曲速
   adv.ftl.desc : "多移动一格"
-  adv.ftl.detail : "在移动时增加一格航程，可以通过银河中心或敌对星区（但不可以停留）"  
+  adv.ftl.detail : "在移动时增加一格航程，可以通过银河中心或敌对星区（但不可以停留）。" 
   
