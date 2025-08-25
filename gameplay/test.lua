@@ -28,7 +28,7 @@ local function add_hand(action)
 	else
 		-- add new card
 		local c = card.test_newcard(action)
-		card.putdown("hand", c)
+		card.putdown(action.to or "hand", c)
 	end
 end
 

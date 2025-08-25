@@ -302,24 +302,30 @@ local function choose_cards(advs)
 	set_card(advs, nil)
 end
 
-local function test_patch()
-	test.patch "start"
-	local hands = test.get_pile "hand"
-	local diff = vdesktop.sync("hand", hands)
+local function sync(where)
+	local p = test.get_pile(where)
+	local diff = vdesktop.sync(where, p)
 	if not diff then
 		return
 	end
 	for _, c in ipairs(diff.discard) do
-		print("START TEST DISCARD", c)
-		vdesktop.transfer("hand", c, "deck")
+		print("START TEST DISCARD FROM", where, c)
+		vdesktop.transfer(where, c, "deck")
 		flow.sleep(5)
 	end
 	for _, c in ipairs(diff.draw) do
-		print("START TEST DRAW", c)
+		print("START TEST DRAW TO", where, c)
 		vdesktop.add("deck", c)
-		vdesktop.transfer("deck", c, "hand")
+		vdesktop.transfer("deck", c, where)
 		flow.sleep(5)
 	end
+end
+
+local function test_patch()
+	test.patch "start"
+	sync "hand"
+	sync "homeworld"
+	sync "colony"
 end
 
 local function discard_used_cards(advs)
@@ -333,6 +339,10 @@ local function discard_used_cards(advs)
 		if card.pickup("hand", c) then
 			card.discard(c)
 			vdesktop.transfer("hand", c, "deck")
+			flow.sleep(5)
+		elseif card.pickup("colony", c) then
+			card.discard(c)
+			vdesktop.transfer("colony", c, "deck")
 			flow.sleep(5)
 		end
 	end

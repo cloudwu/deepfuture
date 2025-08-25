@@ -4,7 +4,7 @@ local region = {}; region.__index = region
 local math = math
 local table = table
 
-global ipairs, assert, setmetatable
+global ipairs, assert, setmetatable, print
 
 function region:add(c)
 	self[#self+1] = {

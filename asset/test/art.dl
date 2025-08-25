@@ -12,10 +12,27 @@ setup :
 		art
 start :
 	---
+	to : hand
 	type : tech
 	name : TEST
 	adv :
 		art
 		art
 		art
-	
+	---
+	to : colony
+	type : world
+	sector : 22
+	name : TEST
+	adv :
+		art
+		art
+		art
+	---
+	to : homeworld
+	type : tech
+	name : TEST
+	adv :
+		art
+		art
+		art

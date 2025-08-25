@@ -45,7 +45,7 @@ schinese:
   desc.start.desktop : "这张卡拥有一个在第 ${adv_era} 纪元获得的提升${adv_name}。当前正处于$(phase.start)阶段，所以你可以触发其对应的效果：\n\n[blue]${adv_name}[n] ${adv_desc}$(desc.start.multiple)"
   desc.start.homeworld.world : "$(desc.start.desktop)"
   desc.start.homeworld.tech : "$(desc.start.desktop)"
-  desc.start.colony.world : "$(desc.start.homeworld.world)"
+  desc.start.colony.world : "$(desc.start.homeworld.world)\n\n殖民地提升带来的效果是一次性的，使用后卡片会被弃掉。"
   plant.era : "该[planet]星球首次发现于第 ${era} 纪元"
   action.S : "[sun]$(POWER)"
   action.S.desc : "抽取 2 张[card]牌"

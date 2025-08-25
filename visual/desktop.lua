@@ -7,8 +7,9 @@ local vbutton = require "visual.button"
 local widget = require "core.widget"
 local util = require "core.util"
 local focus = require "core.focus"
+local table = table
 
-global ipairs, error, pairs
+global ipairs, error, pairs, print, tostring
 
 local DRAWLIST = {}
 local TESTLIST = {}
@@ -347,13 +348,21 @@ function M.button_enable(name, obj)
 	update_test_list()
 end
 
+function M.tostring(where)
+	local t = { where }
+	for _, c in ipairs(region[where]) do
+		t[#t+1] = tostring(c)
+	end
+	return table.concat(t, " ")
+end
+
 -- for test
 function M.sync(where, pile)
 	local r = region[where]
 	local draw = {}
 	local discard = {}
 	for i, c in ipairs(r) do
-		discard[c] = i
+		discard[c.card] = i
 	end
 	for _, c in ipairs(pile) do
 		if discard[c] then

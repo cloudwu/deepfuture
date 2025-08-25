@@ -28,7 +28,7 @@ local function draw_card()
 	return card
 end
 
-local function wait_for_moving(moving)
+local function wait_for_moving_float(moving)
 	repeat
 		local more
 		for card, to in pairs(moving) do
@@ -72,7 +72,7 @@ local function set_neutral(homeworld)
 		end
 	end
 	
-	wait_for_moving(moving)
+	wait_for_moving_float(moving)
 end
 
 local function clear_mask(hands)
@@ -250,7 +250,6 @@ end
 local function set_homeworld(hands)
 	local homeworld = choose(hands)
 
-	local moving = {}
 	for _, c in pairs(hands) do
 		if c == homeworld then
 			vdesktop.transfer("hand", c, "homeworld")
@@ -258,17 +257,13 @@ local function set_homeworld(hands)
 			card.putdown("homeworld", c)
 			map.add_player(homeworld.sector, 3)
 			map.settle(homeworld.sector)
-			moving[c] = "homeworld"
 		else
 			vdesktop.transfer("hand", c, "deck")
 			card.pickup("hand", c)
 			card.putdown("discard", c)
-			moving[c] = "deck"
 		end
 		sleep()
 	end
-	
-	wait_for_moving(moving)
 
 	return homeworld
 end
