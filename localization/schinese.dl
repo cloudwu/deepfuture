@@ -1,9 +1,11 @@
 schinese:
   app.title : "深远未来"
   button.start : "跳过(${n})"
+  button.new_world : "创建"
   tips.setup.homeworld : "[lbutton]选择 [blue]${world}[n] 作为母星"
   tips.setup.invalid : "请选择$(card.type.world)，这是${type}"
-  tips.setup.newworld : "[lbutton]创建一张[blue]新的$(card.type.world)[n]作为母星\n - 因为无法选择$(card.type.world)"
+  tips.setup.newworld : "[lbutton]创建一张[blue]新的$(card.type.world)[n]作为母星\n - 因为手牌中没有$(card.type.world)"
+  tips.setup.newworld.invalid : "这是一张${type}，不能作为母星\n - 请创建一张新的$(card.type.world)"
   tips.action.choose : "[lbutton]选择行动[blue]${action}[n]\n - ${desc}\n$(tips.explain)"
   tips.homeworld : "$(tips.explain)"
   tips.neutral : "$(tips.explain)"

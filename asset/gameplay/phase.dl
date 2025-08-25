@@ -5,7 +5,7 @@ init :
 setup :
 	draw : 5
 # turn on for debug	
-#	no_worlds : true	
+	no_worlds : true	
 start :
 	draw : 5
 	hand_limit : 10

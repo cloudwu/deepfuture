@@ -122,15 +122,29 @@ end
 local function new_world(hands)
 	local focus_state = {}
 	
+	local button = {
+		text = "button.new_world",
+	}
+	local desc = {
+		type = nil
+	}
+	vdesktop.button_enable("button1", button)
+
 	repeat
-		if focus.get(focus_state) and focus_state.active == "hand" then
-			vtips.set("tips.setup.newworld")
-		elseif focus_state.lost == "hand" then
+		if focus.get(focus_state) then
+			if focus_state.active == "button1" then
+				vtips.set("tips.setup.newworld")
+			elseif focus_state.active == "hand" then
+				desc.type = string.format("$(card.type.%s)", focus_state.object.type)
+				vtips.set("tips.setup.newworld.invalid", desc)
+			end
+		elseif focus_state.lost then
 			vtips.set()
 		end
 		flow.sleep(0)
-	until focus.click ("left", "hand")
-	clear_mask(hands)
+	until focus.click ("left", "button1")
+	
+	vdesktop.button_enable("button1", nil)
 	vtips.set()
 	local newcard, card1, card2 = card.generate_newcard()
 	local sec1 = card.draw_discard()
@@ -226,11 +240,7 @@ local function choose(hands)
 	end
 
 	-- no world card in hand
-	
-	for _, c in pairs(hands) do
-		vcard.mask(c, true)
-	end
-	
+
 	local c =  new_world(hands)
 	hands[#hands+1] = c
 	return c
