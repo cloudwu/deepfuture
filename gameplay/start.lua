@@ -225,19 +225,21 @@ local function choose_cards(advs)
 	end
 	
 	vdesktop.button_enable("button1", button)
+	local function set_focus_adv(c)
+		local obj = focus_adv[c]
+		if obj then
+			advancement.focus(card.adv_name(c, obj.focus), true)
+			set_card_tips(c, obj)
+		else
+			vtips.set(nil)
+		end
+	end
 	while true do
 		if focus.get(focus_state) then
 			if focus_state.active == "button1" then
 				vtips.set("tips.start.skip", button)
 			else
-				local c = focus_state.object
-				local obj = focus_adv[c]
-				if obj then
-					advancement.focus(card.adv_name(c, obj.focus), true)
-					set_card_tips(c, obj)
-				else
-					vtips.set(nil)
-				end
+				set_focus_adv(focus_state.object)
 			end
 		elseif focus_state.lost then
 			vtips.set()
@@ -279,7 +281,7 @@ local function choose_cards(advs)
 				end
 				track.focus(false)
 				vtips.set(nil)
-				focus.trigger(btn, c)	-- focus this card again
+				set_focus_adv(c)	-- focus next adv
 				if n ~= button.n then
 					button.n = n
 					vbutton.update "button1"

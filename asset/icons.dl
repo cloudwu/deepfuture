@@ -82,3 +82,6 @@ image : icons/civ.png
 --
 name : token
 image : icons/coin.png
+--
+name : eye
+image : icons/eye.png
