@@ -75,19 +75,21 @@ function effect:update()
 		tmp[c] = false
 		for index = 1, 3 do
 			local obj = adv[index]
-			if obj.use then
-				vcard.focus_adv(c, index, false)
-				if adv.focus == index then
-					adv.focus = nil
+			if obj then
+				if obj.use then
+					vcard.focus_adv(c, index, false)
+					if adv.focus == index then
+						adv.focus = nil
+					end
+				else
+					local enable = check[obj.name]
+					obj.enable = enable
+					if enable then
+						n = n + 1
+						tmp[c] = index
+					end
+					vcard.focus_adv(c, index, nil)
 				end
-			else
-				local enable = check[obj.name]
-				obj.enable = enable
-				if enable then
-					n = n + 1
-					tmp[c] = index
-				end
-				vcard.focus_adv(c, index, nil)
 			end
 		end
 	end
