@@ -7,8 +7,8 @@ setup :
 	marker : 1K
 	adv :
 		history
-		history
-		history
+		computation
+		art
 start :
 	---
 	to : colony
@@ -21,46 +21,6 @@ start :
 		history
 	---
 	to : homeworld
-	type : tech
-	name : TEST
-	adv :
-		art
-		computation
-		history
-	---
-	to : seen
-	type : tech
-	name : TEST
-	adv :
-		art
-		computation
-		history
-	---
-	to : seen
-	type : tech
-	name : TEST
-	adv :
-		art
-		computation
-		history
-	---
-	to : seen
-	type : tech
-	name : TEST
-	adv :
-		art
-		computation
-		history
-	---
-	to : seen
-	type : tech
-	name : TEST
-	adv :
-		art
-		computation
-		history
-	---
-	to : seen
 	type : tech
 	name : TEST
 	adv :

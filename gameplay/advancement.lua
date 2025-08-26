@@ -47,7 +47,6 @@ function advancement.config(name)
 end
 
 local adv_check = {}
-local adv_focus = {}
 
 function adv_check.computation(draw_pile, discard_pile)
 	local n = #draw_pile + #discard_pile
@@ -56,10 +55,6 @@ end
 
 function adv_check.art()
 	return track.check("C", 1)
-end
-
-function adv_focus.art()
-	track.focus("C", true)
 end
 
 local function check_any_track()
@@ -71,10 +66,6 @@ function adv_check.infrastructure()
 	return check_any_track()
 end
 
-function adv_focus.infrastructure()
-	track.focus(true)	-- all
-end
-
 function adv_check.history(draw_pile, seen)
 	return #draw_pile - seen > 0
 end
@@ -84,28 +75,13 @@ function adv_check.economy(draw_pile, discard_pile)
 	return check_any_track() and n > 0
 end
 
-function adv_focus.economy()
-	track.focus(true)	-- all
-end
-
 function adv_check.exploration()
 	local r = map.can_move()
 	return r
 end
 
-function adv_focus.exploration()
-	track.focus(true)	-- all
-end
-
 function advancement.check(what, ...)
 	return adv_check[what](...)
-end
-
-function advancement.focus(what)
-	local f = adv_focus[what]
-	if f then
-		f()
-	end
 end
 
 return advancement

@@ -12,6 +12,7 @@ local advancement = require "gameplay.advancement"
 local show_desc = require "gameplay.desc"
 local rules = require "core.rules".phase
 local class = require "core.class"
+local look = require "gameplay.look"
 require "gameplay.effect"
 local test = require "gameplay.test"
 
@@ -68,6 +69,64 @@ local function discard_hand_limit()
 			wait_click(c)
 			vdesktop.transfer("float", c, "deck")
 		end
+	end
+end
+
+local function look_drawpile(advs, button)
+	local n = card.seen()
+	if n == 0 then
+		return
+	end
+	if button then
+		vdesktop.button_enable("button1", nil)
+	end
+	advs:reset()
+	look.start(n)
+	advs:update()
+	if button then
+		vdesktop.button_enable("button1", button)
+	end
+end
+
+local adv_focus = {}
+
+-- todo: focus status manager
+
+function adv_focus.art()
+	vdesktop.draw_pile_focus(nil)
+	track.focus("C", true)
+end
+
+function adv_focus.infrastructure()
+	vdesktop.draw_pile_focus(nil)
+	track.focus(true)	-- all
+end
+
+function adv_focus.economy()
+	vdesktop.draw_pile_focus(nil)
+	track.focus(true)	-- all
+end
+
+function adv_focus.exploration()
+	vdesktop.draw_pile_focus(nil)
+	track.focus(true)	-- all
+end
+
+function adv_focus.history()
+	vdesktop.draw_pile_focus(true)
+end
+
+local function advancement_unfocus()
+	vdesktop.draw_pile_focus(nil)
+	track.focus(false)	-- disable all focus track
+end
+
+local function advancement_focus(what)
+	local f = adv_focus[what]
+	if f then
+		f()
+	else
+		advancement_unfocus()
 	end
 end
 
@@ -134,13 +193,20 @@ function start_adv.computation(advs)
 	flow.sleep(0)	-- release focus
 	advs:update()
 	local discard = discard_one_card(advs)
+	advs:remove(discard)
 	vdesktop.transfer("hand", discard, "deck")
+end
+
+function start_adv.history(advs)
+	card.add_seen()
+	look_drawpile(advs)
 end
 
 local function choose_cards(advs, n)
 	local button = {
 		text = "button.start",
 		n = n,
+		seen = nil,
 	}
 	local card_tips = {}
 	local focus_state = {}
@@ -149,12 +215,18 @@ local function choose_cards(advs, n)
 	
 	while true do
 		if focus.get(focus_state) then
-			if focus_state.active == "button1" then
+			local where = focus_state.active
+			if where == "button1" then
 				vtips.set("tips.start.skip", button)
+			elseif where == "discard" then
+				button.seen = card.seen()
+				if button.seen > 0 then
+					vtips.set("tips.look.pile", button)
+				end
 			else
 				local focus = advs:focus(focus_state.object)
 				if focus then
-					advancement.focus(focus)
+					advancement_focus(focus)
 					card_tips.adv = advancement.info(focus, "name")
 					card_tips.effect = advancement.info(focus, "desc")
 					local next_adv = advs:nextadv(focus_state.object)
@@ -170,7 +242,7 @@ local function choose_cards(advs, n)
 			end
 		elseif focus_state.lost then
 			vtips.set()
-			track.focus(false)	-- disable all focus track
+			advancement_unfocus()
 		end
 		local switch_card, region = focus.click "right"
 		if switch_card then
@@ -179,14 +251,14 @@ local function choose_cards(advs, n)
 				if not focus then
 					-- unique adv, explain this card
 					vtips.set()
-					track.focus(false)
+					advancement_unfocus()
 					show_desc.start {
 						region = region,
 						card = switch_card,
 						name = advs:focus(switch_card),
 					}
 				else
-					advancement.focus(focus)
+					advancement_focus(focus)
 					card_tips.adv = advancement.info(focus, "name")
 					card_tips.effect = advancement.info(focus, "desc")
 					local next_adv = advs:nextadv(focus_state.object)
@@ -201,7 +273,7 @@ local function choose_cards(advs, n)
 				break
 			end
 			if advs:can_use(c) then
-				track.focus(false)
+				advancement_unfocus()
 				vtips.set(nil)
 				local adv_name = advs:focus(c)
 				advs:use(c)
@@ -216,12 +288,14 @@ local function choose_cards(advs, n)
 					-- no more advs available
 					break
 				end
-				track.focus(false)
+				advancement_unfocus()
 				vtips.set(nil)
 				if n ~= button.n then
 					button.n = n
 					vbutton.update "button1"
 				end
+			elseif btn == "discard" then
+				look_drawpile(advs, button)
 			else
 				vtips.set(nil)
 			end

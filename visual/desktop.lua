@@ -303,6 +303,11 @@ function M.draw(count)
 	focus.frame()
 end
 
+function M.draw_pile_focus(enable)
+	local c = desktop.discard
+	vcard.mask(c, enable)
+end
+
 function M.card_count(draw, discard, seen)
 	if draw ~= desktop.draw_pile or discard ~= desktop.discard_pile or seen ~= desktop.seen then
 		desktop.seen = seen

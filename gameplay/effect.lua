@@ -46,6 +46,9 @@ end
 
 function effect:remove(c)
 	local obj = self[c]
+	if obj == nil then
+		return
+	end
 	self[c] = nil
 	vcard.mask(c)
 	for i = 1, 3 do
