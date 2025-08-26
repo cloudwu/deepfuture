@@ -110,12 +110,14 @@ local function discard_one_card(advs)
 		local c = focus.click "left"
 		if c and not advs:is_used(c) then
 			local discard_card = card.pickup("hand", c)
-			card.discard(discard_card)
-			vdesktop.set_text("phase", "$(phase.start)")
-			for _, c in ipairs(discards) do
-				vcard.mask(c)
+			if discard_card then
+				card.discard(discard_card)
+				vdesktop.set_text("phase", "$(phase.start)")
+				for _, c in ipairs(discards) do
+					vcard.mask(c)
+				end
+				return discard_card
 			end
-			return discard_card
 		end
 		flow.sleep(0)
 	end
