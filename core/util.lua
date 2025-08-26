@@ -1,5 +1,6 @@
 local util = {}
 
+local next = next
 global type, getmetatable, setmetatable
 
 -- todo: flush all cache (change localization)

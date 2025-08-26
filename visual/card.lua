@@ -67,14 +67,16 @@ end
 
 function card.focus_adv(c, index, enable)
 	local adv = c["adv" .. index]
-	if enable then
-		adv._stage = adv._stage_focus
-	elseif enable == false then
-		adv._stage = adv._stage_use
-	else
-		adv._stage = adv._stage_normal
+	if adv then
+		if enable then
+			adv._stage = adv._stage_focus
+		elseif enable == false then
+			adv._stage = adv._stage_use
+		else
+			adv._stage = adv._stage_normal
+		end
+		card.flush(c)
 	end
-	card.flush(c)
 end
 
 function card.layer(...)

@@ -258,38 +258,16 @@ local function gen_adv_desc(adv)
 		adv._stage = ""
 		adv._desc = ""
 	else
+		local adv_name = advancement.name(adv.suit, adv.value)
 		local prefix = "$(adv."..advancement.name(adv.suit, adv.value).."."
 		adv._suit = "$(suit."..adv.suit..")"
-		adv._name = prefix .. "name)." .. adv.era
+		adv._name = advancement.info(adv_name, "name").. "." .. adv.era
+		adv._desc = advancement.info(adv_name, "desc")
 		local stage = advancement.stage(adv.suit, adv.value)
 		adv._stage = "[[$(".. stage .. ")]"
 		adv._stage_focus = "[blue]" .. adv._stage .. "[n]"
 		adv._stage_use = "[40000000]" .. adv._stage .. "[n]"
 		adv._stage_normal = adv._stage
-		adv._desc = prefix .. "desc)"
-	end
-end
-
-local function get_stage(c, n)
-	local adv = c["adv" .. n]
-	if adv == nil or adv.value == nil then
-		return
-	end
-	return advancement.stage(adv.suit, adv.value)
-end
-
-function card.stage(pile, index, n)
-	local card_id = GAME[pile][index]
-	if card_id == nil then
-		return
-	end
-	local c = DECK[card_id]
-	if pile == "hand" then
-		if c.type == "tech" and card.complete(c) then
-			return get_stage(c, n), c
-		end
-	else
-		return get_stage(c, n), c
 	end
 end
 
@@ -329,34 +307,6 @@ function card.complete(c)
 	return c.adv1 and c.adv1.value and c.adv2 and c.adv2.value and c.adv3 and c.adv3.value
 end
 
-local function find_advancements_from(result, stage_name, region)
-	local n = card.count(region)
-	for i = 1, n do
-		for j = 1, 3 do
-			local stage, c = card.stage(region, i, j)
-			if stage == stage_name then
-				local adv_index = "adv" .. j
-				local adv = c[adv_index]
-				local obj = {
-					index = j,
-					name = advancement.name(adv.suit, adv.value),
-					card = c,
-				}
-				result[#result+1] = obj
-			end
-		end
-	end
-end
-
-function card.find_stage(stage_name, regions)
-	local r = {}
-	for _, region in ipairs(regions) do
-		find_advancements_from(r, stage_name, region)
-	end
-	
-	return r
-end
-
 local check_adv = {}
 
 function check_adv.computation()
@@ -377,13 +327,6 @@ function card.check_adv(adv_name)
 		return advancement.check(adv_name, f())
 	else
 		return advancement.check(adv_name)
-	end
-end
-
-function card.adv_name(c, index)
-	local adv = c["adv"..index]
-	if adv then
-		return advancement.name(adv.suit, adv.value)
 	end
 end
 

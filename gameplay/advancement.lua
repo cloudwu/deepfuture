@@ -38,13 +38,16 @@ function advancement.name(suit, value)
 	return name_cache[suit..value]
 end
 
+function advancement.info(adv, what)
+	return "$(adv."..adv.."."..what..")"
+end
+
 function advancement.config(name)
 	return rules[name]
 end
 
 local adv_check = {}
 local adv_focus = {}
-local adv_process = {}
 
 function adv_check.computation(draw_pile, discard_pile)
 	local n = #draw_pile + #discard_pile
@@ -57,10 +60,6 @@ end
 
 function adv_focus.art()
 	track.focus("C", true)
-end
-
-function adv_process.art()
-	track.advance("C", 1)
 end
 
 local function check_any_track()
@@ -107,10 +106,6 @@ function advancement.focus(what)
 	if f then
 		f()
 	end
-end
-
-function advancement.process(what, ...)
-	return adv_process[what](...)
 end
 
 return advancement

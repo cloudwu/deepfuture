@@ -108,15 +108,12 @@ end
 
 function M.start(args)
 	local c = show_card(args)
-	local s = c["adv"..args.adv_index]
-	local prefix = "$(adv.".. advancement.name(s.suit, s.value).. "."
-	
+	local prefix = "$(adv.".. args.name .. "."
 	local desc = {
 		type = "$(card.type." .. c.type .. ")",
 		place = "$(desc.place.".. args.region .. ")",
 		detail = "$(desc.start." .. args.region .. "." .. c.type .. ")",
 		adv_name = prefix .. "name)",
-		adv_era = s.era,
 		adv_desc = prefix .. "detail)",
 	}
 	wait_for_return(desc)

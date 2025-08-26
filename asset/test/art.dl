@@ -17,8 +17,8 @@ start :
 	name : TEST
 	adv :
 		art
-		art
-		art
+		computation
+		computation
 	---
 	to : colony
 	type : world

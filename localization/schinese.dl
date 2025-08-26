@@ -14,6 +14,8 @@ schinese:
   tips.desc.return : "[lbutton][rbutton]返回"
   tips.discard.focus : "[lbutton]丢弃这张卡\n - 这是一张从手牌中随机抽出的卡"
   tips.discard.invalid : "已经超出手牌上限 ${limit} ，必须随机丢弃超出的部分"
+  tips.discard.computation: "[lbutton]丢弃这张卡\n - [blue]$(adv.computation.name)[n]：$(adv.computation.desc)"
+  tips.discard.computation.invalid: "请选择另一张手牌\n - 这张卡已使用，即将被丢弃"
   tips.start.skip : "[lbutton]结束$(phase.start)阶段\n - 跳过潜在的${n}个效果"
   tips.start.card.unique : "[lbutton]${effect}\n - [blue]${adv}[n]带来的效果\n$(tips.explain)"
   tips.start.card.multiple : "[lbutton]${effect}\n - [blue]${adv}[n]带来的效果\n[rbutton]切换为${nextadv}"
