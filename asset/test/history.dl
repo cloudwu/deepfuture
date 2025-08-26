@@ -1,0 +1,77 @@
+# test HISTORY advancement
+setup :
+	---
+	type : world
+	name : TEST
+	sector : 66
+	marker : 1K
+	adv :
+		history
+		history
+		history
+start :
+	---
+	to : colony
+	type : world
+	sector : 22
+	name : TEST
+	adv :
+		art
+		computation
+		history
+	---
+	to : homeworld
+	type : tech
+	name : TEST
+	adv :
+		art
+		computation
+		history
+	---
+	to : seen
+	type : tech
+	name : TEST
+	adv :
+		art
+		computation
+		history
+	---
+	to : seen
+	type : tech
+	name : TEST
+	adv :
+		art
+		computation
+		history
+	---
+	to : seen
+	type : tech
+	name : TEST
+	adv :
+		art
+		computation
+		history
+	---
+	to : seen
+	type : tech
+	name : TEST
+	adv :
+		art
+		computation
+		history
+	---
+	to : seen
+	type : tech
+	name : TEST
+	adv :
+		art
+		computation
+		history
+	---
+	to : seen
+	type : tech
+	name : TEST
+	adv :
+		art
+		computation
+		history

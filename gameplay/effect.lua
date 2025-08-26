@@ -142,7 +142,13 @@ end
 
 local function next_unique(self, c)
 	local obj = self[c]
+	if obj == nil then
+		return
+	end
 	local focus = obj.focus
+	if focus == nil then
+		return
+	end
 	local name = obj[focus].name
 	for i = 1, 2 do
 		local idx = order[focus][i]

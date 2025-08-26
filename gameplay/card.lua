@@ -2,9 +2,10 @@ local genname = require "gameplay.name"
 local persist = require "gameplay.persist"
 local math = math
 local table = table
+local error = error
 local advancement = require "gameplay.advancement"
 
-global tostring, setmetatable, ipairs, pairs, print, print_r, error, assert, tonumber, type
+global tostring, setmetatable, ipairs, pairs, print, print_r, assert, tonumber, type
 
 local card = {}
 
@@ -112,7 +113,7 @@ local function draw_card()
 		return card
 	end
 	seen = seen - 1
-	return table.remove(draw, 1)
+	return table.remove(GAME.draw, 1) or error "No more card"
 end
 
 function card.debug()
@@ -127,6 +128,37 @@ function card.draw_hand()
 	end
 	GAME.hand[#GAME.hand+1] = card_id
 	return DECK[card_id]
+end
+
+function card.add_seen()
+	local draw_pile = GAME.draw
+	local seen = GAME.seen
+	if #draw_pile > seen then
+		local idx = math.random(seen+1, #draw_pile)
+		seen = seen + 1
+		draw_pile[seen], draw_pile[idx] = draw_pile[idx], draw_pile[seen]
+		GAME.seen = seen
+	end
+	return seen
+end
+
+function card.seen()
+	return GAME.seen
+end
+
+function card.puttop(c)
+	local id = c._id
+	table.insert(GAME.draw, 1, id)
+	GAME.seen = GAME.seen + 1
+end
+
+function card.look()
+	local c = {}
+	local draw = GAME.draw
+	for i = 1, GAME.seen do
+		c[i] = DECK[draw[i]]
+	end
+	return c
 end
 
 function card.draw_discard()

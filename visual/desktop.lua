@@ -25,6 +25,7 @@ local desktop = {
 	discard = { type = "back" },
 	draw_pile = 0,
 	discard_pile = 0,
+	seen = 0,
 }
 
 local region = util.map (function(name)
@@ -302,13 +303,16 @@ function M.draw(count)
 	focus.frame()
 end
 
-function M.card_count(draw, discard)
-	if draw ~= desktop.draw_pile or discard ~= desktop.discard_pile then
+function M.card_count(draw, discard, seen)
+	if draw ~= desktop.draw_pile or discard ~= desktop.discard_pile or seen ~= desktop.seen then
+		desktop.seen = seen
 		desktop.draw_pile = draw
 		desktop.discard_pile = discard
 		local c = desktop.discard
 		c.draw = draw
 		c.discard = discard
+		c.seen = seen
+		c.eye = seen > 0 and "$(card.seen)" or ""
 		vcard.flush(c)
 	end
 end

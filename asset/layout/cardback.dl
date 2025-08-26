@@ -11,6 +11,6 @@ logo :
 	text_align : C
 cards :
 	text : card.number
-	height : 50
+	height : 80
 	size : 30
 	text_align : C

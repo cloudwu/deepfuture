@@ -159,7 +159,7 @@ local function choose_cards(advs, n)
 					card_tips.effect = advancement.info(focus, "desc")
 					local next_adv = advs:nextadv(focus_state.object)
 					if next_adv then
-						card_tips.nextadv = next_adv
+						card_tips.nextadv = advancement.info(next_adv, "name")
 						vtips.set("tips.start.card.multiple", card_tips)
 					else
 						vtips.set("tips.start.card.unique", card_tips)
@@ -174,15 +174,25 @@ local function choose_cards(advs, n)
 		end
 		local switch_card, region = focus.click "right"
 		if switch_card then
-			if not advs:nextadv(switch_card, true) then
-				-- unique adv, explain this card
-				vtips.set()
-				track.focus(false)
-				show_desc.start {
-					region = region,
-					card = switch_card,
-					name = advs:focus(switch_card),
-				}
+			if advs:can_use(switch_card) then
+				local focus = advs:nextadv(switch_card, true)
+				if not focus then
+					-- unique adv, explain this card
+					vtips.set()
+					track.focus(false)
+					show_desc.start {
+						region = region,
+						card = switch_card,
+						name = advs:focus(switch_card),
+					}
+				else
+					advancement.focus(focus)
+					card_tips.adv = advancement.info(focus, "name")
+					card_tips.effect = advancement.info(focus, "desc")
+					local next_adv = advs:nextadv(focus_state.object)
+					card_tips.nextadv = advancement.info(next_adv, "name")
+					vtips.set("tips.start.card.multiple", card_tips)
+				end
 			end
 		end
 		local c, btn = focus.click "left"

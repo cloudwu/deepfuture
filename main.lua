@@ -76,7 +76,7 @@ end
 
 function callback.frame(count)
 	flow.update()
-	vdesktop.card_count(card.count "draw", card.count "discard")
+	vdesktop.card_count(card.count "draw", card.count "discard", card.seen())
 	map.update()
 	vdesktop.draw(count)
 end

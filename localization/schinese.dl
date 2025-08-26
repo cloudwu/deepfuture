@@ -79,7 +79,8 @@ schinese:
   card.type.tech : "[techcard]科技卡"
   card.type.civ : "[civcard]文明卡"
   card.logo : "DEEP\nFUTURE"
-  card.number : "[stack]${draw} [discard]${discard}"
+  card.number : "[stack]${draw} [discard]${discard}\n${eye}"
+  card.seen : "[blue][eye] ${seen}[n]"
   hud.world : 母星
   hud.colony : 殖民地
   hud.phase : "${text}阶段"
