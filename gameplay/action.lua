@@ -6,6 +6,7 @@ local vtips = require "visual.tips".layer "hud"
 local map = require "gameplay.map"
 local show_desc = require "gameplay.desc"
 local rules = require "core.rules".phase
+local look = require "gameplay.look"
 
 global pairs
 
@@ -13,6 +14,7 @@ local function choose_action()
 	local desc = {
 		action = nil,
 		desc = nil,
+		seen = nil
 	}
 
 	local focus_state = {}
@@ -28,7 +30,12 @@ local function choose_action()
 					desc.desc = "$(action." .. c.suit .. ".desc)"
 				end
 				vtips.set("tips.action.choose", desc)
-			elseif where ~= "discard" and focus_state.object then
+			elseif where == "discard" then
+				desc.seen = card.seen()
+				if desc.seen > 0 then
+					vtips.set("tips.look.pile", desc)
+				end
+			elseif focus_state.object then
 				vtips.set("tips." .. where)
 			end
 		elseif focus_state.lost then
@@ -41,6 +48,13 @@ local function choose_action()
 				region = where,
 				card = c,
 			}
+		end
+		local c, where = focus.click "left"
+		if where == "discard" then
+			local n = card.seen()
+			if n > 0 then
+				look.start(n)
+			end
 		end
 		flow.sleep(0)
 	end
