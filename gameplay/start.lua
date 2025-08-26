@@ -20,9 +20,12 @@ global print, ipairs, pairs, print_r, error, tostring
 local function draw_hands()
 	local draw = rules.start.draw - card.count "hand"
 	if draw > 0 then
-		-- draw to 5 cards
+		-- draw to rules.start.draw(5) cards
 		for i = 1, draw do
 			local c = card.draw_hand()
+			if c == nil then
+				break
+			end
 			vdesktop.add("deck", c)
 			vdesktop.transfer("deck", c, "hand")
 			flow.sleep(5)
@@ -124,7 +127,7 @@ local function discard_one_card(advs)
 end
 
 function start_adv.computation(advs)
-	local c = card.draw_hand()
+	local c = card.draw_hand() or error "No more card"
 	advs:add(c, "hand")
 	vdesktop.add("deck", c)
 	vdesktop.transfer("deck", c, "hand")

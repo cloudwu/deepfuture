@@ -282,6 +282,10 @@ local function draw_hands()
 			print("SETUP TEST DRAW", c)
 		else
 			c = card.draw_hand()
+			if c == nil then
+				-- in rare case, no more cards (rules.setup.draw is too large)
+				break
+			end
 		end
 		h[i] = c
 		vdesktop.add("deck", c)
