@@ -62,6 +62,20 @@ function track.advance(type, n)
 	vtrack.move(type, pos)
 end
 
+function track.use(type)
+	local pos = TRACK[type] or error ("Invalid track type " .. type)
+	local max = rules[type].max
+	if pos == max then
+		return
+	end
+	pos = pos + 1
+	if pos > max then
+		pos = max
+	end
+	TRACK[type] = pos
+	vtrack.move(type, pos)
+end
+
 function track.setup()
 	local t = {}
 	for key, v in pairs(rules) do

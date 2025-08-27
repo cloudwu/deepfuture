@@ -202,6 +202,50 @@ function start_adv.history(advs)
 	look_drawpile(advs)
 end
 
+function start_adv.economy(advs)
+	advs:reset()
+	local focus_state = {}
+	local desc = { effect = "$(adv.economy.name) $(adv.economy.desc)" }
+	while true do
+		if focus.get(focus_state) then
+			if focus_state.active == "track" then
+				local what = focus_state.object	-- C/M/S/X
+				desc.type = "$(hud." .. what .. ")"
+				if track.check(what, -1) then
+					vtips.set("tips.track.invalid", desc)
+				else
+					vtips.set("tips.track.valid", desc)
+				end
+			else
+				vtips.set "tips.track.out"
+			end
+		elseif focus_state.lost then
+			vtips.set()
+		end
+		
+		local t, where = focus.click "left"
+		if where == "track" then
+			if not track.check(t, -1) then
+				track.use(t, 1)
+				local c1 = card.draw_hand()
+				local c2 = card.draw_hand()
+				if c1 then
+					vdesktop.add("deck", c1)
+					vdesktop.transfer("deck", c1, "hand")
+					flow.sleep(5)
+				end
+				if c2 then
+					vdesktop.add("deck", c2)
+					vdesktop.transfer("deck", c2, "hand")
+				end
+				break
+			end
+		end
+		flow.sleep(0)
+	end
+	advs:update()
+end
+
 local function choose_cards(advs, n)
 	local button = {
 		text = "button.start",
@@ -278,7 +322,7 @@ local function choose_cards(advs, n)
 				local adv_name = advs:focus(c)
 				advs:use(c)
 				local f = start_adv[adv_name]
-				if f then	-- todo : 
+				if f then	-- todo :  remove this after complete all 6 start adv
 					vdesktop.button_enable("button1", nil)
 					f(advs)
 					vdesktop.button_enable("button1", button)
