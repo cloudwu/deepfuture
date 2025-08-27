@@ -27,3 +27,5 @@ button :
 	font_color : 0
 	font_disable : 0x20000000
 	font_size : 16
+payment :
+	upkeep : "[cube]"

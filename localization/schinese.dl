@@ -24,6 +24,9 @@ schinese:
   tips.track.valid : "[lbutton]将 ${type} 进度条后退一格\n - ${effect}"
   tips.track.invalid : "${type} 进度条已经无法后退"
   tips.track.out : "请选择一个进度条后退一格"
+  tips.upkeep.valid : "[lbutton]在这张卡上添加一个[cube]"
+  tips.upkeep.full : "这张卡上的[cube]空间已满"
+  tips.upkeep.invalid  : "请在母星区选择一张卡"
   desc.text : "这是一张${place}中的[blue]${type}[n]。\n\n${detail}"
   desc.text.hand : "[blue]$(phase.action)[n]阶段：作为行动牌打出，发起[blue]${action}[n]行动：\n - ${action_desc}[n]。\n\n[blue]$(phase.payment)[n]阶段：这张卡可让母星区中有${suit}类提升的卡牌避免挑战并产生[cube]。\n\n[blue]$(phase.challenge)[n]阶段：这张牌可用来抵消${suit}类型挑战所带来的负面效果。\n\n"
   desc.text.hand.world : "$(desc.text.hand)这张卡表示在星区 [blue]${sector}[n] 中的一颗可殖民[planet]星球[blue]${name}[n]，$(plant.era)。若你控制了星区 ${sector} ，这张卡可以用于$(action.M)。\n\n注：卡上标注的提升效果在手牌中时不提供任何效应。"
@@ -85,6 +88,7 @@ schinese:
   card.type.civ : "[civcard]文明卡"
   card.logo : "DEEP\nFUTURE"
   card.number : "[stack]${draw} [discard]${discard}\n${eye|}"
+  card.upkeep : "${_upkeep|}"
   card.seen : "[blue][eye] ${seen}[n]"
   hud.world : 母星
   hud.colony : 殖民地

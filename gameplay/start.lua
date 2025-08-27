@@ -18,6 +18,8 @@ local test = require "gameplay.test"
 
 global print, ipairs, pairs, print_r, error, tostring
 
+local UPKEEP_LIMIT <const> = rules.payment.upkeep_limit
+
 local function draw_hands()
 	local draw = rules.start.draw - card.count "hand"
 	if draw > 0 then
@@ -202,8 +204,7 @@ function start_adv.history(advs)
 	look_drawpile(advs)
 end
 
-function start_adv.economy(advs)
-	advs:reset()
+local function dec_tracks()
 	local focus_state = {}
 	local desc = { effect = "$(adv.economy.name) $(adv.economy.desc)" }
 	local last_focus
@@ -243,19 +244,71 @@ function start_adv.economy(advs)
 		if where == "track" then
 			if not track.check(t, -1) then
 				track.use(t, 1)
-				local c1 = card.draw_hand()
-				local c2 = card.draw_hand()
-				if c1 then
-					vdesktop.add("deck", c1)
-					vdesktop.transfer("deck", c1, "hand")
-					flow.sleep(5)
-				end
-				if c2 then
-					vdesktop.add("deck", c2)
-					vdesktop.transfer("deck", c2, "hand")
-				end
-				break
+				track.focus(false)
+				return
 			end
+		end
+		flow.sleep(0)
+	end
+end
+
+function start_adv.economy(advs)
+	advs:reset()
+	dec_tracks()
+	-- draw 2 cards
+	local c1 = card.draw_hand()
+	local c2 = card.draw_hand()
+	if c1 then
+		vdesktop.add("deck", c1)
+		vdesktop.transfer("deck", c1, "hand")
+		flow.sleep(5)
+	end
+	if c2 then
+		vdesktop.add("deck", c2)
+		vdesktop.transfer("deck", c2, "hand")
+	end
+	advs:update()
+end
+
+function start_adv.infrastructure(advs)
+	local r = {}
+	local n = 1
+	while true do
+		local c = card.card("homeworld", n)
+		if c == nil then
+			break
+		end
+		n = n + 1
+		if card.upkeep(c) < UPKEEP_LIMIT then
+			r[c] = true
+		end
+	end
+	advs:reset()
+	dec_tracks()
+	-- add upkeep
+	for c in pairs(r) do
+		vcard.mask(c, true)
+	end
+	local focus_state = {}
+	while true do
+		if focus.get(focus_state) then
+			if focus_state.active == "homeworld" then
+				local c = focus_state.object
+				if r[c] then
+					vtips.set "tips.upkeep.valid"
+				else
+					vtips.set "tips.upkeep.full"
+				end
+			else
+				vtips.set "tips.upkeep.invalid"
+			end
+		elseif focus_state.lost then
+			vtips.set()
+		end
+		local c = focus.click "left"
+		if c and r[c] then
+			card.upkeep_change(c, 1)
+			break
 		end
 		flow.sleep(0)
 	end

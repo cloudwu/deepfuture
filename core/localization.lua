@@ -1,7 +1,7 @@
 local datalist = require "soluna.datalist"
 local file = require "soluna.file"
 
-global pairs, type, ipairs
+global pairs, type, ipairs, print
 
 local localization = {}
 
@@ -61,7 +61,7 @@ function localization.convert(str, args)
 				local key, def = key:match "(.-)|(.*)"
 				if key then
 					local v = tbl[key]
-					if v and type(v) == "string" then
+					if v and type(v) ~= "table" then
 						return v
 					else
 						return def

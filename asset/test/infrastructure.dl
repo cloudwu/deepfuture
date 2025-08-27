@@ -1,4 +1,4 @@
-# test ART advancement
+# test INFRASTRUCURE advancement
 
 setup :
 	---
@@ -8,7 +8,7 @@ setup :
 	marker : 1K
 	adv :
 		art
-		art
+		infrastructure
 		infrastructure
 start :
 	---
@@ -17,8 +17,8 @@ start :
 	name : TEST
 	adv :
 		art
-		computation
-		computation
+		infrastructure
+		infrastructure
 	---
 	to : colony
 	type : world
@@ -26,13 +26,13 @@ start :
 	name : TEST
 	adv :
 		art
-		art
-		art
+		infrastructure
+		infrastructure
 	---
 	to : homeworld
 	type : tech
 	name : TEST
 	adv :
 		art
-		art
-		art
+		infrastructure
+		infrastructure

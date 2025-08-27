@@ -8,11 +8,21 @@ content :
 	width : 100%
 	height : 80%
 	bottom : 0
+	upkeep :
+		position : absolute
+		width : 70%
+		height : 30
+		top : 20
+		text : card.upkeep
+		text_align : C
+		size : 24
+		color : 0x0000ff
 	title :
 		text : card.world.title
 		size : 18
 		left : 5
 		height : 20%
+		text_align : T
 	advancement :
 		height : 70%
 		padding : 10

@@ -4,9 +4,13 @@ local math = math
 local table = table
 local error = error
 local advancement = require "gameplay.advancement"
+local rules = require "core.rules".phase
+local ui = require "core.rules".ui
 
 global tostring, setmetatable, ipairs, pairs, print, print_r, assert, tonumber, type
 
+local UPKEEP_LIMIT <const> = rules.payment.upkeep_limit
+local UPKEEP_LOGO <const> = ui.payment.upkeep
 local card = {}
 
 --[[
@@ -88,6 +92,7 @@ function card.setup()
 		end
 	end
 	game.seen = 0 -- seen cards of drawpile
+	game.upkeep = {}
 	GAME = persist.init("game", game)
 end
 
@@ -261,6 +266,10 @@ function card.drophand()
 end
 
 function card.discard(card)
+	if card._upkeep then
+		card._upkeep = nil	-- clear any upkeep cube
+		GAME.upkeep[card._id] = nil
+	end
 	GAME.discard[#GAME.discard + 1] = card._id
 end
 
@@ -405,6 +414,44 @@ end
 function card.card(where, index)
 	local c = GAME[where][index]
 	return DECK[c]
+end
+
+function card.upkeep(c)
+	return GAME.upkeep[c._id] or 0
+end
+
+-- todo : don't inject into advancement
+function advancement._upkeep_full()
+	local n = #GAME.homeworld
+	for k,v in pairs(GAME.upkeep) do
+		if v ~= UPKEEP_LIMIT then
+			return
+		end
+		n = n - 1
+	end
+	-- all homeworld cards full
+	return n == 0
+end
+
+function card.upkeep_change(c, def)
+	local n = GAME.upkeep[c._id] or 0
+	local n2 = n + def
+	if n2 < 0 then
+		n2 = 0
+	elseif n2 > UPKEEP_LIMIT then
+		n2 = UPKEEP_LIMIT
+	end
+	if n == n2 then
+		return
+	else
+		GAME.upkeep[c._id] = n2
+		if n2 > 0 then
+			c._upkeep = UPKEEP_LOGO:rep(n2)
+		else
+			c._upkeep = nil
+		end
+		return n2
+	end
 end
 
 -- todo: load deck

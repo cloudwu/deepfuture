@@ -62,7 +62,10 @@ local function check_any_track()
 end
 
 function adv_check.infrastructure()
-	-- todo :  check cubes
+	-- inject from core.card
+	if advancement._upkeep_full() then
+		return false
+	end
 	return check_any_track()
 end
 
