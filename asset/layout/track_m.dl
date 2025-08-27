@@ -1,0 +1,13 @@
+id : track
+gap : 2
+padding : 5
+track:
+	flex : 1
+track:
+	id : focus
+	flex : 1
+	background : 0x800000C0
+track:
+	flex : 1
+track:
+	flex : 1

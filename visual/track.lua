@@ -1,4 +1,5 @@
 local widget = require "core.widget"
+local focus = require "core.focus"
 local util = require "core.util"
 local mattext = require "soluna.material.text"
 local font = require "soluna.font"
@@ -9,13 +10,14 @@ local color = require "visual.color"
 local math = math
 local sin = math.sin
 
-global assert, pairs, print
+global assert, pairs, print, print_r
 
 local _, _, track_w, track_h = widget.get("track", "track")
 local FONT_ID
 local SPRITES
 local BATCH
-local DRAWLIST
+local DRAWLIST = {}
+local FOCUS = {}
 local MOVE_SPEED <const> = config.track.speed
 local MOVE_FACTOR <const> = math.pi / (2 * MOVE_SPEED)
 local MOVE_TOKEN <const> = config.track.token
@@ -49,16 +51,35 @@ local function update_coord()
 	end
 end
 
+local tracks = {
+	main = "track",
+	C = "track_c",
+	M = "track_m",
+	S = "track_s",
+	X = "track_x",
+}
+
 local function update(w,h)
 	WIDTH = w
 	HEIGHT = h
-	widget.set("track", {
-		track = {
-			width = w,
-			height = h,
-		}
-	})
-	DRAWLIST = widget.draw_list("track", content, FONT_ID, SPRITES)
+	for key, name in pairs(tracks) do
+		widget.set(name, {
+			track = {
+				width = w,
+				height = h,
+			}
+		})
+		DRAWLIST[key] = widget.draw_list(name, content, FONT_ID, SPRITES)
+		local x, y, w, h = widget.get(name, "focus")
+		if x then
+			FOCUS[key] = {
+				x1 = x,
+				y1 = y,
+				x2 = x + w,
+				y2 = y + h,
+			}
+		end
+	end
 end
 
 function track.flush()
@@ -171,9 +192,38 @@ function track.draw(x,y,w,h)
 		update_coord()
 	end
 	BATCH:layer(x,y)
-	widget.draw(BATCH, DRAWLIST)
+	for key, obj in pairs(move) do
+		if obj.focus then
+			widget.draw(BATCH, DRAWLIST[key])
+		end
+	end
+	widget.draw(BATCH, DRAWLIST.main)
 	draw_move_tokens()
 	BATCH:layer()
+end
+
+function track.test(name, flag, mx, my, w, h)
+	if flag then
+		return flag
+	end
+	local x, y = BATCH:point(mx, my)
+	for key, rect in pairs(FOCUS) do
+		if x >= rect.x1 and x < rect.x2 and y >= rect.y1 and y < rect.y2 then
+			focus.trigger(name, key)
+			return true
+		end
+	end
+	focus.trigger(name)
+	return false
+end
+
+function track.register(args)
+	local ui = args.draw
+	local test = args.test
+	function ui.track(self)
+		track.draw(self.x, self.y, self.w, self.h)
+	end
+	test.track = track.test
 end
 
 function track.init(args)

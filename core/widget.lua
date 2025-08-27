@@ -42,7 +42,10 @@ end
 function widget.get(dom, id)
 	local pos = layout_pos[dom]
 	local d = doms[dom]
-	return d[id]:get()
+	local c = d[id]
+	if c then
+		return c:get()
+	end
 end
 
 function widget.draw_list(dom, texts, font_id, sprites)

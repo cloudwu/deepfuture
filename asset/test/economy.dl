@@ -1,0 +1,37 @@
+# test ECONOMY advancement
+setup :
+	---
+	type : world
+	name : TEST
+	sector : 66
+	marker : 1K
+	adv :
+		exploration
+		computation
+		economy
+start :
+	---
+	to : colony
+	type : world
+	sector : 22
+	name : TEST
+	adv :
+		infrastructure
+		computation
+		economy
+	---
+	to : homeworld
+	type : tech
+	name : TEST
+	adv :
+		art
+		economy
+		history
+	---
+	to : seen
+	type : tech
+	name : TEST
+	adv :
+		economy
+		exploration
+		infrastructure

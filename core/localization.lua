@@ -64,6 +64,7 @@ function localization.convert(str, args)
 		return tbl
 	end
 	local function replacement(text)
+		-- todo : support default value ${key|default}
 		local s = text:gsub("$(%b{})", subargs)
 		local function subtext(tag)
 			tag = tag:sub(2, -2)

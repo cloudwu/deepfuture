@@ -172,10 +172,6 @@ do
 		VTIPS.hud.draw(self)
 	end
 	
-	function hud:track()
-		vtrack.draw(self.x, self.y, self.w, self.h)
-	end
-
 	function describe:tips()
 		VTIPS.desc.draw(self)
 	end
@@ -423,6 +419,10 @@ function M.init(args)
 	update_test_list()
 	TESTLIST.desc = widget.test_list("describe", test)
 	region.discard:add(desktop.discard)
+	vtrack.register {
+		draw = hud,
+		test = test,
+	}
 end
 
 return M
