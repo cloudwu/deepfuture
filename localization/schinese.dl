@@ -1,6 +1,6 @@
 schinese:
   app.title : "深远未来"
-  button.start : "跳过(${n})"
+  button.start : "跳过(${n|0})"
   button.new_world : "创建"
   tips.setup.homeworld : "[lbutton]选择 [blue]${world}[n] 作为母星"
   tips.setup.invalid : "请选择$(card.type.world)，这是${type}"
@@ -84,7 +84,7 @@ schinese:
   card.type.tech : "[techcard]科技卡"
   card.type.civ : "[civcard]文明卡"
   card.logo : "DEEP\nFUTURE"
-  card.number : "[stack]${draw} [discard]${discard}\n${eye}"
+  card.number : "[stack]${draw} [discard]${discard}\n${eye|}"
   card.seen : "[blue][eye] ${seen}[n]"
   hud.world : 母星
   hud.colony : 殖民地
@@ -106,13 +106,13 @@ schinese:
   suit.K : "[skull]"
   suit.H : "[hand]"
   suit.F : "[foot]"
-  card.corner : "${_marker}"
-  card.world.name : "${sector} ${name}"
+  card.corner : "${_marker|}"
+  card.world.name : "${sector|} ${name|}"
   card.world.title : "${era}. [planet]星球"
-  card.tech.name : "${name}"
+  card.tech.name : "${name|}"
   card.tech.title : "${era}. [tech]科技"
-  card.adv : "${_suit} ${_name}"
-  card.desc : "${_stage} ${_desc}"
+  card.adv : "${_suit|} ${_name|}"
+  card.desc : "${_stage|} ${_desc|}"
   START : 开始
   ADVANCE : 提升
   EXPAND : 扩张

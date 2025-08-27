@@ -165,13 +165,7 @@ local function new_world(hands)
 	
 	-- clone from blank
 	local clone = clone_card(newcard, {})
-	clone.sector = ""
-	clone._marker = ""
 	clone.adv1 = clone_card(newcard.adv1, {})
-	clone.adv1._suit = ""
-	clone.adv1._stage = ""
-	clone.adv1._name = ""
-	clone.adv1._desc = ""
 	
 	vdesktop.add("deck", clone)
 	vdesktop.transfer("deck", clone, "float")

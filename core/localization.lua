@@ -56,9 +56,20 @@ function localization.convert(str, args)
 		tag = tag:sub(2,-2)
 		local tbl = args
 		for key in tag:gmatch "[^.]+" do
-			tbl = tbl[key]
-			if tbl == nil then
+			local subtbl = tbl[key]
+			if subtbl == nil then
+				local key, def = key:match "(.-)|(.*)"
+				if key then
+					local v = tbl[key]
+					if v and type(v) == "string" then
+						return v
+					else
+						return def
+					end
+				end
 				return tag
+			else
+				tbl = subtbl
 			end
 		end
 		return tbl

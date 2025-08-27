@@ -313,7 +313,7 @@ function M.card_count(draw, discard, seen)
 		c.draw = draw
 		c.discard = discard
 		c.seen = seen
-		c.eye = seen > 0 and "$(card.seen)" or ""
+		c.eye = seen > 0 and "$(card.seen)"
 		vcard.flush(c)
 	end
 end

@@ -286,9 +286,9 @@ local function gen_adv_desc(adv)
 	if adv.value == nil then
 		assert(adv.suit, "Missing adv.suit")
 		adv._suit = "$(suit."..adv.suit..")"
-		adv._name = ""
-		adv._stage = ""
-		adv._desc = ""
+		adv._name = nil
+		adv._stage = nil
+		adv._desc = nil
 	else
 		local adv_name = advancement.name(adv.suit, adv.value)
 		local prefix = "$(adv."..advancement.name(adv.suit, adv.value).."."

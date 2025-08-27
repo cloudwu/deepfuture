@@ -44,8 +44,8 @@ local function gen_adv_(c, stage, desc)
 		desc[stage.."_stage"] = "$(" .. advancement.stage(s.suit, s.value) .. ")"
 		desc[stage.."_desc"] = prefix .. "detail)"
 	else
-		desc[stage] = ""
-		desc[stage.."_discard"] = ""
+		desc[stage] = nil
+		desc[stage.."_discard"] = nil
 	end
 end
 
