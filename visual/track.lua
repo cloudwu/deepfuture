@@ -193,7 +193,7 @@ function track.draw(x,y,w,h)
 	end
 	BATCH:layer(x,y)
 	for key, obj in pairs(move) do
-		if obj.focus then
+		if obj.focus and not obj.fade then
 			widget.draw(BATCH, DRAWLIST[key])
 		end
 	end

@@ -206,6 +206,18 @@ function start_adv.economy(advs)
 	advs:reset()
 	local focus_state = {}
 	local desc = { effect = "$(adv.economy.name) $(adv.economy.desc)" }
+	local last_focus
+	local function focus_track(what)
+		if last_focus then
+			track.focus(last_focus, false)
+		end
+		if what then
+			track.focus(what, true)
+			last_focus = what
+		else
+			last_focus = nil
+		end
+	end
 	while true do
 		if focus.get(focus_state) then
 			if focus_state.active == "track" then
@@ -213,13 +225,17 @@ function start_adv.economy(advs)
 				desc.type = "$(hud." .. what .. ")"
 				if track.check(what, -1) then
 					vtips.set("tips.track.invalid", desc)
+					focus_track()
 				else
 					vtips.set("tips.track.valid", desc)
+					focus_track(what)
 				end
 			else
+				focus_track()
 				vtips.set "tips.track.out"
 			end
 		elseif focus_state.lost then
+			focus_track()
 			vtips.set()
 		end
 		
