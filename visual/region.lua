@@ -150,7 +150,11 @@ function region:update(w, h, x, y)
 			obj._region = nil
 			obj._move.x = obj._move.x - x
 			obj._move.y = obj._move.y - y
-			self[#self + 1] = obj
+			if self._name == "homeworld" and obj.card.type == "world" then
+				table.insert(self, 1, obj)
+			else
+				self[#self + 1] = obj
+			end
 			q[i] = nil
 		end
 		dirty = true

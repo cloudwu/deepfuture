@@ -1,7 +1,7 @@
 local coroutine = require "soluna.coroutine"
 local debug = debug
 
-global assert, error
+global assert, error, tostring
 
 local flow = {}
 
@@ -66,7 +66,7 @@ local function update_process(thread)
 	if ok then
 		command[cmd](arg)
 	else
-		error(cmd .. "\n" .. debug.traceback(thread))
+		error(tostring(cmd) .. "\n" .. debug.traceback(thread))
 	end
 end
 

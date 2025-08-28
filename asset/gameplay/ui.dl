@@ -17,6 +17,7 @@ card :
 	mask : 0x2000ff00
 map :
 	focus_color : 0x00ff00
+	mask_color : 0x4000ff00
 	neutral : "[black]"
 	player  : "[blue]"
 	token : "[people]"

@@ -249,6 +249,17 @@ function card.pickup(where, card)
 	end
 end
 
+function card.find_value(where, value)
+	local area = GAME[where]
+	for i, id in ipairs(area) do
+		local c = DECK[id]
+		if c.value == value then
+			local id = table.remove(area, i)
+			return DECK[id]
+		end
+	end
+end
+
 function card.putdown(where, card)
 	local id = card._id
 	local area = GAME[where]
@@ -257,7 +268,11 @@ function card.putdown(where, card)
 			return
 		end
 	end
-	area[#area+1] = id
+	if where == "homeworld" and card.type == "world" then
+		table.insert(area,1,id)
+	else
+		area[#area+1] = id
+	end
 end
 
 function card.drophand()
@@ -435,7 +450,12 @@ end
 
 function card.upkeep_change(c, def)
 	local n = GAME.upkeep[c._id] or 0
-	local n2 = n + def
+	local n2 = n
+	if def then
+		n2 = n2 + def
+	else
+		n2 = 0
+	end
 	if n2 < 0 then
 		n2 = 0
 	elseif n2 > UPKEEP_LIMIT then
@@ -452,6 +472,37 @@ function card.upkeep_change(c, def)
 		end
 		return n2
 	end
+end
+
+function card.sector(sec)
+	local r = {}
+	local homeworld = DECK[GAME.homeworld[1]]
+	if homeworld.sector == sec then
+		r[1] = homeworld
+	end
+	for _, id in ipairs(GAME.colony) do
+		local c = DECK[id] 
+		if c.sector == sec then
+			r[#r+1] = c
+		end
+	end
+	if #r > 0 then
+		return r
+	end
+end
+
+function card.check_only_sector(sec)
+	local homeworld = DECK[GAME.homeworld[1]]
+	if homeworld.sector ~= sec then
+		return false
+	end
+	for _, id in ipairs(GAME.colony) do
+		local c = DECK[id] 
+		if c.sector ~= sec then
+			return false
+		end
+	end
+	return true	
 end
 
 -- todo: load deck

@@ -12,9 +12,15 @@ local FOCUS_QUEUE = {}
 
 function focus.clear()
 	if FOCUS_ACTIVE then
-		FOCUS_ACTIVE = nil
-		FOCUS_OBJECT = nil
+		FOCUS_QUEUE[FOCUS_ACTIVE] = nil
+		for k,state in pairs(FOCUS_CLICK) do
+			state.click = nil
+			state.focus = nil
+		end
 	end
+--		FOCUS_ACTIVE = nil
+--		FOCUS_OBJECT = nil
+--	end
 end
 
 function focus.trigger(region, object)

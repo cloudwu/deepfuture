@@ -8,7 +8,8 @@ local vtips = require "visual.tips".layer "hud"
 local vbutton = require "visual.button"
 local track = require "gameplay.track"
 local advancement = require "gameplay.advancement"
---local map = require "gameplay.map"
+local map = require "gameplay.map"
+local vmap = require "visual.map"
 local show_desc = require "gameplay.desc"
 local rules = require "core.rules".phase
 local class = require "core.class"
@@ -16,7 +17,7 @@ local look = require "gameplay.look"
 require "gameplay.effect"
 local test = require "gameplay.test"
 
-global print, ipairs, pairs, print_r, error, tostring
+global print, ipairs, pairs, print_r, error, tostring, next
 
 local UPKEEP_LIMIT <const> = rules.payment.upkeep_limit
 
@@ -245,6 +246,7 @@ local function dec_tracks()
 			if not track.check(t, -1) then
 				track.use(t, 1)
 				track.focus(false)
+				vtips.set()
 				return
 			end
 		end
@@ -312,6 +314,239 @@ function start_adv.infrastructure(advs)
 		end
 		flow.sleep(0)
 	end
+	advs:update()
+end
+
+local function set_sector_mask(sectors, flag)
+	for sec in pairs(sectors) do
+		vmap.set_sector_mask(sec, flag)
+	end
+end
+
+local function choose_new_homeworld()
+	vtips.set()
+	local colony = {}
+	local n = 1
+	while true do
+		local c = card.card("colony", n)
+		if not c then
+			break
+		end
+		vcard.mask(c, true)
+		colony[n] = c
+		n = n + 1
+	end
+	local focus_state = {}
+	local new_homeworld
+	while true do
+		if focus.get(focus_state) then
+			if focus_state.active == "colony" then
+				vtips.set "tips.homeworld.set"
+			else
+				vtips.set "tips.homeworld.invalid"
+			end
+		elseif focus_state.lost then
+			vtips.set()
+		end
+		local sec, region = focus.click "left"
+		if sec and region == "colony" then
+			new_homeworld = card.pickup("colony", sec)
+			break
+		end
+		flow.sleep(0)
+	end
+	for _, c in ipairs(colony) do
+		vcard.mask(c)
+	end
+	card.putdown("homeworld", new_homeworld)
+	vdesktop.transfer("colony", new_homeworld, "homeworld")
+end
+
+local function discard_planets(advs, cards)
+	local drop_homeworld
+	for c in pairs(cards) do
+		advs:remove(c)
+		local p = card.pickup("colony", c)
+		if p then
+			card.discard(p)
+			vdesktop.transfer("colony", p, "deck")
+		elseif card.pickup("homeworld", c) then
+			card.upkeep_change(c)	-- clear upkeep
+			drop_homeworld = c
+		end
+		flow.sleep(5)
+	end
+	if drop_homeworld then
+		local value = drop_homeworld.value
+		local n = card.find_value("neutral", value)
+		if n then
+			vdesktop.transfer("neutral", n, "deck")
+			flow.sleep(5)
+		end
+		vdesktop.transfer("homeworld", drop_homeworld, "neutral")
+		choose_new_homeworld()
+	end
+end
+
+local function exploration(advs, sectors)
+	set_sector_mask(sectors, true)
+	local danger
+	local function clear_danger()
+		if danger then
+			for _, c in ipairs(danger) do
+				vcard.mask(c)
+			end
+		end
+		danger = nil
+	end
+	local function set_danger(pile)
+		if pile == nil then
+			clear_danger()
+		elseif pile ~= danger then
+			clear_danger()
+			danger = pile
+			for i, c in ipairs(danger) do
+				vcard.mask(c, true)
+			end
+		end
+	end
+	local desc = {}
+	-- choose from
+	local focus_state = {}
+	local from_sector
+	local to_sector
+	while true do
+		if focus.get(focus_state) then
+			local sec = focus_state.object
+			local where = focus_state.active
+			if where == "map" then
+				local danger_pile = sectors[sec]
+				desc.from = sec
+				if danger_pile == nil then
+					vtips.set ("tips.exploration.invalid", desc)
+					set_danger()
+				elseif danger_pile == false then
+					vtips.set ("tips.exploration.from", desc)
+					set_danger()
+				else
+					vtips.set ("tips.exploration.danger", desc)
+					set_danger(danger_pile)
+				end
+			else
+				vtips.set ("tips.exploration.invalid", desc)
+				set_danger()
+			end
+		elseif focus_state.lost then
+			vtips.set()
+		end
+		local sec, region = focus.click "left"
+		if sec and region == "map" then
+			from_sector = sec
+			break
+		end
+		flow.sleep(0)
+	end
+	vtips.set()
+	-- choose to
+	local focus_state = {}
+	local neighbor = map.find_neighbor(from_sector)
+	local danger_cards = {}
+	set_sector_mask(sectors, false)
+	set_sector_mask(neighbor, true)
+	if sectors[from_sector] then
+		-- danger
+		set_danger(sectors[from_sector])
+		for _, c in pairs(sectors[from_sector]) do
+			danger_cards[c] = true
+		end
+	end
+	
+	while true do
+		if focus.get(focus_state) then
+			local sec = focus_state.object
+			local where = focus_state.active
+			if where == "map" then
+				desc.to = sec
+				if neighbor[sec] then
+					vtips.set ("tips.exploration.to", desc)
+				else
+					vtips.set ("tips.exploration.dest", desc)
+				end
+			elseif danger_cards[sec] then
+				vtips.set ("tips.exploration.cancel", desc)
+			else
+				vtips.set ("tips.exploration.dest", desc)
+			end
+		elseif focus_state.lost then
+			vtips.set()
+		end
+		local sec, region = focus.click "left"
+		if sec then
+			if danger_cards[sec] then
+				-- cancel
+				set_danger()
+				set_sector_mask(neighbor, false)
+				return exploration(advs, sectors)
+			end
+			if region == "map" and neighbor[sec] then
+				set_danger()
+				to_sector = sec
+				break
+			end
+		end
+		local sec, region = focus.click "right"
+		if sec and danger_cards[sec] then
+			-- cancel
+			set_danger()
+			set_sector_mask(neighbor, false)
+			return exploration(advs, sectors)
+		end
+		flow.sleep(0)
+	end
+	-- move from to
+	map.move(from_sector, to_sector)
+	
+	if next(danger_cards) then
+		discard_planets(advs, danger_cards)
+	end
+	-- todo: discard danger
+	set_sector_mask(neighbor, false)
+end
+
+function start_adv.exploration(advs)
+	local sectors = map.find_ctrl(false)	-- true for expand
+	local only_sector
+	for sector, n in pairs(sectors) do
+		local cards = card.sector(sector)
+		if cards then
+			if n == 1 and only_sector == nil then
+				-- the first sector contains planet with only 1 people
+				only_sector = sector
+			else
+				only_sector = false
+			end
+			if n == 1 then
+				-- danger
+				sectors[sector] = cards
+			else
+				sectors[sector] = false
+			end
+		else
+			sectors[sector] = false
+		end
+	end
+	if only_sector then
+		if card.check_only_sector(only_sector) then
+			sectors[only_sector] = nil
+		else
+			sectors[only_sector] = card.sector(only_sector)
+		end
+	end
+	
+	-- set mask
+	advs:reset()
+	dec_tracks()
+	exploration(advs, sectors)
 	advs:update()
 end
 

@@ -2,6 +2,7 @@ local datalist = require "soluna.datalist"
 local file = require "soluna.file"
 local card = require "gameplay.card"
 local soluna = require "soluna"
+local map = require "gameplay.map"
 
 global ipairs, print
 
@@ -25,6 +26,9 @@ local patch = {}
 local function add_hand(action)
 	if action.type == "drop" then
 		card.drophand()
+	elseif action.type == "galaxy" then
+		map.set_galaxy(action.sector, action.n, action.camp)
+		map.settle(action.sector)
 	else
 		-- add new card
 		local c = card.test_newcard(action)

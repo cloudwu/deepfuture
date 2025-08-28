@@ -281,13 +281,15 @@ function M.mouse_move(x, y)
 	mouse_x = x
 	mouse_y = y
 	widget.test(mouse_x, mouse_y, BATCH, DESC and TESTLIST.desc or TESTLIST.hud)
+end
+
+function M.draw(count)
+	-- todo : find a better place to check unfocus :
+	--		code trigger unfocus, rather than mouse move
 	if focus.get(focus_state) then
 		map_focus(focus_state.active, focus_state.object)
 	end
 	map_focus(focus_state.lost)
-end
-
-function M.draw(count)
 	widget.draw(BATCH, DRAWLIST.hud, focus.region())
 	if DESC then
 		widget.draw(BATCH, DRAWLIST.describe)

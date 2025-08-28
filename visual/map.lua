@@ -15,6 +15,7 @@ local BATCH
 -- See https://www.redblobgames.com/grids/hexagons/
 local HEX_SIZE = config.map.size
 
+local MASK_COLOR <const> = config.map.mask_color
 local focus_color <const> = config.map.focus_color
 local token <const> = config.map.token
 local tokens_width <const> = config.map.tokens_width
@@ -100,6 +101,12 @@ function map.focus(sector)
 	end
 end
 
+local mask_sector = {}
+
+function map.set_sector_mask(sec, flag)
+	mask_sector[sec] = flag
+end
+
 function map.update()
 	local hex_text = {}
 	for sector in pairs(SECTOR_TO_AXIAL) do
@@ -149,6 +156,9 @@ function map.draw(x, y)
 		else
 			BATCH:layer(x,y)
 			widget.draw(BATCH, hex_drawlist[sector])
+			if mask_sector[sector] then
+				BATCH:add(mask.mask(SPRITES.hex, MASK_COLOR))
+			end
 			if sector == focus_sector.sector then
 				local c = update_focus_color()
 				if c then

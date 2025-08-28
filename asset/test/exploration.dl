@@ -1,0 +1,72 @@
+# test EXPLORATION advancement
+
+setup :
+	---
+	type : world
+	name : TEST
+	sector : 66
+	marker : 1K
+	adv :
+		exploration
+		exploration
+		exploration
+start :
+	---
+	to : hand
+	type : tech
+	name : TEST
+	adv :
+		exploration
+		exploration
+		exploration
+	---
+	to : colony
+	type : world
+	sector : 22
+	name : TEST
+	adv :
+		exploration
+		exploration
+		exploration
+	---
+	to : colony
+	type : world
+	sector : 66
+	name : TEST
+	adv :
+		exploration
+		exploration
+		exploration
+	---
+	to : homeworld
+	type : tech
+	name : TEST
+	adv :
+		exploration
+		exploration
+		exploration
+	---
+	type : galaxy
+	sector : 22
+	n : 1
+	camp : player
+	---
+	type : galaxy
+	sector : 23
+	n : 1
+	camp : player
+	---
+	type : galaxy
+	sector : 56
+	n : 3
+	camp : player
+	---
+	type : galaxy
+	sector : 25
+	n : 5
+	camp : player
+	---
+	type : galaxy
+	sector : 66
+	n : 1
+	camp : player

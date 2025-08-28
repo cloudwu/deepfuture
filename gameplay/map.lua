@@ -4,7 +4,7 @@ local config = require "core.rules".ui
 local util = require "core.util"
 local rules = require "core.rules".map
 
-global pairs, assert, print, print_r
+global pairs, assert, print, print_r, error
 
 local map = {}
 
@@ -70,7 +70,89 @@ function map.add_player(sec, n)
 end
 
 function map.settle(sec)
-	colony[sec] = true
+	local s = galaxy[sec]
+	if s and s.camp == "player" then
+		colony[sec] = true
+	else
+		colony[sec] = nil
+	end
+	util.dirty_trigger(map.can_move)
+end
+
+function map.set_galaxy(sec, n, camp)
+	local s = { n = n, camp = camp }
+	galaxy[sec] = s
+	vmap.set(sec, COLOR[camp], n)
+	util.dirty_trigger(map.update)
+	util.dirty_trigger(map.is_safe)
+	util.dirty_trigger(map.can_move)
+end
+
+local function can_move(sec)
+	local conn = connection[sec]
+	for sec in pairs(conn) do
+		if sec ~= 0 then
+			local s = galaxy[sec]
+			if not s or (s.camp == "player" and s.n < LIMIT) then
+				return true
+			end
+		end
+	end
+end
+
+function map.move(sec_from, sec_to)
+	local from = galaxy[sec_from] or error ("No people in " .. sec_from)
+	local to = galaxy[sec_to]
+	if not to then
+		to = {
+			n = 0,
+			camp = "player",
+		}
+		galaxy[sec_to] = to
+	end
+	to.n = to.n + 1
+	from.n = from.n - 1
+	if from.n == 0 then
+		galaxy[sec_from] = nil
+		map.settle(sec_from)
+	end
+	vmap.set(sec_from, COLOR[from.camp], from.n)
+	vmap.set(sec_to, COLOR[to.camp], to.n)
+	util.dirty_trigger(map.update)
+	util.dirty_trigger(map.is_safe)
+	util.dirty_trigger(map.can_move)
+end
+
+function map.find_ctrl(is_expand)
+	local r = {}
+	for sec, obj in pairs(galaxy) do
+		if obj.camp == "player" then
+			if can_move(sec) then
+				if is_expand then
+					if obj.n > 1 then
+						r[sec] = obj.n
+					end
+				else
+					r[sec] = obj.n
+				end
+			end
+		end
+	end
+	return r
+end
+
+function map.find_neighbor(sec)
+	local conn = connection[sec]
+	local r = {}
+	for sec in pairs(conn) do
+		if sec ~= 0 then
+			local s = galaxy[sec]
+			if not s or (s.camp == "player" and s.n < LIMIT) then
+				r[sec] = s and s.n or 0
+			end
+		end
+	end
+	return r
 end
 
 map.is_safe = util.dirty_update(function()
