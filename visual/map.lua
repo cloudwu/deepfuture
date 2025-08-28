@@ -1,37 +1,70 @@
 local widget = require "core.widget"
 local mask = require "soluna.material.mask"
 local config = require "core.rules".ui
-
 local map = {}
 local table = table
 
-global pairs, tostring, ipairs, assert
+global pairs, tostring, ipairs, assert, print_r, error
 
 local FONT_ID
 local SPRITES
 local BATCH
 
+-- size is the outer circle's radius
+-- See f https://www.redblobgames.com/grids/hexagons/
+local HEX_SIZE = config.map.size
+
 local focus_color <const> = config.map.focus_color
 local token <const> = config.map.token
 local tokens_width <const> = config.map.tokens_width
-local lines = { 1, 2, 3, 4, 3, 4, 3, 4, 3, 4, 3, 2, 1 }
-local hex_id = {
-	{ 11 },
-	{ 63, 12 },
-	{ 62, 14, 13 },
-	{ 61, 65, 15, 21 },
-	{ 64, 16, 24 },
-	{ 53, 66, 26, 22 },
-	{ 55, nil, 25 },
-	{ 52, 56, 36, 23 },
-	{ 54, 46, 34 },
-	{ 51, 45, 35, 31 },
-	{ 43, 44, 32 },
-	{ 42, 33 },
-	{ 41 },
+local SECTOR_TO_AXIAL <const> = {
+	[11] = 30, [12] = 40, [13] = 50, [14] = 31, [15] = 41, [16] = 32,
+	[21] = 60, [22] = 61, [23] = 62, [24] = 51, [25] = 52, [26] = 42,
+	[31] = 63, [32] = 54, [33] = 45, [34] = 53, [35] = 44, [36] = 43,
+	[41] = 36, [42] = 26, [43] = 16, [44] = 35, [45] = 25, [46] = 34,
+	[51] = 06, [52] = 05, [53] = 04, [54] = 15, [55] = 14, [56] = 24,
+	[61] = 03, [62] = 12, [63] = 21, [64] = 13, [65] = 22, [66] = 23,
+	[0] = 33,
 }
-local hex_drawlist = {}
 
+local AXIAL_TO_SECTOR <const> = (function()
+	local result = {}
+	for sector,v in pairs(SECTOR_TO_AXIAL) do
+		local q = v // 10
+		local r = v % 10
+		local coord = q << 3 | r
+		result[coord] = sector
+		SECTOR_TO_AXIAL[sector] = coord
+	end
+	return result
+end)()
+
+local neighbors <const> = {
+	{ 1, 0 }, { 1, -1 }, { 0 , -1},
+	{-1, 0 }, {-1,  1 }, { 0 ,  1},
+}
+local function neighbor_sector(coord, n)
+	local q = coord >> 3
+	local r = coord & 7
+	q = q + n[1]
+	r = r + n[2]
+	coord = q << 3 | r
+	return AXIAL_TO_SECTOR[coord]
+end
+
+function map.neighbors(sector)
+	local coord = SECTOR_TO_AXIAL[sector] or error ("Invalid sector " .. sector)
+	local result = {}
+	for _, n in ipairs(neighbors) do
+		local s = neighbor_sector(coord, n)
+		if s then
+			result[s] = true
+		end
+	end
+	return result
+end
+
+local hex_drawlist = {}
 local hex_people = {}
 
 local function people_icons(color, n)
@@ -68,9 +101,9 @@ end
 
 function map.update()
 	local hex_text = {}
-	for _, v in pairs(hex_id) do
-		for k, content in pairs(v) do
-			local p = hex_people[content]
+	for sector in pairs(SECTOR_TO_AXIAL) do
+		if sector ~= 0 then
+			local p = hex_people[sector]
 			if p then
 				hex_text.content = {
 					people = people_icons(table.unpack(p))
@@ -78,8 +111,8 @@ function map.update()
 			else
 				hex_text.content = nil
 			end
-			hex_text.id = tostring(content)
-			hex_drawlist[content] = widget.draw_list("hex", hex_text, FONT_ID, SPRITES)
+			hex_text.id = sector
+			hex_drawlist[sector] = widget.draw_list("hex", hex_text, FONT_ID, SPRITES)
 		end
 	end
 end
@@ -96,33 +129,33 @@ local function update_focus_color()
 	end
 end
 
+local HEX_HORIZ <const> = HEX_SIZE * 3 / 2
+local HEX_VERT <const> = HEX_SIZE * 3 ^ 0.5 / 2
+
 function map.draw(x, y)
+	y = y - 3 * HEX_VERT
 	BATCH:layer(x,y)
-	y = 0
-	for i = 1, #lines do
-		local n = lines[i]
-		local xx = - n * 72 + 288
-		for j = 1, n do
-			local id = hex_id[i][j]
-			if id then
-				local list = hex_drawlist[id]
-				for _, obj in ipairs(list) do
-					local o, dx, dy = table.unpack(obj)
-					BATCH:add(o, dx + xx, dy + y)
+	for sector, coord in pairs(SECTOR_TO_AXIAL) do
+		local q = coord >> 3
+		local r = coord & 7
+		
+		local x = HEX_HORIZ * r 
+		local y = HEX_VERT * ((q << 1) + r)
+		
+		if sector == 0 then
+			BATCH:add(SPRITES.hex, x, y)
+			BATCH:add(SPRITES.core, x, y)
+		else
+			BATCH:layer(x,y)
+			widget.draw(BATCH, hex_drawlist[sector])
+			if sector == focus.sector then
+				local c = update_focus_color()
+				if c then
+					BATCH:add(mask.mask(SPRITES.hex, c))
 				end
-				if id == focus.sector then
-					local c = update_focus_color()
-					if c then
-						BATCH:add(mask.mask(SPRITES.hex, c), xx, y)
-					end
-				end
-			else
-				BATCH:add(SPRITES.hex, xx, y)
-				BATCH:add(SPRITES.core, xx, y)
 			end
-			xx = xx + 144
+			BATCH:layer()
 		end
-		y = y + 42
 	end
 	BATCH:layer()
 end

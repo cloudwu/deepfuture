@@ -21,6 +21,7 @@ map :
 	player  : "[blue]"
 	token : "[people]"
 	tokens_width : 3
+	size : 48
 button :
 	hover : 0xffffff
 	normal : 0xc0c0c0

@@ -4,7 +4,7 @@ local config = require "core.rules".ui
 local util = require "core.util"
 local rules = require "core.rules".map
 
-global pairs, assert, print
+global pairs, assert, print, print_r
 
 local map = {}
 
@@ -19,47 +19,9 @@ local COLOR = {
 
 local LIMIT <const> = rules.sector.limit
 
-local connection = {
-	[11] = { 63, 14, 12 },
-	[63] = { 62, 65, 14 },
-	[12] = { 14, 15, 13 },
-	[62] = { 61, 64, 65 },
-	[14] = { 65, 16, 15 },
-	[13] = { 15, 24, 21 },
-	[61] = { 53, 64 },
-	[65] = { 64, 66, 16 },
-	[15] = { 16, 26, 24 },
-	[21] = { 24, 22 },
-	[64] = { 53, 55, 66 },
-	[16] = { 66, 0, 26 },
-	[24] = { 26, 25, 22 },
-	[53] = { 52, 55 },
-	[66] = { 55, 56, 0 },
-	[26] = { 0, 36, 25 },
-	[22] = { 25, 23 },
-	[55] = { 52, 54, 56 },
-	[0] = { 56, 46, 36 },
-	[25] = { 36, 34, 23 },
-	[52] = { 51, 54 },
-	[56] = { 54, 45, 46 },
-	[36] = { 46, 35, 34 },
-	[23] = { 34, 31 },
-	[54] = { 51, 43, 45 },
-	[46] = { 45, 44, 35 },
-	[34] = { 35, 32, 31 },
-	[51] = { 43 },
-	[45] = { 43, 42, 44 },
-	[35] = { 44, 33, 32 },
-	[31] = { 32 },
-	[43] = { 42 },
-	[44] = { 42, 33 },
-	[32] = { 33 },
-	[42] = { 41 },
-	[33] = { 41 },
-	[41] = {},
-}
 
-local function init_connection()
+local connection = (function ()
+	local connection = {}
 	for sec, conn in pairs(connection) do
 		local t = {}
 		for id, v in pairs(conn) do
@@ -72,8 +34,8 @@ local function init_connection()
 		end
 		connection[sec] = t
 	end
-end
-init_connection()
+	return connection
+end) ()
 
 -- todo: persisit load
 
