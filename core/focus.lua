@@ -1,18 +1,17 @@
 local focus = {}
 
-global pairs, print
+global pairs, print, next
 
 local FOCUS_ACTIVE
-local FOCUS_LOST
 local FOCUS_OBJECT
 local FOCUS_CLICK = {
 	left = {},
 	right = {},
 }
+local FOCUS_QUEUE = {}
 
 function focus.clear()
 	if FOCUS_ACTIVE then
-		FOCUS_LOST = FOCUS_ACTIVE
 		FOCUS_ACTIVE = nil
 		FOCUS_OBJECT = nil
 	end
@@ -20,19 +19,17 @@ end
 
 function focus.trigger(region, object)
 	if object then
-		if FOCUS_ACTIVE ~= region then
-			FOCUS_LOST = FOCUS_ACTIVE
-			FOCUS_ACTIVE = region
-			for k,v in pairs(FOCUS_CLICK) do
-				v.click = nil
-				v.focus = nil
-			end
+		-- new focus
+		local last = FOCUS_QUEUE[region]
+		if last ~= object then
+			local n = #FOCUS_QUEUE
+			FOCUS_QUEUE[n + 1] = region
+			FOCUS_QUEUE[n + 2] = object
+			FOCUS_QUEUE[region] = object
 		end
-		FOCUS_OBJECT = object
-	elseif FOCUS_ACTIVE == region then
-		FOCUS_ACTIVE = nil
-		FOCUS_LOST = region
-		FOCUS_OBJECT = nil
+	else
+		-- clear focus
+		FOCUS_QUEUE[region] = nil
 	end
 end
 
@@ -58,18 +55,47 @@ function focus.region()
 	return FOCUS_ACTIVE
 end
 
+local function get_current_focus()
+	local n = #FOCUS_QUEUE - 1
+	local focus, object
+	for i = n, 1, -2 do
+		local r = FOCUS_QUEUE[i]
+		if FOCUS_QUEUE[r] then
+			focus = r
+			object = FOCUS_QUEUE[i+1]
+			break
+		end
+	end
+	if focus then
+		-- new focus
+		local lost = FOCUS_ACTIVE
+		if lost == focus then
+			lost = nil
+		end
+		return focus, object, lost
+	else
+		if FOCUS_QUEUE[FOCUS_ACTIVE] then
+			-- no new focus
+			return FOCUS_ACTIVE, FOCUS_OBJECT
+		else
+			return nil, nil, FOCUS_ACTIVE
+		end
+	end
+end
+
 function focus.get(state)
-	state.lost = FOCUS_LOST
-	if not FOCUS_ACTIVE then
+	local focus, object, lost = get_current_focus()
+	state.lost = lost
+	if not focus then
 		state.object = nil
 		return false
 	end
-	if state.active == FOCUS_ACTIVE and
-		state.object == FOCUS_OBJECT then
+	if state.active == focus and
+		state.object == object then
 		return false
 	end
-	state.active = FOCUS_ACTIVE
-	state.object = FOCUS_OBJECT
+	state.active = focus
+	state.object = object
 	return true
 end
 
@@ -94,10 +120,25 @@ function focus.press(btn, region)
 end
 
 function focus.frame()
+	local focus, object = get_current_focus()
+	if focus then
+		FOCUS_ACTIVE = focus
+		FOCUS_OBJECT = object
+		if next(FOCUS_QUEUE) then
+			FOCUS_QUEUE = {}
+		end
+		FOCUS_QUEUE = { [focus] = object }
+	else
+		FOCUS_ACTIVE = nil
+		FOCUS_OBJECT = nil
+		if next(FOCUS_QUEUE) then
+			FOCUS_QUEUE = {}
+		end
+	end
+	
 	for k,v in pairs(FOCUS_CLICK) do
 		v.click = nil
 	end
-	FOCUS_LOST = nil
 end
 
 return focus

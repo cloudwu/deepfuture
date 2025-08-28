@@ -7,7 +7,7 @@ local textconv = require "soluna.text"
 local localization = require "core.localization"
 local table = table
 
-global pairs, ipairs, type
+global pairs, ipairs, type, print
 
 local widget = {}
 local scripts = {}

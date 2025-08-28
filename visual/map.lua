@@ -1,17 +1,18 @@
 local widget = require "core.widget"
 local mask = require "soluna.material.mask"
 local config = require "core.rules".ui
+local focus = require "core.focus"
 local map = {}
 local table = table
 
-global pairs, tostring, ipairs, assert, print_r, error
+global pairs, tostring, ipairs, assert, print, error
 
 local FONT_ID
 local SPRITES
 local BATCH
 
 -- size is the outer circle's radius
--- See f https://www.redblobgames.com/grids/hexagons/
+-- See https://www.redblobgames.com/grids/hexagons/
 local HEX_SIZE = config.map.size
 
 local focus_color <const> = config.map.focus_color
@@ -30,8 +31,8 @@ local SECTOR_TO_AXIAL <const> = {
 local AXIAL_TO_SECTOR <const> = (function()
 	local result = {}
 	for sector,v in pairs(SECTOR_TO_AXIAL) do
-		local q = v // 10
-		local r = v % 10
+		local r = v // 10
+		local q = v % 10
 		local coord = q << 3 | r
 		result[coord] = sector
 		SECTOR_TO_AXIAL[sector] = coord
@@ -87,15 +88,15 @@ function map.set(sector, color, n)
 	end
 end
 
-local focus = {
+local focus_sector = {
 	sector = nil,
 	time = 0,
 }
 
 function map.focus(sector)
-	if focus.sector ~= sector then
-		focus.sector = sector
-		focus.time = 60
+	if focus_sector.sector ~= sector then
+		focus_sector.sector = sector
+		focus_sector.time = 60
 	end
 end
 
@@ -118,11 +119,11 @@ function map.update()
 end
 
 local function update_focus_color()
-	if focus.sector then
-		local t = focus.time
-		focus.time = t - 1
+	if focus_sector.sector then
+		local t = focus_sector.time
+		focus_sector.time = t - 1
 		if t == 0 then
-			focus.sector = nil
+			focus_sector.sector = nil
 		else
 			return t << 24 | focus_color
 		end
@@ -148,7 +149,7 @@ function map.draw(x, y)
 		else
 			BATCH:layer(x,y)
 			widget.draw(BATCH, hex_drawlist[sector])
-			if sector == focus.sector then
+			if sector == focus_sector.sector then
 				local c = update_focus_color()
 				if c then
 					BATCH:add(mask.mask(SPRITES.hex, c))
@@ -158,6 +159,57 @@ function map.draw(x, y)
 		end
 	end
 	BATCH:layer()
+end
+
+local last_sec
+local function print_sec(sec)
+	if last_sec ~= sec then
+		last_sec = sec
+		print(sec)
+	end
+end
+
+-- Chris Cox : https://www.redblobgames.com/grids/hexagons/more-pixel-to-hex.html
+
+local HEX_SQRT3 <const> = 3 ^ 0.5
+local HEX_SCALEY <const> = 1 / (HEX_SIZE * HEX_SQRT3)
+local HEX_SCALEX <const> = 1 / HEX_SIZE
+
+function map.test(name, flag, mx, my, w, h)
+	if flag then
+		return flag
+	end
+	local x, y = BATCH:point(mx, my)
+	if x < 0 or x >= w or y < 0 or y >= h then
+		focus.trigger(name, false)
+		return false
+	end
+	
+	local hx = y * HEX_SCALEY + 3
+	local t = x * HEX_SCALEX
+	local temp = (hx - t) // 1
+	local qf = (hx + hx + temp - 3) * (1 / 3)
+	local qr = (hx + t  - temp - 1) * (1 / 3)
+	local r = qf // 1
+	local q = qr // 1
+	local c = r << 3 | q
+	local sec = AXIAL_TO_SECTOR[c]
+	if sec then
+		focus.trigger(name, sec)
+		return true
+	else
+		focus.trigger(name, false)
+		return false
+	end
+end
+
+function map.register(args)
+	local ui = args.draw
+	local test = args.test
+	function ui.map(self)
+		map.draw(self.x, self.y)
+	end
+	test.map = map.test
 end
 
 function map.init(args)

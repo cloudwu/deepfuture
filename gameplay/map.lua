@@ -19,20 +19,13 @@ local COLOR = {
 
 local LIMIT <const> = rules.sector.limit
 
-
 local connection = (function ()
 	local connection = {}
-	for sec, conn in pairs(connection) do
-		local t = {}
-		for id, v in pairs(conn) do
-			if v == true then
-				t[id] = true
-			else
-				t[v] = true
-				connection[v][sec] = true
-			end
+	for i = 1, 6 do
+		for j = 1, 6 do
+			local sec = i * 10 + j
+			connection[sec] = vmap.neighbors(sec)
 		end
-		connection[sec] = t
 	end
 	return connection
 end) ()

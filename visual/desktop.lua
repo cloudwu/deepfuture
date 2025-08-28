@@ -37,10 +37,6 @@ region.background = vregion.rect()
 local hud = {}
 local describe = {}
 
-function hud:map()
-	vmap.draw(self.x, self.y)
-end
-
 do
 	local _, _, card_w, card_h = widget.get("blankcard", "card")
 
@@ -238,12 +234,10 @@ local function map_focus(region_name, card)
 		if card.sector then
 			vmap.focus(card.sector)
 		end
-	elseif r then
+	else
 		r:focus(nil)
 	end
 end
-
-local focus_state = {}
 
 local test = {
 	neutral = focus_map_test,
@@ -281,17 +275,19 @@ function M.describe(text)
 	end
 end
 
+local focus_state = {}
+
 function M.mouse_move(x, y)
 	mouse_x = x
 	mouse_y = y
 	widget.test(mouse_x, mouse_y, BATCH, DESC and TESTLIST.desc or TESTLIST.hud)
-end
-
-function M.draw(count)
 	if focus.get(focus_state) then
 		map_focus(focus_state.active, focus_state.object)
 	end
 	map_focus(focus_state.lost)
+end
+
+function M.draw(count)
 	widget.draw(BATCH, DRAWLIST.hud, focus.region())
 	if DESC then
 		widget.draw(BATCH, DRAWLIST.describe)
@@ -415,14 +411,17 @@ function M.init(args)
 	function update_desc_list()
 		DRAWLIST.describe = widget.draw_list("describe", layouts.describe, font_id, sprites)
 	end
-	update_draw_list()
-	update_test_list()
-	TESTLIST.desc = widget.test_list("describe", test)
 	region.discard:add(desktop.discard)
-	vtrack.register {
+	local d = {
 		draw = hud,
 		test = test,
 	}
+	vtrack.register(d)
+	vmap.register(d)
+	
+	TESTLIST.desc = widget.test_list("describe", test)
+	update_draw_list()
+	update_test_list()
 end
 
 return M
