@@ -35,7 +35,7 @@ local DECK
 local HISTORY
 
 local function gen_marker(obj)
-	obj._marker = tostring(obj.value) .. "$(suit." .. ui.suit[obj.suit] .. ")"
+	obj._marker = tostring(obj.value) .. card.suit_info(obj)
 end
 
 local card_meta = {
@@ -69,7 +69,7 @@ function card.init_deck()
 end
 
 local GAME
-local areas = { "draw", "discard", "hand", "neutral", "homeworld", "colony" }
+local areas = { "draw", "discard", "hand", "neutral", "homeworld", "colony", "challenge" }
 
 function areas.draw(init)
 	local n = 1
@@ -321,14 +321,14 @@ local function gen_adv_desc(adv)
 	end
 	if adv.value == nil then
 		assert(adv.suit, "Missing adv.suit")
-		adv._suit = "$(suit."..ui.suit[adv.suit]..")"
+		adv._suit = card.suit_info(adv)
 		adv._name = nil
 		adv._stage = nil
 		adv._desc = nil
 	else
 		local adv_name = advancement.name(adv.suit, adv.value)
 		local prefix = "$(adv."..advancement.name(adv.suit, adv.value).."."
-		adv._suit = "$(suit."..ui.suit[adv.suit]..")"
+		adv._suit = card.suit_info(adv)
 		adv._name = advancement.info(adv_name, "name").. "." .. adv.era
 		adv._desc = advancement.info(adv_name, "desc")
 		local stage = advancement.stage(adv.suit, adv.value)
@@ -516,6 +516,67 @@ function card.check_only_sector(sec)
 	end
 	return true	
 end
+
+local function get_adv_suit(c, key, r)
+	local adv = c[key]
+	if adv == nil then
+		return
+	end
+	if adv.value and adv.suit then
+		r[adv.suit] = true
+	end
+end
+
+function card.adv_suits(c)
+	local r = {}
+	get_adv_suit(c, "adv1", r)
+	get_adv_suit(c, "adv2", r)
+	get_adv_suit(c, "adv3", r)
+	return r
+end
+
+function card.find_suit(where, suits, r)
+	r = r or {}
+	local area = GAME[where]
+	for i, id in ipairs(area) do
+		local c = DECK[id]
+		if suits[c.suit] then
+			r[c] = true
+		end
+	end
+	return r
+end
+
+local function suit_info(c)
+	return "$(suit."..ui.suit[c.suit]..")"
+end
+
+card.suit_info = suit_info
+
+local function suit_text(s)
+	if s == nil then
+		return ""
+	else
+		return suit_info(s)
+	end
+end
+
+local function unique(t, obj)
+	if t[obj] == nil then
+		t[obj] = true
+		t[#t+1] = obj
+	end
+end
+
+function card.payment_text(c)
+	local markers = {}
+	unique(markers, suit_text(c.adv1))
+	unique(markers, suit_text(c.adv2))
+	unique(markers, suit_text(c.adv3))
+	
+	return table.concat(markers)
+end
+
 
 -- todo: load deck
 

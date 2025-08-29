@@ -10,30 +10,6 @@ local table = table
 
 global none
 
-local function suit_text(s)
-	if s == nil then
-		return ""
-	else
-		return "$(suit."..ui.suit[s.suit]..")"
-	end
-end
-
-local function unique(t, obj)
-	if t[obj] == nil then
-		t[obj] = true
-		t[#t+1] = obj
-	end
-end
-
-local function gen_payment(c)
-	local markers = {}
-	unique(markers, suit_text(c.adv1))
-	unique(markers, suit_text(c.adv2))
-	unique(markers, suit_text(c.adv3))
-	
-	return table.concat(markers)
-end
-
 local function gen_adv_(c, stage, desc)
 	local stage = "adv"..stage
 	local s = c[stage]
@@ -97,10 +73,10 @@ function M.action(args)
 		sector = c.sector,
 		name = c.name,
 		era = c.era,
-		payment = gen_payment(c),
+		payment = card.payment_text(c),
 	}
 	if c.suit then
-		desc.suit = "$(suit." .. ui.suit[c.suit] .. ")"
+		desc.suit = card.suit_info(c)
 		desc.action = "$(action." .. phase.action[c.suit] .. ")"
 		desc.action_desc = "$(action." .. phase.action[c.suit] .. ".detail)"
 	end

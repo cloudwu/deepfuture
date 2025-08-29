@@ -10,7 +10,7 @@ logo :
 	size : 40
 	text_align : C
 cards :
-	text : card.number
+	text : card.extra
 	height : 80
 	size : 30
 	text_align : C

@@ -97,6 +97,7 @@ local function choose_action()
 				return card.plan_blankcard()
 			else
 				-- action skip
+				break
 			end
 		end
 		flow.sleep(0)
@@ -111,7 +112,7 @@ local function create_plan_card(newcard)
 	for idx,suit in ipairs(SUITS) do
 		local c = util.shallow_clone(newcard, {})
 		c.suit = suit
-		c._marker = "$(suit." .. ui.suit[suit] .. ")"
+		c._marker = card.suit_info(c)
 		suit_card[c] = true
 		flow.sleep(5)
 		vdesktop.add("deck", c)

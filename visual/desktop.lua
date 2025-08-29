@@ -22,7 +22,7 @@ local VTIPS = {}
 local M = {}
 
 local desktop = {
-	discard = { type = "back" },
+	discard = { type = "back", text = "$(card.number)" },
 	draw_pile = 0,
 	discard_pile = 0,
 	seen = 0,
