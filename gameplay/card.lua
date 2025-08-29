@@ -6,6 +6,7 @@ local error = error
 local advancement = require "gameplay.advancement"
 local rules = require "core.rules".phase
 local ui = require "core.rules".ui
+local util = require "core.util"
 
 global tostring, setmetatable, ipairs, pairs, print, print_r, assert, tonumber, type
 
@@ -28,15 +29,13 @@ type : blank world tech civ deleted
 
 ]]
 
-local actions = {
-	"S", "M", "R", "K", "H", "F"
-}
+local actions = util.keys(ui.suit)
 
 local DECK
 local HISTORY
 
 local function gen_marker(obj)
-	obj._marker = tostring(obj.value) .. "$(suit." .. obj.suit .. ")"
+	obj._marker = tostring(obj.value) .. "$(suit." .. ui.suit[obj.suit] .. ")"
 end
 
 local card_meta = {
@@ -196,6 +195,19 @@ function card.draw_type(type)
 	end
 end
 
+function card.plan_blankcard()
+	local newcard = #DECK + 1
+	
+	local card = new_card {
+		_id = newcard,
+		type = "blank",
+		era = HISTORY.era,
+	}
+	
+	DECK[newcard] = card
+	return card
+end
+
 function card.generate_newcard()
 	local card1 = draw_card()
 	local card2 = draw_card()
@@ -309,14 +321,14 @@ local function gen_adv_desc(adv)
 	end
 	if adv.value == nil then
 		assert(adv.suit, "Missing adv.suit")
-		adv._suit = "$(suit."..adv.suit..")"
+		adv._suit = "$(suit."..ui.suit[adv.suit]..")"
 		adv._name = nil
 		adv._stage = nil
 		adv._desc = nil
 	else
 		local adv_name = advancement.name(adv.suit, adv.value)
 		local prefix = "$(adv."..advancement.name(adv.suit, adv.value).."."
-		adv._suit = "$(suit."..adv.suit..")"
+		adv._suit = "$(suit."..ui.suit[adv.suit]..")"
 		adv._name = advancement.info(adv_name, "name").. "." .. adv.era
 		adv._desc = advancement.info(adv_name, "desc")
 		local stage = advancement.stage(adv.suit, adv.value)

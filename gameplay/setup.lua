@@ -9,6 +9,7 @@ local map = require "gameplay.map"
 local track = require "gameplay.track"
 local rules = require "core.rules".phase
 local test = require "gameplay.test"
+local util = require "core.util"
 local string = string
 
 global pairs, ipairs, tostring, print
@@ -113,13 +114,6 @@ local function choose_world(hands)
 	return homeworld
 end
 
-local function clone_card(from, to)
-	for k,v in pairs(from) do
-		to[k] = v
-	end
-	return to
-end
-
 local function new_world(hands)
 	local focus_state = {}
 	
@@ -164,8 +158,8 @@ local function new_world(hands)
 	card.putdown("hand", newcard)
 	
 	-- clone from blank
-	local clone = clone_card(newcard, {})
-	clone.adv1 = clone_card(newcard.adv1, {})
+	local clone = util.shallow_clone(newcard, {})
+	clone.adv1 = util.shallow_clone(newcard.adv1, {})
 	
 	vdesktop.add("deck", clone)
 	vdesktop.transfer("deck", clone, "float")

@@ -31,3 +31,10 @@ button :
 	font_size : 16
 payment :
 	upkeep : "[cube]"
+suit :
+	S : sun
+	M : moon
+	R : heart
+	K : skull
+	H : hand
+	F : foot

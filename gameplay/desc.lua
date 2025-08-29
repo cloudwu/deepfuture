@@ -4,6 +4,8 @@ local vdesktop = require "visual.desktop"
 local vtips = require "visual.tips" .layer "desc"
 local card = require "gameplay.card"
 local advancement = require "gameplay.advancement"
+local ui = require "core.rules".ui
+local phase = require "core.rules".phase
 local table = table
 
 global none
@@ -12,7 +14,7 @@ local function suit_text(s)
 	if s == nil then
 		return ""
 	else
-		return "$(suit."..s.suit..")"
+		return "$(suit."..ui.suit[s.suit]..")"
 	end
 end
 
@@ -98,9 +100,9 @@ function M.action(args)
 		payment = gen_payment(c),
 	}
 	if c.suit then
-		desc.suit = "$(suit." .. c.suit .. ")"
-		desc.action = "$(action." .. c.suit .. ")"
-		desc.action_desc = "$(action." .. c.suit .. ".detail)"
+		desc.suit = "$(suit." .. ui.suit[c.suit] .. ")"
+		desc.action = "$(action." .. phase.action[c.suit] .. ")"
+		desc.action_desc = "$(action." .. phase.action[c.suit] .. ".detail)"
 	end
 	gen_adv(c, desc)
 	wait_for_return(desc)

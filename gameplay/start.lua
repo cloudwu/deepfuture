@@ -554,6 +554,8 @@ local function choose_cards(advs, n)
 	local button = {
 		text = "button.start",
 		n = n,
+	}
+	local desc = {
 		seen = nil,
 	}
 	local card_tips = {}
@@ -567,9 +569,9 @@ local function choose_cards(advs, n)
 			if where == "button1" then
 				vtips.set("tips.start.skip", button)
 			elseif where == "discard" then
-				button.seen = card.seen()
-				if button.seen > 0 then
-					vtips.set("tips.look.pile", button)
+				desc.seen = card.seen()
+				if desc.seen > 0 then
+					vtips.set("tips.look.pile", desc)
 				end
 			else
 				local focus = advs:focus(focus_state.object)

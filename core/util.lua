@@ -1,7 +1,7 @@
 local util = {}
 
 local next = next
-global type, getmetatable, setmetatable
+global type, getmetatable, setmetatable, pairs
 
 -- todo: flush all cache (change localization)
 function util.cache(f)
@@ -52,6 +52,23 @@ end
 
 function util.dirty_trigger(update)
 	dirty_flag[update] = nil
+end
+
+function util.shallow_clone(from, to)
+	for k,v in pairs(from) do
+		to[k] = v
+	end
+	return to
+end
+
+function util.keys(t)
+	local keys = {}
+	local n = 1
+	for k in pairs(t) do
+		keys[n] = k
+		n = n + 1
+	end
+	return keys
 end
 
 return util

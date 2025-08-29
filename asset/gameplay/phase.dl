@@ -7,3 +7,10 @@ start :
 	hand_limit : 10
 payment :
 	upkeep_limit : 3
+action :
+	S : power
+	M : settle
+	K : advance
+	R : grow
+	H : battle
+	F : expand
