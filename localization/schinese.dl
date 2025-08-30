@@ -4,6 +4,7 @@ schinese:
   button.new_world : "创建"
   button.action.plan : "计划"
   button.action.skip : "跳过(${n})"
+  button.restart : "再来一盘"
   tips.setup.homeworld : "[lbutton]选择 [blue]${world}[n] 作为母星"
   tips.setup.invalid : "请选择$(card.type.world)，这是${type}"
   tips.setup.newworld : "[lbutton]创建一张[blue]新的$(card.type.world)[n]作为母星\n - 因为手牌中没有$(card.type.world)"
@@ -56,6 +57,10 @@ schinese:
   tips.challenge.card : "[lbutton]弃掉这张${challenge_suit}卡避免挑战"
   tips.challenge.invalid : "选择挑战卡应对挑战${choice|}${nochoice|}"
   tips.challenge.effect : "[lbutton]${suit} ${effect}\n - ${card}来源于这张卡"
+  tips.end.homeworld : "[800000]失去了所有殖民地[n]"
+  tips.end.M : "[800000]$(hud.M.logo) 力量衰落[n]"
+  tips.end.S : "[800000]$(hud.S.logo) 失去稳定[n]"
+  tips.end.X : "[800000]$(hud.X.logo) 异星天灾[n]"
   challenge.corruption.name : "腐败遍地"
   challenge.resource.name : "资源枯竭"
   challenge.pirate.name : "海盗袭击"
@@ -134,6 +139,7 @@ schinese:
   phase.action : 行动
   phase.payment : 支付
   phase.challenge : 挑战
+  phase.end : 结束
   card.type.world : "[worldcard]星球卡"
   card.type.blank : "[blankcard]空白卡"
   card.type.tech : "[techcard]科技卡"

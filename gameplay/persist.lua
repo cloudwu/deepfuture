@@ -19,7 +19,6 @@ local function loadfile(filename)
 end
 
 function persist.init(entry, init)
-	assert(DATA[entry] == nil)
 	DATA[entry] = init
 	return init
 end

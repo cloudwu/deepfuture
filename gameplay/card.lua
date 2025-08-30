@@ -448,8 +448,11 @@ function card.test_newcard(args)
 end
 
 function card.card(where, index)
-	local c = GAME[where][index]
-	return DECK[c]
+	local pile = GAME[where]
+	if pile then
+		local c = pile[index]
+		return DECK[c]
+	end
 end
 
 function card.upkeep(c)

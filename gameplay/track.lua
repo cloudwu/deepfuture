@@ -84,9 +84,18 @@ function track.setup()
 	local t = {}
 	for key, v in pairs(rules) do
 		t[key] = v.init
+		vtrack.move(key, v.init)
 	end
 	TRACK = persist.init("track", t)
 	update()
+end
+
+function track.loss()
+	for t, value in pairs(TRACK) do
+		if value == rules[t].loss then
+			return t
+		end
+	end
 end
 
 return track

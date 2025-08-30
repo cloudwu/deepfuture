@@ -209,7 +209,7 @@ local function add_rival(lost, sector, n)
 		local c = card.draw_discard()
 		vdesktop.add("deck", c)
 		vdesktop.transfer("deck", c, "float")
-		wait_moving("deck", c)
+		wait_moving("float", c)
 		interval()
 		local value = c.value
 		local ncard = card.find_value("neutral", value)
@@ -247,7 +247,11 @@ local function add_rival(lost, sector, n)
 		if dec > 0 then
 			vmap.focus(sector)
 			n = n - 1
-			vdesktop.set_text("phase", nil, RIVAL_TOKEN:rep(n))
+			if n == 0 then
+				vdesktop.set_text("phase")
+			else
+				vdesktop.set_text("phase", nil, RIVAL_TOKEN:rep(n))
+			end
 			interval()
 		else
 			lost_sector = false
@@ -260,10 +264,13 @@ local function add_rival(lost, sector, n)
 	while n > 0 do
 		local rival = map.add_neutral(sector, 1)
 		if rival == 0 then
-			print("ADD", n)
-			vdesktop.set_text("phase", nil, RIVAL_TOKEN:rep(n))
-			interval()
 			n = n - 1
+			if n == 0 then
+				vdesktop.set_text("phase")
+			else
+				vdesktop.set_text("phase", nil, RIVAL_TOKEN:rep(n))
+			end
+			interval()
 		else
 			break
 		end
@@ -321,6 +328,7 @@ local function add_neutral(lost, rival)
 		card.discard(last)
 		vdesktop.transfer("neutral", last, "deck")
 	end
+	card.putdown("neutral", c)
 	wait_moving("neutral", c)
 	vmap.focus(c.sector)
 	add_rival(lost, c.sector, rival)
@@ -380,10 +388,16 @@ local function lost_sectors(lost)
 		vdesktop.transfer("homeworld", c , "deck")
 		flow.sleep(5)
 		if not relocate() then
-			return "loss"
+			vtips.set()
+			return "loss", "homeworld"
 		end
 	end
-	return "start"
+	local loss = track.loss()
+	if loss then
+		return "loss", loss
+	else
+		return "start"
+	end
 end
 
 return function ()

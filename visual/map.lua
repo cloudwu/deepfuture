@@ -175,14 +175,6 @@ function map.draw(x, y)
 	BATCH:layer()
 end
 
-local last_sec
-local function print_sec(sec)
-	if last_sec ~= sec then
-		last_sec = sec
-		print(sec)
-	end
-end
-
 -- Chris Cox : https://www.redblobgames.com/grids/hexagons/more-pixel-to-hex.html
 
 local HEX_SQRT3 <const> = 3 ^ 0.5
@@ -224,6 +216,15 @@ function map.register(args)
 		map.draw(self.x, self.y)
 	end
 	test.map = map.test
+end
+
+function map.clear()
+	focus_sector.sector = nil
+	focus_sector.time = 0
+	hex_drawlist = {}
+	hex_people = {}
+	mask_sector = {}
+	map.update()
 end
 
 function map.init(args)

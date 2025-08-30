@@ -32,10 +32,11 @@ end) ()
 
 -- todo: persisit load
 
-function map.init()
+function map.setup()
 	galaxy = persist.init("galaxy", {})
 	frontier = {}
 	colony = {}
+	vmap.clear()
 end
 
 local function add_people(sec, n, camp)

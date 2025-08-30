@@ -306,10 +306,29 @@ local function set_neutral_test()
 	end
 end
 
+local function clear(where)
+	local n = 1
+	while true do
+		local c = card.card(where, n)
+		if c == nil then
+			return
+		end
+		n = n + 1
+		vdesktop.transfer(where, c, "deck")
+		flow.sleep(5)
+	end
+end
+
 return function ()
+	vtips.set()
 	vdesktop.set_text("phase", "$(phase.setup)")
+	clear "hand"
+	clear "homeworld"
+	clear "colony"
+	clear "neutral"
 	card.setup()
 	track.setup()
+	map.setup()
 	test.patch "setup"
 	local hands = draw_hands()
 	local homeworld = set_homeworld(hands)

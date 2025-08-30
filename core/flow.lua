@@ -1,7 +1,7 @@
 local coroutine = require "soluna.coroutine"
 local debug = debug
 
-global assert, error, tostring
+global assert, error, tostring, print
 
 local flow = {}
 
@@ -21,8 +21,8 @@ function flow.enter(state, args)
 	local f = STATE[state] or error ("Missing state " .. state)
 	CURRENT.state = state
 	CURRENT.thread = coroutine.create(function()
-		local next_state = f(args)
-		return "NEXT", next_state
+		local next_state, args = f(args)
+		return "NEXT", next_state, args
 	end)
 end
 
@@ -40,9 +40,9 @@ end
 
 local command = {}
 
-function command.NEXT(state)
+function command.NEXT(state, args)
 	CURRENT.thread = nil
-	flow.enter(state)
+	flow.enter(state, args)
 end
 
 function command.SLEEP(tick)
@@ -62,9 +62,9 @@ function command.RESUME(thread)
 end
 
 local function update_process(thread)
-	local ok, cmd, arg = coroutine.resume(thread)
+	local ok, cmd, arg1, arg2 = coroutine.resume(thread)
 	if ok then
-		command[cmd](arg)
+		command[cmd](arg1, arg2)
 	else
 		error(tostring(cmd) .. "\n" .. debug.traceback(thread))
 	end

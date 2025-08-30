@@ -19,15 +19,13 @@ setup :
 	type : world
 	name : TEST
 	sector : 65
-	adv :
-		art
+	adv : art
 	---
 	to : colony
 	type : world
 	sector : 22
 	name : TEST
-	adv :
-		art
+	adv : infrastructure
 	---
 	type : galaxy
 	sector : 22
@@ -43,6 +41,7 @@ start :
 	to : seen
 	type : world	# challenge 1 : neutral world
 	sector : 66
+	adv : art
 	---
 	to : seen
 	type : blank	# challenge 1 : neutral
