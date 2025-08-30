@@ -146,7 +146,7 @@ schinese:
   card.seen : "[blue][eye] ${seen}[n]"
   hud.world : 母星
   hud.colony : 殖民地
-  hud.phase : "${text}阶段"
+  hud.phase : "${text}阶段\n${extra|}"
   hud.mark : "${mark}"
   hud.C : "C"
   hud.C.logo : "[culture]"

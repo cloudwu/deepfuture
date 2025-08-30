@@ -5,6 +5,7 @@ local vcard = require "visual.card"
 local card = require "gameplay.card"
 local rules = require "core.rules".phase
 local challenge_rules = require "core.rules".challenge
+local ui = require "core.rules".ui
 local focus = require "core.focus"
 local vdesktop = require "visual.desktop"
 local track = require "gameplay.track"
@@ -14,6 +15,8 @@ local look = require "gameplay.look"
 local relocate = require "gameplay.relocate"
 
 global pairs, print, ipairs, print_r, error, next, print_r, next, assert
+
+local RIVAL_TOKEN <const> = ui.map.token
 
 local function challenge(challenge_card)
 	card.pickup("challenge", challenge_card)
@@ -198,7 +201,7 @@ local function accept_challenge(card_suit)
 end
 
 local function interval()
-	flow.sleep(20)
+	flow.sleep(10)
 end
 
 local function add_rival(lost, sector, n)
@@ -238,15 +241,34 @@ local function add_rival(lost, sector, n)
 		end
 		vmap.focus(sector)
 	end
-	local dec = map.sub_player(sector, n)
-	if dec > 0 then
-		vmap.focus(sector)
-		interval()
+	local lost_sector = true
+	while n > 0 do
+		local dec = map.sub_player(sector, 1)
+		if dec > 0 then
+			vmap.focus(sector)
+			n = n - 1
+			vdesktop.set_text("phase", nil, RIVAL_TOKEN:rep(n))
+			interval()
+		else
+			lost_sector = false
+			break
+		end
+	end
+	if lost_sector then
 		lost[sector] = true
 	end
-	local rival = map.add_neutral(sector, n - dec)
-	flow.sleep(5)
-	if rival > 0 then
+	while n > 0 do
+		local rival = map.add_neutral(sector, 1)
+		if rival == 0 then
+			print("ADD", n)
+			vdesktop.set_text("phase", nil, RIVAL_TOKEN:rep(n))
+			interval()
+			n = n - 1
+		else
+			break
+		end
+	end
+	if n > 0 then
 		local c = card.draw_discard()
 		vdesktop.add("deck", c)
 		vdesktop.transfer("deck", c, "float")
@@ -255,11 +277,19 @@ local function add_rival(lost, sector, n)
 		vdesktop.transfer("float", c, "deck")
 		wait_moving("deck", c)
 		local value = c.value
-		local n = map.neighbor(sector, value)
-		if n then
-			vmap.focus(n)
-			return add_rival(lost, n, rival)
+		local neighbor = map.neighbor(sector, value)
+		if neighbor then
+			vmap.focus(neighbor)
+			return add_rival(lost, neighbor, n)
 		end
+	end
+end
+
+local function set_title_rival(rival)
+	for i = 1, rival do
+		local extra = RIVAL_TOKEN:rep(i)
+		vdesktop.set_text("phase", nil, extra)
+		interval()
 	end
 end
 
@@ -282,7 +312,7 @@ local function add_neutral(lost, rival)
 		return
 	end
 	wait_moving("float", c)
-	interval()
+	set_title_rival(rival)
 	-- move this world to neutral
 	vdesktop.transfer("float", c, "neutral")
 	local last = card.find_value("neutral", c.value)
@@ -293,7 +323,6 @@ local function add_neutral(lost, rival)
 	end
 	wait_moving("neutral", c)
 	vmap.focus(c.sector)
-	flow.sleep(5)
 	add_rival(lost, c.sector, rival)
 	interval()
 end
@@ -308,6 +337,7 @@ local function execute_challenge(lost, name)
 	end
 	if rule.rival then
 		-- nil : random
+		set_title_rival(rule.rival)
 		add_rival(lost, nil, rule.rival)
 	end
 	local rival = rule.world

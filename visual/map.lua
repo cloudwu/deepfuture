@@ -64,7 +64,6 @@ function map.neighbors(sector)
 	for idx, n in ipairs(neighbors) do
 		local s = neighbor_sector(coord, n)
 		if s then
-			print("NEIGHBOR", sector, idx, s)
 			result[s] = idx
 		end
 	end

@@ -70,10 +70,15 @@ function map.sub_player(sec, n)
 		-- clear sector
 		galaxy[sec] = nil
 		n = s.n
+		s.n = 0
 	else
 		s.n = s.n - n
 	end
-	vmap.set(sec, nil)
+	if s.n == 0 then
+		vmap.set(sec, nil)
+	else
+		vmap.set(sec, COLOR[s.camp], s.n)
+	end
 	util.dirty_trigger(map.update)
 	util.dirty_trigger(map.is_safe)
 	util.dirty_trigger(map.can_move)
