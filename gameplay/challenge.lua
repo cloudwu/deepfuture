@@ -403,5 +403,6 @@ return function ()
 			vdesktop.transfer("float", c, "deck")
 		end
 	end
+	map.set_galaxy(0, 0)
 	return lost_sectors(lost)
 end

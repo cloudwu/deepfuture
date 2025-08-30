@@ -119,9 +119,14 @@ function map.settle(sec)
 end
 
 function map.set_galaxy(sec, n, camp)
-	local s = { n = n, camp = camp }
-	galaxy[sec] = s
-	vmap.set(sec, COLOR[camp], n)
+	if n == 0 then
+		galaxy[sec] = nil
+		vmap.set(sec, nil)
+	else
+		local s = { n = n, camp = camp }
+		galaxy[sec] = s
+		vmap.set(sec, COLOR[camp], n)
+	end
 	util.dirty_trigger(map.update)
 	util.dirty_trigger(map.is_safe)
 	util.dirty_trigger(map.can_move)
