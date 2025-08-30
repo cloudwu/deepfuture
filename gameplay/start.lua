@@ -209,6 +209,7 @@ end
 local function dec_tracks()
 	local focus_state = {}
 	local desc = { effect = "$(adv.economy.name) $(adv.economy.desc)" }
+	track.focus(true)
 	while true do
 		if focus.get(focus_state) then
 			if focus_state.active == "track" then

@@ -14,6 +14,8 @@ schinese:
   tips.action.neutral : "$(tips.explain)"
   tips.action.colony : "$(tips.explain)"
   tips.action.finish : " - 结束$(phase.action)阶段\n - 进入$(phase.payment)阶段"
+  tips.action.map : "银河系的地图\n - 黑色[people]表示敌人\n - [blue]蓝色[people][n]表示你的人口"
+  tips.action.track : "游戏进度条\n - $(hud.C.logo)文化 $(hud.M.logo)力量 $(hud.S.logo)稳定 $(hud.X.logo)异星\n - 应当避免[coin]落到[cross]\n - 尽可能将[coin]推进到[star]"
   tips.button.plan : "[lbutton]创建并保留一张$(card.type.blank)\n - 指定$(card.type.blank)的类型\n - 弃掉所有其它手牌\n$(tips.action.finish)"
   tips.button.actionskip : "[lbutton]跳过 ${n} 个行动\n$(tips.action.finish)"
   tips.explain : "[rbutton]解释这张卡"
