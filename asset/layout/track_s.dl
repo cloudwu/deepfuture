@@ -8,6 +8,6 @@ track:
 track:
 	id : focus
 	flex : 1
-	background : 0x800000ff
+	background : 0x4000ff00
 track:
 	flex : 1

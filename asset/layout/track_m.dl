@@ -6,7 +6,7 @@ track:
 track:
 	id : focus
 	flex : 1
-	background : 0x800000C0
+	background : 0x4000ff00
 track:
 	flex : 1
 track:

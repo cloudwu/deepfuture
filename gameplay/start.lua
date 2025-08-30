@@ -209,36 +209,24 @@ end
 local function dec_tracks()
 	local focus_state = {}
 	local desc = { effect = "$(adv.economy.name) $(adv.economy.desc)" }
-	local last_focus
-	local function focus_track(what)
-		if last_focus then
-			track.focus(last_focus, false)
-		end
-		if what then
-			track.focus(what, true)
-			last_focus = what
-		else
-			last_focus = nil
-		end
-	end
 	while true do
 		if focus.get(focus_state) then
 			if focus_state.active == "track" then
 				local what = focus_state.object	-- C/M/S/X
+				track.focus(false)
 				desc.type = "$(hud." .. what .. ")"
 				if track.check(what, -1) then
 					vtips.set("tips.track.invalid", desc)
-					focus_track()
 				else
 					vtips.set("tips.track.valid", desc)
-					focus_track(what)
+					track.focus(what, true)
 				end
 			else
-				focus_track()
 				vtips.set "tips.track.out"
 			end
 		elseif focus_state.lost then
-			focus_track()
+			-- focus all
+			track.focus(true)
 			vtips.set()
 		end
 		
@@ -594,12 +582,11 @@ local function choose_cards(advs, n)
 				vtips.set(nil)
 				local adv_name = advs:focus(c)
 				advs:use(c)
-				local f = start_adv[adv_name]
-				if f then	-- todo :  remove this after complete all 6 start adv
-					vdesktop.button_enable("button1", nil)
-					f(advs)
-					vdesktop.button_enable("button1", button)
-				end
+				local f = start_adv[adv_name] or ("Unknown adv : " .. adv_name)
+				vdesktop.button_enable("button1", nil)
+				-- do adv
+				f(advs)
+				vdesktop.button_enable("button1", button)
 				local n = advs:update()
 				if n == 0 then
 					-- no more advs available
