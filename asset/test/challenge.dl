@@ -1,0 +1,64 @@
+# test challenge phase
+
+setup :
+	---
+	type : world
+	to : neutral
+	name : TEST
+	sector : 66
+	value : 1
+	adv : art
+	---
+	type : world
+	to : neutral
+	name : TEST
+	sector : 23
+	value : 2
+	adv : art
+	---
+	type : world
+	name : TEST
+	sector : 65
+	adv :
+		art
+	---
+	to : colony
+	type : world
+	sector : 22
+	name : TEST
+	adv :
+		art
+	---
+	type : galaxy
+	sector : 22
+	n : 1
+	camp : player
+start :
+	---
+	to : seen
+	type : blank	# challenge 1 : add neutral
+	suit : S
+	value : 1
+	---
+	to : seen
+	type : world	# challenge 1 : neutral world
+	sector : 66
+	---
+	to : seen
+	type : blank	# challenge 1 : neutral
+	suit : M
+	---
+	to : seen
+	type : blank	# challenge 1 : type
+	suit : F
+	value : 6
+	---
+	to : seen
+	type : blank	# challenge 2
+	suit : R
+	value : 6
+	---
+	to : seen
+	type : blank	# challenge 1
+	suit : H
+	

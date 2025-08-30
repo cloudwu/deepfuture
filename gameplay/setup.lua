@@ -12,7 +12,7 @@ local test = require "gameplay.test"
 local util = require "core.util"
 local string = string
 
-global pairs, ipairs, tostring, print
+global pairs, ipairs, tostring, print, print_r
 
 local function sleep()
 	flow.sleep(5)
@@ -44,16 +44,24 @@ local function wait_for_moving_float(moving)
 	until not more
 end
 
-local function set_neutral(homeworld)
-	local sec = homeworld.sector
+local function set_neutral()
 	local tmp = {}
+	local n = 1
+	while true do
+		local c = card.card("neutral", n)
+		if c == nil then
+			break
+		end
+		n = n + 1
+		tmp[c.value] = true
+	end
 	local moving = {}
 	for i = 1, card.count "draw" + card.count "discard" do
 		local c = draw_card()
 		if c == nil then
 			break
 		end
-		if c.type ~= "world" or c.sector == sec or tmp[c.value] then
+		if c.type ~= "world" or tmp[c.value] or map.player_ctrl(c.sector) then
 			card.discard(c)
 			moving[c] = "deck"
 			if tmp[c.value] then
@@ -157,9 +165,8 @@ local function new_world(hands)
 
 	card.putdown("hand", newcard)
 	
-	-- clone from blank
-	local clone = util.shallow_clone(newcard, {})
-	clone.adv1 = util.shallow_clone(newcard.adv1, {})
+	local clone = { type = "blank", _marker = "" }
+	clone.adv1 = {}
 	
 	vdesktop.add("deck", clone)
 	vdesktop.transfer("deck", clone, "float")
@@ -180,7 +187,7 @@ local function new_world(hands)
 	interval()
 
 	moving(card1, function ()
-		clone._marker = tostring(clone.value)-- .. "$(suit." .. obj.suit .. ")"
+		clone._marker = tostring(newcard.value)
 	end)
 
 	moving(card2, function ()
@@ -194,6 +201,8 @@ local function new_world(hands)
 	moving(sec2, function ()
 		clone.sector = newcard.sector
 		clone.name = newcard.name
+		clone.era = newcard.era
+		clone.type = "world"
 	end)
 
 	moving(advsuit, function ()
@@ -283,6 +292,20 @@ local function draw_hands()
 	return h
 end
 
+local function set_neutral_test()
+	local n = 1
+	while true do
+		local c = card.card("neutral", n)
+		if c == nil then
+			return
+		end
+		n = n + 1
+		map.add_neutral(c.sector, 3)
+		vdesktop.add("deck", c)
+		vdesktop.transfer("deck", c, "neutral")
+	end
+end
+
 return function ()
 	vdesktop.set_text("phase", "$(phase.setup)")
 	card.setup()
@@ -290,6 +313,7 @@ return function ()
 	test.patch "setup"
 	local hands = draw_hands()
 	local homeworld = set_homeworld(hands)
-	set_neutral( homeworld )
+	set_neutral_test()	
+	set_neutral()
 	return "start"
 end

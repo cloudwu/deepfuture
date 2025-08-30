@@ -5,7 +5,7 @@ local vdesktop = require "visual.desktop"
 local vcard = require "visual.card"
 local focus = require "core.focus"
 
-global pairs
+global pairs, print
 
 local M = {}
 
@@ -35,7 +35,7 @@ local function wait_click(p)
 	local desc = { n = nil }
 	while true do
 		if focus.get(focus_state) then
-			if focus_state.active == "float" then
+			if focus_state.active == "float" and p[focus_state.object] then
 				desc.n = p[focus_state.object]
 				vtips.set ("tips.look.focus", desc)
 			else

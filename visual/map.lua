@@ -42,8 +42,12 @@ local AXIAL_TO_SECTOR <const> = (function()
 end)()
 
 local neighbors <const> = {
-	{ 1, 0 }, { 1, -1 }, { 0 , -1},
-	{-1, 0 }, {-1,  1 }, { 0 ,  1},
+	{-1,  0},	-- 1 N
+	{-1,  1},	-- 2 NE
+	{ 0,  1},	-- 3 SE
+	{ 1,  0},	-- 4 S
+	{ 1, -1},	-- 5 SW
+	{ 0, -1},	-- 6 NW
 }
 local function neighbor_sector(coord, n)
 	local q = coord >> 3
@@ -57,10 +61,11 @@ end
 function map.neighbors(sector)
 	local coord = SECTOR_TO_AXIAL[sector] or error ("Invalid sector " .. sector)
 	local result = {}
-	for _, n in ipairs(neighbors) do
+	for idx, n in ipairs(neighbors) do
 		local s = neighbor_sector(coord, n)
 		if s then
-			result[s] = true
+			print("NEIGHBOR", sector, idx, s)
+			result[s] = idx
 		end
 	end
 	return result

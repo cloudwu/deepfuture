@@ -1,0 +1,92 @@
+1S : corruption
+2S : resource
+3S : pirate
+4S : warlord
+5S : separatist
+6S : newciv
+1M : unrest
+2M : enervating
+3M : decadence
+4M : rioting
+5M : intrigue
+6M : newciv
+1R : disaster
+2R : enervating
+3R : decadence
+4R : rioting
+5R : intrigue
+6R : newciv
+1K : infiltration
+2K : xenophobia
+3K : estrangement
+4K : worshipping
+5K : intervention
+6K : newciv
+1H : pacifist
+2H : resource
+3H : pirate
+4H : warlord
+5H : separatist
+6H : newciv
+1F : conflict
+2F : xenophobia
+3F : estrangement
+4F : worshipping
+5F : intervention
+6F : newciv
+corruption :
+	M : 2
+	X : 1
+resource :
+	M : 3
+	C : 1
+pirate :
+	M : 2
+	C : 2
+warlord :
+	M : 3
+	rival : 1
+separatist :
+	M : 1
+	rival : 3
+newciv :
+	world : 5
+unrest :
+	S : 2
+	M : 1
+enervating :
+	S : 3
+	C : 1
+decadence :
+	S : 2
+	C : 2
+rioting :
+	S : 3
+	rival : 1
+intrigue :
+	S : 1
+	rival : 3
+disaster :
+	S : 2
+	X : 1
+infiltration :
+	X : 2
+	S : 1
+xenophobia :
+	X : 3
+	C : 1
+estrangement :
+	X : 2
+	C : 2
+worshipping :
+	X : 3
+	rival : 1
+intervention :
+	X : 1
+	rival : 3
+pacifist :
+	M : 2
+	S : 1
+conflict :
+	X : 2
+	M : 1

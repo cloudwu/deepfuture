@@ -1,5 +1,6 @@
 local genname = require "gameplay.name"
 local persist = require "gameplay.persist"
+local vcard = require "visual.card"
 local math = math
 local table = table
 local error = error
@@ -34,6 +35,12 @@ local actions = util.keys(ui.suit)
 local DECK
 local HISTORY
 
+function card.dump_deck()
+	for _, c in ipairs(DECK) do
+		print(c, c._marker)
+	end
+end
+
 local function gen_marker(obj)
 	obj._marker = tostring(obj.value) .. card.suit_info(obj)
 end
@@ -59,6 +66,7 @@ function card.init_deck()
 				era = 0,
 			}
 			gen_marker(card)
+			vcard.flush(card)
 			init[id] = card; id = id + 1
 		end
 	end
@@ -239,11 +247,13 @@ end
 
 local function convert_adv(advname)
 	local c = advancement.config(advname)
-	return {
-		suit = c.suit,
-		value = c.value,
-		era = HISTORY.era,
-	}
+	if c then
+		return {
+			suit = c.suit,
+			value = c.value,
+			era = HISTORY.era,
+		}
+	end
 end
 
 function card.nextera()
@@ -266,7 +276,6 @@ function card.find_value(where, value)
 	for i, id in ipairs(area) do
 		local c = DECK[id]
 		if c.value == value then
-			local id = table.remove(area, i)
 			return DECK[id]
 		end
 	end
@@ -404,8 +413,8 @@ function card.test_newcard(args)
 		_id = newcard,
 		type = args.type or "blank",
 		era = args.era or HISTORY.era,
-		value = 1,
-		suit = actions[1],
+		value = args.value or 1,
+		suit = args.suit or actions[1],
 		sector = args.sector or 11,
 	}
 	if args.marker then
@@ -542,6 +551,32 @@ function card.find_suit(where, suits, r)
 		local c = DECK[id]
 		if suits[c.suit] then
 			r[c] = true
+		end
+	end
+	return r
+end
+
+local function match_adv_suit(c, key, suits, r)
+	local adv = c[key]
+	if adv == nil then
+		return
+	end
+	if adv.value and adv.suit then
+		if suits[adv.suit] then
+			r[c] = true
+		end
+	end
+end
+
+function card.find_upkeep(suits, r)
+	r = r or {}
+	for i, id in ipairs(GAME.homeworld) do
+		local upkeep = GAME.upkeep[id] or 0
+		if upkeep > 0 then
+			local c = DECK[id]
+			match_adv_suit(c, "adv1", suits, r)
+			match_adv_suit(c, "adv2", suits, r)
+			match_adv_suit(c, "adv3", suits, r)
 		end
 	end
 	return r

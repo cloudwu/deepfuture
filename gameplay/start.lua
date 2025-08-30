@@ -14,10 +14,11 @@ local show_desc = require "gameplay.desc"
 local rules = require "core.rules".phase
 local class = require "core.class"
 local look = require "gameplay.look"
+local relocate = require "gameplay.relocate"
 require "gameplay.effect"
 local test = require "gameplay.test"
 
-global print, ipairs, pairs, print_r, error, tostring, next
+global print, ipairs, pairs, print_r, error, tostring, next, assert
 
 local UPKEEP_LIMIT <const> = rules.payment.upkeep_limit
 
@@ -323,45 +324,6 @@ local function set_sector_mask(sectors, flag)
 	end
 end
 
-local function choose_new_homeworld()
-	vtips.set()
-	local colony = {}
-	local n = 1
-	while true do
-		local c = card.card("colony", n)
-		if not c then
-			break
-		end
-		vcard.mask(c, true)
-		colony[n] = c
-		n = n + 1
-	end
-	local focus_state = {}
-	local new_homeworld
-	while true do
-		if focus.get(focus_state) then
-			if focus_state.active == "colony" then
-				vtips.set "tips.homeworld.set"
-			else
-				vtips.set "tips.homeworld.invalid"
-			end
-		elseif focus_state.lost then
-			vtips.set()
-		end
-		local sec, region = focus.click "left"
-		if sec and region == "colony" then
-			new_homeworld = card.pickup("colony", sec)
-			break
-		end
-		flow.sleep(0)
-	end
-	for _, c in ipairs(colony) do
-		vcard.mask(c)
-	end
-	card.putdown("homeworld", new_homeworld)
-	vdesktop.transfer("colony", new_homeworld, "homeworld")
-end
-
 local function discard_planets(advs, cards)
 	local drop_homeworld
 	for c in pairs(cards) do
@@ -380,11 +342,14 @@ local function discard_planets(advs, cards)
 		local value = drop_homeworld.value
 		local n = card.find_value("neutral", value)
 		if n then
+			n = card.pickup("neutral", n)
+			card.discard(n)
 			vdesktop.transfer("neutral", n, "deck")
 			flow.sleep(5)
 		end
 		vdesktop.transfer("homeworld", drop_homeworld, "neutral")
-		choose_new_homeworld()
+		local succ = relocate()
+		assert(succ, "Lost all colony")
 	end
 end
 
@@ -698,9 +663,9 @@ local function discard_used_cards(advs)
 end
 
 return function ()
-	test_patch()
 	vdesktop.set_text("phase", "$(phase.start)")
 	draw_hands()
+	test_patch()
 	
 	local advs = class.effect "START"
 	advs:add_pile "hand"
@@ -712,6 +677,7 @@ return function ()
 		choose_cards(advs, n)
 		discard_used_cards(advs)
 		advs:reset()
+		track.focus(false)
 	end
 	discard_hand_limit()
 

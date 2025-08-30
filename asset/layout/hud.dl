@@ -101,9 +101,9 @@ bottom :
 float :
 	position : absolute
 	left : 0
+	right : 100
 	top : 0
 	height : 100%
-	width : 100%
 	justify : center
 	center :
 		height : 280

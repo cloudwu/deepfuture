@@ -6,6 +6,7 @@ local card = require "gameplay.card"
 local rules = require "core.rules".phase
 local focus = require "core.focus"
 local vdesktop = require "visual.desktop"
+local look = require "gameplay.look"
 
 local UPKEEP_LIMIT <const> = rules.payment.upkeep_limit
 
@@ -13,14 +14,18 @@ global pairs, print, ipairs, print_r, error, next, print_r
 
 local function payment(homeworld_card)
 	local challenge_card
-	vcard.mask(homeworld_card, true)
 	local suits = card.adv_suits(homeworld_card)
 	local need_suits = card.payment_text(homeworld_card)
 	local cards = card.find_suit("colony", suits, {})
 	card.find_suit("hand", suits, cards)
-	for c in pairs(cards) do
-		vcard.mask(c, true)
+	local function set_mask(flag)
+		vcard.mask(homeworld_card, flag)
+		for c in pairs(cards) do
+			vcard.mask(c, flag)
+		end
 	end
+	set_mask(true)
+	
 	local upkeep_n = card.upkeep(homeworld_card)
 	local focus_state = {}
 	local desc = {
@@ -50,6 +55,11 @@ local function payment(homeworld_card)
 			else
 				vtips.set ("tips.payment.invalid", desc)
 			end
+		elseif focus_state.active == "discard" then
+			desc.seen = card.seen()
+			if desc.seen > 0 then
+				vtips.set("tips.look.pile", desc)
+			end
 		elseif focus_state.lost then
 			vtips.set()
 		end
@@ -66,15 +76,19 @@ local function payment(homeworld_card)
 			card.upkeep_change(homeworld_card, 1)
 			vcard.flush(homeworld_card)
 			break
+		elseif where == "discard" then
+			set_mask()
+			local n = card.seen()
+			if n > 0 then
+				look.start(n)
+			end
+			set_mask(true)
 		end
 		flow.sleep(0)
 	end
 
-	for c in pairs(cards) do
-		vcard.mask(c)
-	end
-	vcard.mask(homeworld_card)
-	
+	set_mask()
+
 	return challenge_card
 end
 
@@ -84,11 +98,13 @@ local function add_challenge(challenge_card)
 	challenge_card._back = back
 	vdesktop.add("deck", back)
 	vdesktop.transfer("deck", back, "colony")
+	flow.sleep(5)
 end
 
 return function ()
 	vdesktop.set_text("phase", "$(phase.payment)")
 	local n = 1
+	local backs = {}
 	while true do
 		local c = card.card("homeworld", n)
 		if c == nil then
@@ -100,11 +116,24 @@ return function ()
 		vtips.set()
 		if challenge_card then
 			add_challenge(challenge_card)
+			backs[#backs+1] = challenge_card._back
 		end
 	end
 	for i = 1, rules.payment.least do
+		flow.sleep(5)
 		local c = card.draw_card()
 		add_challenge(c)
+		backs[#backs+1] = c._back
 	end
-	return "idle"
+	
+	-- wait for moving
+	repeat
+		local moving
+		for _, c in ipairs(backs) do
+			moving = moving or vdesktop.moving("colony", c)
+			flow.sleep(0)
+		end
+	until not moving
+	
+	return "challenge"
 end

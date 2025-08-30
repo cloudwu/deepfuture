@@ -60,6 +60,26 @@ local function add_people(sec, n, camp)
 	return r
 end
 
+function map.sub_player(sec, n)
+	local s = galaxy[sec]
+	if not s or s.camp ~= "player" then
+		return 0
+	end
+	assert(s.camp == "player")
+	if s.n <= n then
+		-- clear sector
+		galaxy[sec] = nil
+		n = s.n
+	else
+		s.n = s.n - n
+	end
+	vmap.set(sec, nil)
+	util.dirty_trigger(map.update)
+	util.dirty_trigger(map.is_safe)
+	util.dirty_trigger(map.can_move)
+	return n
+end
+
 function map.add_neutral(sec, n)
 	return add_people(sec, n, "neutral")
 end
@@ -67,6 +87,20 @@ end
 function map.add_player(sec, n)
 	frontier[sec] = true
 	return add_people(sec, n, "player")
+end
+
+function map.player_ctrl(sec)
+	local s = galaxy[sec]
+	return s and s.camp == "player"
+end
+
+function map.neighbor(sector, idx)
+	local conn = connection[sector]
+	for n, id in pairs(conn) do
+		if id == idx then
+			return n
+		end
+	end
 end
 
 function map.settle(sec)

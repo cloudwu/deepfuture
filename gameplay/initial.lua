@@ -1,5 +1,6 @@
 local card = require "gameplay.card"
 local name = require "gameplay.name"
+local vcard = require "visual.card"
 local rules = require "core.rules".phase
 local math = math
 
@@ -24,6 +25,7 @@ function initial.new()
 		local index = card.add_adv_suit(world, advsuit.suit)
 		card.add_adv_value(world, index, advtype.value, 0)
 		name.world(world)
+		vcard.flush(world)
 		card.discard(world)
 	end
 	card.cleanup()

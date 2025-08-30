@@ -3,8 +3,9 @@ local file = require "soluna.file"
 local card = require "gameplay.card"
 local soluna = require "soluna"
 local map = require "gameplay.map"
+local table = table
 
-global ipairs, print
+global ipairs, print, tostring
 
 local test = {}
 local TESTCASE
@@ -33,6 +34,7 @@ local function add_hand(action)
 		-- add new card
 		local c = card.test_newcard(action)
 		if action.to == "seen" then
+			print("Put on draw pile", c)
 			card.puttop(c)
 		else
 			card.putdown(action.to or "hand", c)

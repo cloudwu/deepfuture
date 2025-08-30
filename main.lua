@@ -54,6 +54,7 @@ game.setup = require "gameplay.setup"
 game.start = require "gameplay.start"
 game.action = require "gameplay.action"
 game.payment = require "gameplay.payment"
+game.challenge = require "gameplay.challenge"
 
 function game.idle()
 	return "idle"
