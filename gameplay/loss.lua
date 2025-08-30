@@ -1,9 +1,13 @@
 local flow = require "core.flow"
 local vdesktop = require "visual.desktop"
 local focus = require "core.focus"
+local card = require "gameplay.card"
 
 return function(reason)
-	vdesktop.set_text("phase", "$(phase.end)", "$(tips.end."..reason..")")
+	vdesktop.set_text("phase", {
+		text = "$(phase.end)",
+		extra = "$(tips.end."..reason..")"
+	})
 	local button = {
 		text = "button.restart",
 	}	
@@ -16,5 +20,7 @@ return function(reason)
 		flow.sleep(0)
 	end
 	vdesktop.button_enable("button1", nil)
+	card.next_turn()
+	vdesktop.set_text("phase", { extra = false })
 	return "setup"
 end

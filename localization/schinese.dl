@@ -153,6 +153,7 @@ schinese:
   hud.world : 母星
   hud.colony : 殖民地
   hud.phase : "${text}阶段\n${extra|}"
+  hud.turn : "银河历 [blue]${turn}[n] 年"
   hud.mark : "${mark}"
   hud.C : "C"
   hud.C.logo : "[culture]"

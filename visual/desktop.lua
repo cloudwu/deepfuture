@@ -252,14 +252,16 @@ local test = {
 local mouse_x = 0
 local mouse_y = 0
 
-function M.set_text(key, text, extra)
+function M.set_text(key, args)
 	key = "text." .. key
-	local env = hud[key]
-	if env == nil then
-		hud[key] = { text = text, extra =  extra }
-	else
-		env.text = text or env.text
-		env.extra = extra
+	local env = hud[key] or {}
+	hud[key] = env
+	for k,v in pairs(args) do
+		if v then
+			env[k] = v
+		else
+			env[k] = nil
+		end
 	end
 	update_draw_list()
 end

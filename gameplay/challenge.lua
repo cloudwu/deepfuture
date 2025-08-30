@@ -248,9 +248,9 @@ local function add_rival(lost, sector, n)
 			vmap.focus(sector)
 			n = n - 1
 			if n == 0 then
-				vdesktop.set_text("phase")
+				vdesktop.set_text("phase", { extra = false })
 			else
-				vdesktop.set_text("phase", nil, RIVAL_TOKEN:rep(n))
+				vdesktop.set_text("phase", { extra = RIVAL_TOKEN:rep(n) })
 			end
 			interval()
 		else
@@ -266,9 +266,9 @@ local function add_rival(lost, sector, n)
 		if rival == 0 then
 			n = n - 1
 			if n == 0 then
-				vdesktop.set_text("phase")
+				vdesktop.set_text("phase", { extra = false })
 			else
-				vdesktop.set_text("phase", nil, RIVAL_TOKEN:rep(n))
+				vdesktop.set_text("phase", { extra = RIVAL_TOKEN:rep(n) })
 			end
 			interval()
 		else
@@ -294,8 +294,8 @@ end
 
 local function set_title_rival(rival)
 	for i = 1, rival do
-		local extra = RIVAL_TOKEN:rep(i)
-		vdesktop.set_text("phase", nil, extra)
+		local extra = 
+		vdesktop.set_text("phase", { extra = RIVAL_TOKEN:rep(i) })
 		interval()
 	end
 end
@@ -401,12 +401,13 @@ local function lost_sectors(lost)
 end
 
 return function ()
-	vdesktop.set_text("phase", "$(phase.challenge)")
+	vdesktop.set_text("phase", { text = "$(phase.challenge)" })
 	local lost = {}
 	while true do
 		local c = card.card("challenge", 1)
 		if c == nil then
 			-- todo : next round/year"
+			vdesktop.set_text("phase", { extra = false } )
 			break
 		end
 		if challenge(c) then

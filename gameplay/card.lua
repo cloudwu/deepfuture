@@ -103,6 +103,14 @@ function card.setup()
 	GAME = persist.init("game", game)
 end
 
+function card.next_turn()
+	HISTORY.year = HISTORY.year + 1
+end
+
+function card.turn()
+	return HISTORY.year
+end
+
 local function draw_card()
 	local _ENV = GAME
 	global draw, discard, seen
@@ -256,8 +264,9 @@ local function convert_adv(advname)
 	end
 end
 
-function card.nextera()
+function card.next_era()
 	HISTORY.era = HISTORY.era + 1
+	HISTORY.year = HISTORY.era * 1000
 end
 
 function card.pickup(where, card)

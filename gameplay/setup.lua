@@ -321,7 +321,6 @@ end
 
 return function ()
 	vtips.set()
-	vdesktop.set_text("phase", "$(phase.setup)")
 	clear "hand"
 	clear "homeworld"
 	clear "colony"
@@ -330,6 +329,12 @@ return function ()
 	track.setup()
 	map.setup()
 	test.patch "setup"
+	vdesktop.set_text("phase", {
+		text = "$(phase.setup)",
+	})
+	vdesktop.set_text("turn", {
+		turn = card.turn(),
+	})
 	local hands = draw_hands()
 	local homeworld = set_homeworld(hands)
 	set_neutral_test()	

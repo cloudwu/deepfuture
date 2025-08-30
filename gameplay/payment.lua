@@ -102,7 +102,7 @@ local function add_challenge(challenge_card)
 end
 
 return function ()
-	vdesktop.set_text("phase", "$(phase.payment)")
+	vdesktop.set_text("phase", { text = "$(phase.payment)" })
 	local n = 1
 	local backs = {}
 	while true do

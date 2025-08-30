@@ -76,6 +76,12 @@ desktop :
 			text : hud.world
 			height : 20
 			size : 16
+			history :
+				flex : 1
+				text : hud.turn
+				size : 16
+				text_align : R
+				env : text.turn
 		card :
 			margin : 5
 			region : homeworld

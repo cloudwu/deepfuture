@@ -29,7 +29,7 @@ function initial.new()
 		card.discard(world)
 	end
 	card.cleanup()
-	card.nextera()
+	card.next_era()
 end
 
 function initial.load(filename)

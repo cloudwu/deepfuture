@@ -166,6 +166,7 @@ local function create_plan_card(newcard)
 		end
 		if focus.click "left" == value_card then
 			vcard.mask(value_card)
+			newcard.suit = choose.suit
 			newcard.value = value_card.value
 			newcard._marker = value_card.value .. choose._marker
 			vcard.flush(newcard)
@@ -215,7 +216,7 @@ return function ()
 --	local disable = check_action(hands)
 	button_enable(nil, true)
 
-	vdesktop.set_text("phase", "$(phase.action)")
+	vdesktop.set_text("phase", { text = "$(phase.action)" } )
 	local plan_card = choose_action()
 	
 	button_enable()

@@ -9,6 +9,7 @@ global setmetatable, pairs, assert, print
 local effect = class.container "effect"
 
 function effect:add(c, from)
+	print("EFFECT ADD", c, from)
 	if from == "hand" and (c.type ~= "tech" or not card.complete(c)) then
 		return
 	end

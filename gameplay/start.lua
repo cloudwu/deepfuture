@@ -41,7 +41,7 @@ end
 local function discard_hand_limit()
 	local discard = card.count "hand" - rules.start.hand_limit
 	if discard > 0 then
-		vdesktop.set_text("phase", "$(phase.discard)")
+		vdesktop.set_text("phase", { text = "$(phase.discard)" })
 		-- discard random card
 		local focus_state = {}
 		local desc = { limit = rules.start.hand_limit }
@@ -141,7 +141,7 @@ function start_adv.art()
 end
 
 local function discard_one_card(advs)
-	vdesktop.set_text("phase", "$(phase.discard)")
+	vdesktop.set_text("phase", { text = "$(phase.discard)" })
 	local discards = {}
 	local n = 1
 	while true do
@@ -178,7 +178,7 @@ local function discard_one_card(advs)
 			local discard_card = card.pickup("hand", c)
 			if discard_card then
 				card.discard(discard_card)
-				vdesktop.set_text("phase", "$(phase.start)")
+				vdesktop.set_text("phase", { text = "$(phase.start)" })
 				for _, c in ipairs(discards) do
 					vcard.mask(c)
 				end
@@ -262,11 +262,13 @@ function start_adv.economy(advs)
 	local c1 = card.draw_hand()
 	local c2 = card.draw_hand()
 	if c1 then
+		advs:add(c1, "hand")
 		vdesktop.add("deck", c1)
 		vdesktop.transfer("deck", c1, "hand")
 		flow.sleep(5)
 	end
 	if c2 then
+		advs:add(c2, "hand")
 		vdesktop.add("deck", c2)
 		vdesktop.transfer("deck", c2, "hand")
 	end
@@ -663,7 +665,13 @@ local function discard_used_cards(advs)
 end
 
 return function ()
-	vdesktop.set_text("phase", "$(phase.start)")
+	card.next_turn()
+	vdesktop.set_text("phase", {
+		text = "$(phase.start)",
+	})
+	vdesktop.set_text("turn", {
+		turn = card.turn(),
+	})
 	draw_hands()
 	test_patch()
 	
