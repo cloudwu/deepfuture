@@ -464,6 +464,18 @@ function card.card(where, index)
 	end
 end
 
+function card.pile(where, r)
+	r = r or {}
+	local n = #r
+	local pile = GAME[where]
+	if pile then
+		for i = 1, #pile do
+			r[n+i] = DECK[pile[i]]
+		end
+	end
+	return r
+end
+
 function card.upkeep(c)
 	return GAME.upkeep[c._id] or 0
 end

@@ -2,8 +2,10 @@ local flow = require "core.flow"
 local vdesktop = require "visual.desktop"
 local focus = require "core.focus"
 local card = require "gameplay.card"
+local sync = require "gameplay.sync"
 
 return function(reason)
+	sync()
 	vdesktop.set_text("phase", {
 		text = "$(phase.end)",
 		extra = "$(tips.end."..reason..")"

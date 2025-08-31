@@ -36,7 +36,6 @@ function map.setup()
 	galaxy = persist.init("galaxy", {})
 	frontier = {}
 	colony = {}
-	vmap.clear()
 end
 
 local function add_people(sec, n, camp)
@@ -131,6 +130,14 @@ function map.set_galaxy(sec, n, camp)
 	util.dirty_trigger(map.update)
 	util.dirty_trigger(map.is_safe)
 	util.dirty_trigger(map.can_move)
+end
+
+function map.sync()
+	vmap.clear()
+	for sec, obj in pairs(galaxy) do
+		vmap.set(sec, COLOR[obj.camp], obj.n)
+	end
+	vmap.update()
 end
 
 local function can_move(sec)

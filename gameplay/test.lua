@@ -54,17 +54,6 @@ function patch.start(data)
 	end
 end
 
-function test.get_pile(what)
-	local i = 1
-	local p = {}
-	repeat
-		local c = card.card(what, i)
-		p[i] = c
-		i = i + 1
-	until not c
-	return p
-end
-
 function test.patch(phase)
 	if TESTCASE == nil then
 		return

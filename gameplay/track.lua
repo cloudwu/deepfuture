@@ -2,7 +2,6 @@ local persist = require "gameplay.persist"
 local vtrack = require "visual.track"
 local rules = require "core.rules".track
 local ui = require "core.rules".ui.track
-local util = require "core.util"
 
 global pairs, error, print
 
@@ -10,7 +9,7 @@ local track = {}
 
 local TRACK
 
-local update = util.dirty_update(function()
+local function update()
 	for k,v in pairs(TRACK) do
 		local r = rules[k]
 		if r.win then
@@ -22,7 +21,7 @@ local update = util.dirty_update(function()
 		vtrack.move(k, v)
 	end
 	vtrack.flush()
-end)
+end
 
 function track.focus(type, enable)
 	if type == true then
@@ -84,9 +83,11 @@ function track.setup()
 	local t = {}
 	for key, v in pairs(rules) do
 		t[key] = v.init
-		vtrack.move(key, v.init)
 	end
 	TRACK = persist.init("track", t)
+end
+
+function track.sync()
 	update()
 end
 

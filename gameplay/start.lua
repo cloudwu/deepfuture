@@ -17,6 +17,7 @@ local look = require "gameplay.look"
 local relocate = require "gameplay.relocate"
 require "gameplay.effect"
 local test = require "gameplay.test"
+local sync = require "gameplay.sync"
 
 global print, ipairs, pairs, print_r, error, tostring, next, assert
 
@@ -611,32 +612,6 @@ local function choose_cards(advs, n)
 	vtips.set(nil)
 end
 
-local function sync(where)
-	local p = test.get_pile(where)
-	local diff = vdesktop.sync(where, p)
-	if not diff then
-		return
-	end
-	for _, c in ipairs(diff.discard) do
-		print("START TEST DISCARD FROM", where, c)
-		vdesktop.transfer(where, c, "deck")
-		flow.sleep(5)
-	end
-	for _, c in ipairs(diff.draw) do
-		print("START TEST DRAW TO", where, c)
-		vdesktop.add("deck", c)
-		vdesktop.transfer("deck", c, where)
-		flow.sleep(5)
-	end
-end
-
-local function test_patch()
-	test.patch "start"
-	sync "hand"
-	sync "homeworld"
-	sync "colony"
-end
-
 local function discard_used_cards(advs)
 	local cards = advs:used_cards()
 	for _, c in ipairs(cards) do
@@ -661,7 +636,8 @@ return function ()
 		turn = card.turn(),
 	})
 	draw_hands()
-	test_patch()
+	test.patch "start"
+	sync()
 	
 	local advs = class.effect "START"
 	advs:add_pile "hand"

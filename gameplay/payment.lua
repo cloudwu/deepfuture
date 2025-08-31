@@ -7,6 +7,7 @@ local rules = require "core.rules".phase
 local focus = require "core.focus"
 local vdesktop = require "visual.desktop"
 local look = require "gameplay.look"
+local sync = require "gameplay.sync"
 
 local UPKEEP_LIMIT <const> = rules.payment.upkeep_limit
 
@@ -102,6 +103,7 @@ local function add_challenge(challenge_card)
 end
 
 return function ()
+	sync()
 	vdesktop.set_text("phase", { text = "$(phase.payment)" })
 	local n = 1
 	local backs = {}

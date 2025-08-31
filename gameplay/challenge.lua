@@ -13,6 +13,7 @@ local vmap = require "visual.map"
 local map = require "gameplay.map"
 local look = require "gameplay.look"
 local relocate = require "gameplay.relocate"
+local sync = require "gameplay.sync"
 
 global pairs, print, ipairs, print_r, error, next, print_r, next, assert
 
@@ -401,6 +402,7 @@ local function lost_sectors(lost)
 end
 
 return function ()
+	sync()
 	vdesktop.set_text("phase", { text = "$(phase.challenge)" })
 	local lost = {}
 	while true do

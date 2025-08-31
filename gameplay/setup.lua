@@ -10,6 +10,7 @@ local track = require "gameplay.track"
 local rules = require "core.rules".phase
 local test = require "gameplay.test"
 local util = require "core.util"
+local sync = require "gameplay.sync"
 local string = string
 
 global pairs, ipairs, tostring, print, print_r
@@ -244,7 +245,8 @@ local function choose(hands)
 	return c
 end
 
-local function set_homeworld(hands)
+local function set_homeworld()
+	local hands = card.pile "hand"
 	local homeworld = choose(hands)
 
 	for _, c in pairs(hands) do
@@ -268,21 +270,11 @@ end
 local function draw_hands()
 	local h = {}
 	local n = card.count "hand"	-- test patch may add cards
-	local draw_n = rules.setup.draw
-	if draw_n < n then
-		draw_n = n
-	end
-	for i = 1, draw_n do
-		local c
-		if i <= n then
-			c = card.card("hand", i)
-			print("SETUP TEST DRAW", c)
-		else
-			c = card.draw_hand()
-			if c == nil then
-				-- in rare case, no more cards (rules.setup.draw is too large)
-				break
-			end
+	for i = n + 1, rules.setup.draw do
+		local c = card.draw_hand()
+		if c == nil then
+			-- in rare case, no more cards (rules.setup.draw is too large)
+			break
 		end
 		h[i] = c
 		vdesktop.add("deck", c)
@@ -290,20 +282,6 @@ local function draw_hands()
 		sleep()
 	end
 	return h
-end
-
-local function set_neutral_test()
-	local n = 1
-	while true do
-		local c = card.card("neutral", n)
-		if c == nil then
-			return
-		end
-		n = n + 1
-		map.add_neutral(c.sector, 3)
-		vdesktop.add("deck", c)
-		vdesktop.transfer("deck", c, "neutral")
-	end
 end
 
 local function clear(where)
@@ -329,15 +307,15 @@ return function ()
 	track.setup()
 	map.setup()
 	test.patch "setup"
+	sync()
 	vdesktop.set_text("phase", {
 		text = "$(phase.setup)",
 	})
 	vdesktop.set_text("turn", {
 		turn = card.turn(),
 	})
-	local hands = draw_hands()
-	local homeworld = set_homeworld(hands)
-	set_neutral_test()	
+	draw_hands()
+	local homeworld = set_homeworld()
 	set_neutral()
 	return "start"
 end
