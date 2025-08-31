@@ -12,6 +12,8 @@ local look = require "gameplay.look"
 local vbutton = require "visual.button"
 local util = require "core.util"
 local persist = require "gameplay.persist"
+local sync = require "gameplay.sync"
+local effect = require "gameplay.effect"
 
 global pairs, print, ipairs, print_r, error
 
@@ -44,7 +46,7 @@ local expain_region = {
 	neutral = true,
 }
 
-local function choose_action()
+local function choose_action(hands)
 	local desc = {
 		action = nil,
 		desc = nil,
@@ -58,12 +60,17 @@ local function choose_action()
 			local c = focus_state.object
 			if where == "hand" then
 				desc.action = "$(action." .. rules.action[c.suit] .. ")"
-				if c.suit == "H" and map.is_safe() then
-					desc.desc = "$(action." .. rules.action[c.suit] .. ".desc.safe)"
+				if hands[c] then
+					if c.suit == "H" and map.is_safe() then
+						desc.desc = "$(action." .. rules.action[c.suit] .. ".desc.safe)"
+					else
+						desc.desc = "$(action." .. rules.action[c.suit] .. ".desc)"
+					end
+					vtips.set("tips.action.choose", desc)
 				else
-					desc.desc = "$(action." .. rules.action[c.suit] .. ".desc)"
+					desc.desc = "$(action." .. rules.action[c.suit] .. ".desc.invalid)"
+					vtips.set("tips.action.invalid", desc)
 				end
-				vtips.set("tips.action.choose", desc)
 			elseif where == "discard" then
 				desc.seen = card.seen()
 				if desc.seen > 0 then
@@ -193,33 +200,119 @@ local function create_plan_card(newcard)
 	vdesktop.transfer("float", newcard, "hand")
 end
 
-local check = {}
-
--- check settle
-function check.M(hands)
-	
-end
-
--- check grow
-function check.R(hands)
-end
-
-local function check_action(hands)
-	local disable = {}
-	for suit, f in pairs(check) do
-		disable[suit] = f(hands)
+-- society can settle on a new world
+local function has_society(pile)
+	local n = 1
+	while true do
+		local c = card.card(pile, n)
+		if not c then
+			return
+		end
+		if card.has_advancement(c, pile, "society") then
+			return true
+		end
+		n = n + 1
 	end
-	return disable
+end
+
+local function merge_last(hands, last)
+	if last then
+		for c, enable in pairs(last) do
+			if hands[c] == nil and enable then
+				vcard.mask(c)
+			end
+		end
+	end
+	for c, enable in pairs(hands) do
+		vcard.mask(c, enable)
+	end
+	return hands
+end
+
+local function check_settle(hands, play_card)
+	if play_card.suit ~= "M" then
+		return true
+	end
+	local can_settle = true
+	for c in pairs(hands) do
+		if c ~= play_card then
+			if c.type == "world" then
+				if map.player_ctrl(c.sector) then
+					return true
+				else
+					can_settle = false
+				end
+			elseif card.has_advancement(c, "hand", "society") then
+				return true
+			end
+		end
+	end
+	return can_settle
+end
+
+local function ctrl_neutral()
+	local n = 1
+	while true do
+		local c = card.card("neutral", n)
+		if not c then
+			return false
+		end
+		if map.player_ctrl(c.sector) then
+			return true
+		end
+		n = n + 1
+	end
+end
+
+local function check_action(last)
+	local can_grow = map.can_grow()
+	local hands = {}
+	local n = 1
+	while true do
+		local c = card.card("hand",n)
+		if not c then
+			break
+		end
+		n = n + 1
+		if not can_grow and c.suit == "R" then
+			hands[c] = false
+		else
+			hands[c] = true
+		end
+	end
+	-- check settle
+	if ctrl_neutral() then
+		return true
+	end
+	if has_society "homeworld" or has_society "colony" then
+		return merge_last(hands, last)
+	end
+	
+	for c in pairs(hands) do
+		hands[c] = check_settle(hands, c)
+	end
+
+	return merge_last(hands, last)
+end
+
+local function clear_mask(hands)
+	for c, enable in pairs(hands) do
+		if enable then
+			vcard.mask(c)
+		end
+	end
 end
 
 return function ()
---	local disable = check_action(hands)
+	sync()
+	local hands = check_action()
 	button_enable(nil, true)
 
 	vdesktop.set_text("phase", { text = "$(phase.action)" } )
-	local plan_card = choose_action()
+	local plan_card = choose_action(hands)
 	
 	button_enable()
+	clear_mask(hands)
 	
 	if plan_card then
 		create_plan_card(plan_card)

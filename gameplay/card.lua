@@ -636,6 +636,19 @@ function card.payment_text(c)
 	return table.concat(markers)
 end
 
+function card.has_advancement(c, from, adv_name)
+	if from == "hand" and (c.type ~= "tech" or not card.complete(c)) then
+		return
+	end
+	for i = 1, 3 do
+		local adv = c["adv"..i]
+		if adv and adv.value then
+			if advancement.name(adv.suit, adv.value) == adv_name then
+				return true
+			end
+		end
+	end
+end
 
 -- todo: load deck
 

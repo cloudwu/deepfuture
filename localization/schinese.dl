@@ -10,6 +10,7 @@ schinese:
   tips.setup.newworld : "[lbutton]创建一张[blue]新的$(card.type.world)[n]作为母星\n - 因为手牌中没有$(card.type.world)"
   tips.setup.newworld.invalid : "这是一张${type}，不能作为母星\n - 请创建一张新的$(card.type.world)"
   tips.action.choose : "[lbutton]选择行动[blue]${action}[n]\n - ${desc}\n$(tips.explain)"
+  tips.action.invalid : "无法进行[blue]${action}[n]行动\n - ${desc}\n$(tips.explain)"
   tips.action.homeworld : "$(tips.explain)"
   tips.action.neutral : "$(tips.explain)"
   tips.action.colony : "$(tips.explain)"
@@ -122,6 +123,7 @@ schinese:
   action.settle : "[moon]$(SETTLE)"
   action.settle.desc : "殖民[planet]星球"
   action.settle.detail : "手牌中有$(card.type.world)位于你所控制星区，可将该卡放置到$(desc.place.colony)\n - 你控制了中立星球所在星区，可将$(desc.place.neutral)中对应$(card.type.world)移动到$(desc.place.colony)\n - 将手牌中的$(card.type.blank)转换为位于你所控制星区的$(card.type.world)并放置到$(desc.place.colony)。手牌中必须没有$(card.type.world)\n - 创建一张新的位于你所控制星区的$(card.type.world)放置到$(desc.place.colony)。手牌必须没有$(card.type.world)及$(card.type.blank)\n - 若无法在你所控制的星区中放置$(card.type.world)，不能发起$(action.settle)行动"
+  action.settle.desc.invalid : "没能控制手牌中星球卡所在星区"
   action.advance : "[skull]$(ADVANCE)"
   action.advance.desc : "提升[planet]星球或[tech]科技"
   action.advance.detail : "对你的母星或殖民地进行一次提升，或向母星添加一张新的$(card.type.tech)，亦或提升一张母星中未完成的$(card.type.tech)"
@@ -135,6 +137,7 @@ schinese:
   action.expand : "[foot]$(EXPAND)"
   action.expand.desc : "向邻接星区派遣[people]人口"
   action.expand.detail : "向邻接空置星区派遣至少一个[people]人口，不可以因此失去对出发星区的控制"
+  action.expand.invalid : "所有控制的星区的人口均到达上限"
   phase.setup : 布局
   phase.start : 开始
   phase.discard : 弃牌

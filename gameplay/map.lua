@@ -9,7 +9,6 @@ global pairs, assert, print, print_r, error
 local map = {}
 
 local galaxy = {}
-local frontier = {}
 local colony = {}
 
 local COLOR = {
@@ -34,7 +33,6 @@ end) ()
 
 function map.setup()
 	galaxy = persist.init("galaxy", {})
-	frontier = {}
 	colony = {}
 end
 
@@ -57,6 +55,9 @@ local function add_people(sec, n, camp)
 	util.dirty_trigger(map.update)
 	util.dirty_trigger(map.is_safe)
 	util.dirty_trigger(map.can_move)
+	if camp == "player" then
+		util.dirty_trigger(map.can_grow)
+	end
 	return r
 end
 
@@ -82,6 +83,7 @@ function map.sub_player(sec, n)
 	util.dirty_trigger(map.update)
 	util.dirty_trigger(map.is_safe)
 	util.dirty_trigger(map.can_move)
+	util.dirty_trigger(map.can_grow)
 	return n
 end
 
@@ -90,7 +92,6 @@ function map.add_neutral(sec, n)
 end
 
 function map.add_player(sec, n)
-	frontier[sec] = true
 	return add_people(sec, n, "player")
 end
 
@@ -116,6 +117,7 @@ function map.settle(sec)
 		colony[sec] = nil
 	end
 	util.dirty_trigger(map.can_move)
+	util.dirty_trigger(map.can_grow)
 end
 
 function map.set_galaxy(sec, n, camp)
@@ -130,6 +132,9 @@ function map.set_galaxy(sec, n, camp)
 	util.dirty_trigger(map.update)
 	util.dirty_trigger(map.is_safe)
 	util.dirty_trigger(map.can_move)
+	if camp == "player" then
+		util.dirty_trigger(map.can_grow)
+	end
 end
 
 function map.sync()
@@ -173,6 +178,7 @@ function map.move(sec_from, sec_to)
 	util.dirty_trigger(map.update)
 	util.dirty_trigger(map.is_safe)
 	util.dirty_trigger(map.can_move)
+	util.dirty_trigger(map.can_grow)
 end
 
 function map.find_ctrl(is_expand)
@@ -208,12 +214,14 @@ function map.find_neighbor(sec)
 end
 
 map.is_safe = util.dirty_update(function()
-	for player in pairs(frontier) do
-		local conn = connection[player]
-		for sec in pairs(conn) do
-			local s = galaxy[sec]
-			if s and s.camp == "neutral" then
-				return false
+	for player, obj in pairs(galaxy) do
+		if obj.camp == "player" then
+			local conn = connection[player]
+			for sec in pairs(conn) do
+				local s = galaxy[sec]
+				if s and s.camp == "neutral" then
+					return false
+				end
 			end
 		end
 	end
@@ -232,8 +240,8 @@ map.can_move = util.dirty_update(function()
 			only_colony_sec = k
 		end
 	end
-	for player in pairs(frontier) do
-		if player ~= only_colony_sec or galaxy[player].n > 1 then
+	for player, obj in pairs(galaxy) do
+		if obj.camp == "player" and (player ~= only_colony_sec or obj.n > 1) then
 			-- only_colony_sec don't allow move the last people
 			local conn = connection[player]
 			for sec in pairs(conn) do
@@ -251,6 +259,14 @@ map.can_move = util.dirty_update(function()
 		end
 	end
 	return false
+end)
+
+map.can_grow = util.dirty_update(function()
+	for player, obj in pairs(galaxy) do
+		if obj.camp == "player" and obj.n < LIMIT then
+			return true
+		end
+	end
 end)
 
 return map

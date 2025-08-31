@@ -6,19 +6,8 @@ local map = require "gameplay.map"
 
 global ipairs
 
-local function get_pile(what)
-	local i = 1
-	local p = {}
-	repeat
-		local c = card.card(what, i)
-		p[i] = c
-		i = i + 1
-	until not c
-	return p
-end
-
 local function sync(where)
-	local p = get_pile(where)
+	local p = card.pile(where)
 	local diff = vdesktop.sync(where, p)
 	if not diff then
 		return

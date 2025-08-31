@@ -7,19 +7,12 @@ local vdesktop = require "visual.desktop"
 
 return function()
 	vtips.set()
-	local colony = {}
-	local n = 1
-	while true do
-		local c = card.card("colony", n)
-		if not c then
-			break
-		end
-		vcard.mask(c, true)
-		colony[n] = c
-		n = n + 1
-	end
+	local colony = card.pile "colony"
 	if #colony == 0 then
 		return
+	end
+	for _, c in ipairs(colony) do
+		vcard.mask(c, true)
 	end
 	local focus_state = {}
 	local new_homeworld
