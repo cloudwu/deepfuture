@@ -1,0 +1,20 @@
+# test POWER action
+
+start :
+	---
+	type : blank
+	suit : S
+	---
+	type : tech
+	name : TEST
+	adv :
+		industry
+		energy
+		labor
+	---
+	type : tech
+	name : TEST
+	adv :
+		empire
+		devices
+		art

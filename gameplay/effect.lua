@@ -1,10 +1,18 @@
 local advancement = require "gameplay.advancement"
 local vcard = require "visual.card"
 local card = require "gameplay.card"
-local util = require "core.util"
 local class = require "core.class"
+local vdesktop = require "visual.desktop"
+local flow = require "core.flow"
+local look = require "gameplay.look"
+local vtips = require "visual.tips".layer "hud"
+local focus = require "core.focus"
+local track = require "gameplay.track"
+local show_desc = require "gameplay.desc"
+local vbutton = require "visual.button"
+local map = require "gameplay.map"
 
-global setmetatable, pairs, assert, print
+global setmetatable, pairs, assert, print, ipairs
 
 local effect = class.container "effect"
 
@@ -71,7 +79,6 @@ function effect:focus(c)
 end
 
 function effect:update()
-	local check = util.cache(card.check_adv)
 	local tmp = {}
 	local n = 0
 	for c, adv in pairs(self) do
@@ -85,7 +92,7 @@ function effect:update()
 						adv.focus = nil
 					end
 				else
-					local enable = check[obj.name]
+					local enable = self:check_adv(obj.name, c)
 					obj.enable = enable
 					if enable then
 						n = n + 1
@@ -215,6 +222,288 @@ function effect:can_use(c)
 		return
 	end
 	return self[c].focus
+end
+
+function effect:discard_used_cards()
+	local cards = self:used_cards()
+	for _, c in ipairs(cards) do
+		if card.pickup("hand", c) then
+			card.discard(c)
+			vdesktop.transfer("hand", c, "deck")
+			flow.sleep(5)
+		elseif card.pickup("colony", c) then
+			card.discard(c)
+			vdesktop.transfer("colony", c, "deck")
+			flow.sleep(5)
+		end
+	end
+	self:reset()
+end
+
+function effect:look_drawpile(button)
+	local n = card.seen()
+	if n == 0 then
+		return
+	end
+	if button then
+		vdesktop.button_enable("button1", nil)
+	end
+	self:reset()
+	look.start(n)
+	self:update()
+	if button then
+		vdesktop.button_enable("button1", button)
+	end
+end
+
+local function advancement_unfocus()
+	vdesktop.draw_pile_focus(nil)
+	track.focus(false)	-- disable all focus track
+end
+
+local function advancement_focus(f)
+	if f then
+		f()
+	else
+		advancement_unfocus()
+	end
+end
+
+function effect:choose_cards(args)
+	local adv_focus = args.adv_focus
+	local adv_func = args.adv_func
+	local button = {
+		text = "button.advancement.skip",
+		n = args.n,
+		phase = "$(phase." .. args.phase .. ")",
+	}
+	local desc = {
+		seen = nil,
+	}
+	local card_tips = {}
+	local focus_state = {}
+	
+	vdesktop.button_enable("button1", button)
+	
+	while true do
+		if focus.get(focus_state) then
+			local where = focus_state.active
+			if where == "button1" then
+				vtips.set("tips.advancement.skip", button)
+			elseif where == "discard" then
+				desc.seen = card.seen()
+				if desc.seen > 0 then
+					vtips.set("tips.look.pile", desc)
+				end
+			else
+				local focus = self:focus(focus_state.object)
+				if focus then
+					advancement_focus(adv_focus[focus])
+					card_tips.adv = advancement.info(focus, "name")
+					card_tips.effect = advancement.info(focus, "desc")
+					local next_adv = self:nextadv(focus_state.object)
+					if next_adv then
+						card_tips.nextadv = advancement.info(next_adv, "name")
+						vtips.set("tips.advancement.card.multiple", card_tips)
+					else
+						vtips.set("tips.advancement.card.unique", card_tips)
+					end
+				else
+					vtips.set()
+				end
+			end
+		elseif focus_state.lost then
+			vtips.set()
+			advancement_unfocus()
+		end
+		local switch_card, region = focus.click "right"
+		if switch_card then
+			if self:can_use(switch_card) then
+				local focus = self:nextadv(switch_card, true)
+				if not focus then
+					-- unique adv, explain this card
+					vtips.set()
+					advancement_unfocus()
+					show_desc.start {
+						region = region,
+						card = switch_card,
+						name = self:focus(switch_card),
+					}
+				else
+					advancement_focus(adv_focus[focus])
+					card_tips.adv = advancement.info(focus, "name")
+					card_tips.effect = advancement.info(focus, "desc")
+					local next_adv = self:nextadv(focus_state.object)
+					card_tips.nextadv = advancement.info(next_adv, "name")
+					vtips.set("tips.advancement.card.multiple", card_tips)
+				end
+			end
+		end
+		local c, btn = focus.click "left"
+		if c then
+			if btn == "button1" then
+				break
+			end
+			if self:can_use(c) then
+				advancement_unfocus()
+				vtips.set(nil)
+				local adv_name = self:focus(c)
+				self:use(c)
+				vdesktop.button_enable("button1", nil)
+				local f = adv_func[adv_name] or ("Unknown adv : " .. adv_name)
+				-- do adv
+				f(self)
+				vdesktop.button_enable("button1", button)
+				local n = self:update()
+				if n == 0 then
+					-- no more advs available
+					break
+				end
+				advancement_unfocus()
+				vtips.set(nil)
+				if n ~= button.n then
+					button.n = n
+					vbutton.update "button1"
+				end
+			elseif btn == "discard" then
+				self:look_drawpile(button)
+			else
+				vtips.set(nil)
+			end
+		end
+		flow.sleep(0)
+	end
+	vdesktop.button_enable("button1", nil)
+	vtips.set(nil)
+end
+
+function effect:discard_one_card(phase, advname, action)
+	vdesktop.set_text("phase", {
+		text = "$(phase.discard)",
+		extra = "[blue]$(adv." .. advname .. ".name)[n]",
+	})
+	local discards = {}
+	local n = 1
+	while true do
+		local c = card.card("hand", n)
+		if c == nil then
+			break
+		end
+		if not self:is_used(c) then
+			discards[#discards+1] = c
+		end
+		n = n + 1
+	end
+	self:reset()
+	for _, c in ipairs(discards) do
+		vcard.mask(c, true)
+	end
+	local focus_state = {}
+	while true do
+		if focus.get(focus_state) then
+			if focus_state.active == "hand" then
+				if self:is_used(focus_state.object) then
+					vtips.set "tips.discard.advancement.invalid"
+				else
+					vtips.set "tips.discard.advancement"
+				end
+			else
+				vtips.set()
+			end
+		elseif focus_state.lost then
+			vtips.set()
+		end
+		local c = focus.click "left"
+		if c and not self:is_used(c) then
+			local discard_card = card.pickup("hand", c)
+			if discard_card then
+				card.discard(discard_card)
+				vdesktop.set_text("phase", { text = "$(phase." .. phase .. ")", extra = action })
+				for _, c in ipairs(discards) do
+					vcard.mask(c)
+				end
+				self:remove(discard_card)
+				vdesktop.transfer("hand", discard_card, "deck")
+				vtips.set()
+				break
+			end
+		end
+		flow.sleep(0)
+	end
+end
+
+local adv_check = {}
+
+function adv_check.computation(draw_pile, discard_pile)
+	local n = card.count "draw" + card.count "discard"
+	return n > 0
+end
+
+function adv_check.art()
+	return track.check("C", 1)
+end
+
+local function check_any_track()
+	return track.check("C", -1) or track.check("M", -1) or track.check("S", -1) or track.check("X", -1)
+end
+
+function adv_check.infrastructure()
+	-- inject from core.card
+	if advancement._upkeep_full() then
+		return false
+	end
+	return check_any_track()
+end
+
+function adv_check.history()
+	return card.count "draw" - card.seen() > 0
+end
+
+function adv_check.economy()
+	local n = card.count "draw" + card.count "discard"
+	return check_any_track() and n > 0
+end
+
+function adv_check.exploration()
+	local r = map.can_move()
+	return r
+end
+
+function adv_check.industry(advs, current_card)
+	local n = 1
+	while true do
+		local c = card.card("hand", n)
+		if c == nil then
+			break
+		end
+		if not advs:is_used(c) and c ~= current_card then
+			return true
+		end
+		n = n + 1
+	end
+	return false
+end
+
+function adv_check.energy()
+	local n = card.count "draw" + card.count "discard"
+	return n > 0
+end
+
+function adv_check.labor()
+	return track.check("S", 1)
+end
+
+function adv_check.empire()
+	return track.check("M", 1)
+end
+
+function adv_check.devices()
+	return track.check("C", 2)
+end
+
+function effect:check_adv(adv_name, c)
+	local f = adv_check[adv_name] or ("Invalid adv " .. adv_name)
+	return f(self, c)
 end
 
 function class.effect(action)

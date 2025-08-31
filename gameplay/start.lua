@@ -5,15 +5,11 @@ local vdesktop = require "visual.desktop"
 local vcard = require "visual.card"
 local focus = require "core.focus"
 local vtips = require "visual.tips".layer "hud"
-local vbutton = require "visual.button"
 local track = require "gameplay.track"
-local advancement = require "gameplay.advancement"
 local map = require "gameplay.map"
 local vmap = require "visual.map"
-local show_desc = require "gameplay.desc"
 local rules = require "core.rules".phase
 local class = require "core.class"
-local look = require "gameplay.look"
 local relocate = require "gameplay.relocate"
 require "gameplay.effect"
 local test = require "gameplay.test"
@@ -77,22 +73,6 @@ local function discard_hand_limit()
 	end
 end
 
-local function look_drawpile(advs, button)
-	local n = card.seen()
-	if n == 0 then
-		return
-	end
-	if button then
-		vdesktop.button_enable("button1", nil)
-	end
-	advs:reset()
-	look.start(n)
-	advs:update()
-	if button then
-		vdesktop.button_enable("button1", button)
-	end
-end
-
 local adv_focus = {}
 
 -- todo: focus status manager
@@ -121,73 +101,10 @@ function adv_focus.history()
 	vdesktop.draw_pile_focus(true)
 end
 
-local function advancement_unfocus()
-	vdesktop.draw_pile_focus(nil)
-	track.focus(false)	-- disable all focus track
-end
-
-local function advancement_focus(what)
-	local f = adv_focus[what]
-	if f then
-		f()
-	else
-		advancement_unfocus()
-	end
-end
-
 local start_adv = {}
 
 function start_adv.art()
 	track.advance("C", 1)
-end
-
-local function discard_one_card(advs)
-	vdesktop.set_text("phase", { text = "$(phase.discard)" })
-	local discards = {}
-	local n = 1
-	while true do
-		local c = card.card("hand", n)
-		if c == nil then
-			break
-		end
-		if not advs:is_used(c) then
-			discards[#discards+1] = c
-		end
-		n = n + 1
-	end
-	advs:reset()
-	for _, c in ipairs(discards) do
-		vcard.mask(c, true)
-	end
-	local focus_state = {}
-	while true do
-		if focus.get(focus_state) then
-			if focus_state.active == "hand" then
-				if advs:is_used(focus_state.object) then
-					vtips.set "tips.discard.computation.invalid"
-				else
-					vtips.set "tips.discard.computation"
-				end
-			else
-				vtips.set()
-			end
-		elseif focus_state.lost then
-			vtips.set()
-		end
-		local c = focus.click "left"
-		if c and not advs:is_used(c) then
-			local discard_card = card.pickup("hand", c)
-			if discard_card then
-				card.discard(discard_card)
-				vdesktop.set_text("phase", { text = "$(phase.start)" })
-				for _, c in ipairs(discards) do
-					vcard.mask(c)
-				end
-				return discard_card
-			end
-		end
-		flow.sleep(0)
-	end
 end
 
 function start_adv.computation(advs)
@@ -197,14 +114,12 @@ function start_adv.computation(advs)
 	vdesktop.transfer("deck", c, "hand")
 	flow.sleep(0)	-- release focus
 	advs:update()
-	local discard = discard_one_card(advs)
-	advs:remove(discard)
-	vdesktop.transfer("hand", discard, "deck")
+	advs:discard_one_card ("start", "computation", false)
 end
 
 function start_adv.history(advs)
 	card.add_seen()
-	look_drawpile(advs)
+	advs:look_drawpile(advs)
 end
 
 local function dec_tracks()
@@ -507,126 +422,6 @@ function start_adv.exploration(advs)
 	advs:update()
 end
 
-local function choose_cards(advs, n)
-	local button = {
-		text = "button.start",
-		n = n,
-	}
-	local desc = {
-		seen = nil,
-	}
-	local card_tips = {}
-	local focus_state = {}
-	
-	vdesktop.button_enable("button1", button)
-	
-	while true do
-		if focus.get(focus_state) then
-			local where = focus_state.active
-			if where == "button1" then
-				vtips.set("tips.start.skip", button)
-			elseif where == "discard" then
-				desc.seen = card.seen()
-				if desc.seen > 0 then
-					vtips.set("tips.look.pile", desc)
-				end
-			else
-				local focus = advs:focus(focus_state.object)
-				if focus then
-					advancement_focus(focus)
-					card_tips.adv = advancement.info(focus, "name")
-					card_tips.effect = advancement.info(focus, "desc")
-					local next_adv = advs:nextadv(focus_state.object)
-					if next_adv then
-						card_tips.nextadv = advancement.info(next_adv, "name")
-						vtips.set("tips.start.card.multiple", card_tips)
-					else
-						vtips.set("tips.start.card.unique", card_tips)
-					end
-				else
-					vtips.set()
-				end
-			end
-		elseif focus_state.lost then
-			vtips.set()
-			advancement_unfocus()
-		end
-		local switch_card, region = focus.click "right"
-		if switch_card then
-			if advs:can_use(switch_card) then
-				local focus = advs:nextadv(switch_card, true)
-				if not focus then
-					-- unique adv, explain this card
-					vtips.set()
-					advancement_unfocus()
-					show_desc.start {
-						region = region,
-						card = switch_card,
-						name = advs:focus(switch_card),
-					}
-				else
-					advancement_focus(focus)
-					card_tips.adv = advancement.info(focus, "name")
-					card_tips.effect = advancement.info(focus, "desc")
-					local next_adv = advs:nextadv(focus_state.object)
-					card_tips.nextadv = advancement.info(next_adv, "name")
-					vtips.set("tips.start.card.multiple", card_tips)
-				end
-			end
-		end
-		local c, btn = focus.click "left"
-		if c then
-			if btn == "button1" then
-				break
-			end
-			if advs:can_use(c) then
-				advancement_unfocus()
-				vtips.set(nil)
-				local adv_name = advs:focus(c)
-				advs:use(c)
-				local f = start_adv[adv_name] or ("Unknown adv : " .. adv_name)
-				vdesktop.button_enable("button1", nil)
-				-- do adv
-				f(advs)
-				vdesktop.button_enable("button1", button)
-				local n = advs:update()
-				if n == 0 then
-					-- no more advs available
-					break
-				end
-				advancement_unfocus()
-				vtips.set(nil)
-				if n ~= button.n then
-					button.n = n
-					vbutton.update "button1"
-				end
-			elseif btn == "discard" then
-				look_drawpile(advs, button)
-			else
-				vtips.set(nil)
-			end
-		end
-		flow.sleep(0)
-	end
-	vdesktop.button_enable("button1", nil)
-	vtips.set(nil)
-end
-
-local function discard_used_cards(advs)
-	local cards = advs:used_cards()
-	for _, c in ipairs(cards) do
-		if card.pickup("hand", c) then
-			card.discard(c)
-			vdesktop.transfer("hand", c, "deck")
-			flow.sleep(5)
-		elseif card.pickup("colony", c) then
-			card.discard(c)
-			vdesktop.transfer("colony", c, "deck")
-			flow.sleep(5)
-		end
-	end
-end
-
 return function ()
 	card.next_turn()
 	vdesktop.set_text("phase", {
@@ -646,9 +441,13 @@ return function ()
 	
 	local n = advs:update()
 	if n > 0 then
-		choose_cards(advs, n)
-		discard_used_cards(advs)
-		advs:reset()
+		advs:choose_cards {
+			n = n,
+			phase = "start",
+			adv_focus = adv_focus,
+			adv_func = start_adv,
+		}
+		advs:discard_used_cards()
 		track.focus(false)
 	end
 	discard_hand_limit()

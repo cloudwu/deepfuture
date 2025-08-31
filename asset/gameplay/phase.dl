@@ -15,4 +15,5 @@ action :
 	R : grow
 	H : battle
 	F : expand
-	
+power :
+	draw : 2

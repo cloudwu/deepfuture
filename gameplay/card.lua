@@ -393,29 +393,6 @@ function card.complete(c)
 	return c.adv1 and c.adv1.value and c.adv2 and c.adv2.value and c.adv3 and c.adv3.value
 end
 
-local check_adv = {}
-
-function check_adv.computation()
-	return GAME.draw, GAME.discard
-end
-
-function check_adv.history()
-	return GAME.draw, GAME.seen
-end
-
-function check_adv.economy()
-	return GAME.draw, GAME.discard
-end
-
-function card.check_adv(adv_name)
-	local f = check_adv[adv_name]
-	if f then
-		return advancement.check(adv_name, f())
-	else
-		return advancement.check(adv_name)
-	end
-end
-
 function card.test_newcard(args)
 	local newcard = #DECK + 1
 	local card = new_card {

@@ -14,8 +14,9 @@ local util = require "core.util"
 local persist = require "gameplay.persist"
 local sync = require "gameplay.sync"
 local effect = require "gameplay.effect"
+require "gameplay.effect"
 
-global pairs, print, ipairs, print_r, error
+global pairs, print, ipairs, print_r, error, require
 
 local BUTTONS = {
 	button1 = {
@@ -46,71 +47,10 @@ local expain_region = {
 	neutral = true,
 }
 
-local function choose_action(hands)
-	local desc = {
-		action = nil,
-		desc = nil,
-		seen = nil
-	}
-
-	local focus_state = {}
-	while true do
-		if focus.get(focus_state) then
-			local where = focus_state.active
-			local c = focus_state.object
-			if where == "hand" then
-				desc.action = "$(action." .. rules.action[c.suit] .. ")"
-				if hands[c] then
-					if c.suit == "H" and map.is_safe() then
-						desc.desc = "$(action." .. rules.action[c.suit] .. ".desc.safe)"
-					else
-						desc.desc = "$(action." .. rules.action[c.suit] .. ".desc)"
-					end
-					vtips.set("tips.action.choose", desc)
-				else
-					desc.desc = "$(action." .. rules.action[c.suit] .. ".desc.invalid)"
-					vtips.set("tips.action.invalid", desc)
-				end
-			elseif where == "discard" then
-				desc.seen = card.seen()
-				if desc.seen > 0 then
-					vtips.set("tips.look.pile", desc)
-				end
-			elseif BUTTONS[where] then
-				vtips.set("tips.button." .. BUTTONS[where].action,BUTTONS[where])
-			elseif focus_state.object then
-				vtips.set("tips.action." .. where)
-			end
-		elseif focus_state.lost then
-			vtips.set()
-		end
-		local c, where = focus.click "right"
-		if c and expain_region[where] then
-			vtips.set()
-			show_desc.action {
-				region = where,
-				card = c,
-			}
-		end
-		local c, where = focus.click "left"
-		if where == "discard" then
-			local n = card.seen()
-			if n > 0 then
-				look.start(n)
-			end
-		elseif BUTTONS[where] then
-			if BUTTONS[where].action == "plan" then
-				vtips.set()
-				return card.plan_blankcard()
-			else
-				-- action skip
-				break
-			end
-		end
-		flow.sleep(0)
-	end
-	vtips.set()
-end
+-- todo : other action
+local ACTION = {
+	power = require "gameplay.power",
+}
 
 local SUITS <const> = util.keys(rules.action)
 
@@ -300,6 +240,116 @@ local function clear_mask(hands)
 		if enable then
 			vcard.mask(c)
 		end
+	end
+end
+
+local function choose_action(hands)
+	local desc = {
+		action = nil,
+		desc = nil,
+		seen = nil
+	}
+	
+	local last_action
+	local function nomore_action()
+		local n = BUTTONS.button2.n - 1
+		if n <= 0 then
+			return true
+		end
+		BUTTONS.button2.n = n
+		
+		for c, enable in pairs(hands) do
+			if enable then
+				local action = rules.action[c.suit]
+				if action == last_action then
+					hands[c] = false
+					vcard.mask(c)
+				end
+			end
+		end
+		return false
+	end
+
+	local focus_state = {}
+	while true do
+		if focus.get(focus_state) then
+			local where = focus_state.active
+			local c = focus_state.object
+			if where == "hand" then
+				desc.action = "$(action." .. rules.action[c.suit] .. ")"
+				if hands[c] then
+					if c.suit == "H" and map.is_safe() then
+						desc.desc = "$(action." .. rules.action[c.suit] .. ".desc.safe)"
+					else
+						desc.desc = "$(action." .. rules.action[c.suit] .. ".desc)"
+					end
+					vtips.set("tips.action.choose", desc)
+				else
+					local action_name = rules.action[c.suit]
+					if action_name == last_action then
+						vtips.set("tips.action.unique", desc)
+					else
+						desc.desc = "$(action." .. rules.action[c.suit] .. ".desc.invalid)"
+						vtips.set("tips.action.invalid", desc)
+					end
+				end
+			elseif where == "discard" then
+				desc.seen = card.seen()
+				if desc.seen > 0 then
+					vtips.set("tips.look.pile", desc)
+				end
+			elseif BUTTONS[where] then
+				vtips.set("tips.button." .. BUTTONS[where].action,BUTTONS[where])
+			elseif focus_state.object then
+				vtips.set("tips.action." .. where)
+			end
+		elseif focus_state.lost then
+			vtips.set()
+		end
+		local c, where = focus.click "right"
+		if c and expain_region[where] then
+			vtips.set()
+			show_desc.action {
+				region = where,
+				card = c,
+			}
+		end
+		local c, where = focus.click "left"
+		if where == "discard" then
+			local n = card.seen()
+			if n > 0 then
+				look.start(n)
+			end
+		elseif BUTTONS[where] then
+			if BUTTONS[where].action == "plan" then
+				vtips.set()
+				return card.plan_blankcard()
+			else
+				-- action skip
+				break
+			end
+		elseif hands[c] then
+			-- execute action
+			local action_name = rules.action[c.suit]
+			local f = ACTION[action_name]
+			if f then	-- todo: remove it when finish all actions
+				vtips.set()
+				clear_mask(hands)
+				c = card.pickup("hand", c)
+				card.discard(c)
+				vdesktop.transfer("hand", c, "deck")
+				f()
+				hands = check_action(hands)
+				vtips.set()
+				vdesktop.set_text("phase", { extra = false } )
+				last_action = action_name
+				if nomore_action() then
+					break
+				end
+				button_enable("button2", true)
+			end
+		end
+		flow.sleep(0)
 	end
 end
 
