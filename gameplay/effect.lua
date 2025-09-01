@@ -12,7 +12,7 @@ local show_desc = require "gameplay.desc"
 local vbutton = require "visual.button"
 local map = require "gameplay.map"
 
-global setmetatable, pairs, assert, print, ipairs
+global setmetatable, pairs, assert, print, ipairs, error
 
 local effect = class.container "effect"
 
@@ -570,8 +570,28 @@ function adv_check.engineering()
 	return track.check("M", 1)
 end
 
+function adv_check.biology()
+	return not not map.can_grow_extra()
+end
+
+function adv_check.genetics()
+	return map.can_grow_more()
+end
+
+function adv_check.education()
+	return track.check("X", 1)
+end
+
+function adv_check.agriculture()
+	return track.check("S", 1)
+end
+
+function adv_check.construction()
+	return track.check("C", 2)
+end
+
 function effect:check_adv(adv_name, c)
-	local f = adv_check[adv_name] or ("Invalid adv " .. adv_name)
+	local f = adv_check[adv_name] or error ("Invalid adv " .. adv_name)
 	return f(self, c)
 end
 

@@ -15,17 +15,14 @@ local ACTION_TEXT <const> = "[blue]$(POWER)[n]"
 local adv_focus = {}
 
 function adv_focus.labor()
-	vdesktop.draw_pile_focus(nil)
 	track.focus("S", true)
 end
 
 function adv_focus.empire()
-	vdesktop.draw_pile_focus(nil)
 	track.focus("M", true)
 end
 
 function adv_focus.devices()
-	vdesktop.draw_pile_focus(nil)
 	track.focus("C", true)
 end
 

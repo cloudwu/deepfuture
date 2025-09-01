@@ -51,6 +51,7 @@ local expain_region = {
 local ACTION = {
 	power = require "gameplay.power",
 	advance = require "gameplay.advance",
+	grow = require "gameplay.grow",
 }
 
 local SUITS <const> = util.keys(rules.action)

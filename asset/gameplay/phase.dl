@@ -17,3 +17,5 @@ action :
 	F : expand
 power :
 	draw : 2
+grow :
+	add : 2

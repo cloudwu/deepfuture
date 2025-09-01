@@ -1,0 +1,55 @@
+# test GROW action
+
+setup :
+	---
+	to : colony
+	type : world
+	name : TEST
+	adv :
+		biology
+		genetics
+		genetics
+	---
+	to : homeworld
+	type : tech
+	name : TEST
+	adv :
+		biology
+		genetics
+		genetics
+	---
+	type : galaxy
+	sector : 22
+	n : 1
+	camp : player
+	---
+	type : galaxy
+	sector : 23
+	n : 1
+	camp : player
+	---
+	type : galaxy
+	sector : 56
+	n : 3
+	camp : player
+	---
+	type : galaxy
+	sector : 25
+	n : 5
+	camp : player
+	---
+	type : galaxy
+	sector : 66
+	n : 1
+	camp : player
+start:
+	---
+	type : blank
+	suit : R
+	---
+	type : tech
+	adv :
+		education
+		construction
+		agriculture
+	

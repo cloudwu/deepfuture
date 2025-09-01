@@ -262,11 +262,98 @@ map.can_move = util.dirty_update(function()
 end)
 
 map.can_grow = util.dirty_update(function()
-	for player, obj in pairs(galaxy) do
+	for sec, obj in pairs(galaxy) do
 		if obj.camp == "player" and obj.n < LIMIT then
 			return true
 		end
 	end
 end)
+
+function map.territory(limit)
+	limit = LIMIT - (limit or 0)
+	local r = {}
+	for sec, obj in pairs(galaxy) do
+		if obj.camp == "player" and obj.n > 0 and obj.n <= limit then
+			r[sec] = obj.n
+		end
+	end
+	return r
+end
+
+function map.can_grow_more()
+	for sec, obj in pairs(galaxy) do
+		if obj.grow and obj.n < LIMIT then
+			return true
+		end
+	end
+end
+
+function map.can_grow_extra()
+	for sec, obj in pairs(galaxy) do
+		if obj.camp == "player" and	not obj.grow and not obj.extra and obj.n < LIMIT then
+			return sec
+		end
+	end
+end
+
+function map.list_grow_extra()
+	local r = {}
+	for sec, obj in pairs(galaxy) do
+		if obj.camp == "player" and	not obj.grow and not obj.extra and obj.n < LIMIT then
+			r[sec] = true
+		end
+	end
+	return r
+end
+
+function map.reset()
+	for sec, obj in pairs(galaxy) do
+		obj.grow = nil
+		obj.extra = nil
+	end
+end
+
+function map.grow(sec)
+	if sec then
+		local s = galaxy[sec]
+		if s then
+			s.grow = true
+		end
+		return sec
+	else
+		for sec, obj in pairs(galaxy) do
+			if obj.grow and obj.n < LIMIT then
+				return sec
+			end
+		end
+	end
+end
+
+function map.grow_extra(sec)
+	local s = galaxy[sec]
+	if s then
+		s.extra = true
+	end
+end
+
+function map.info(sec, desc)
+	desc.sec = sec
+	if sec == 0 then
+		desc.what = "$(BLACKHOLE)"
+	else
+		desc.what = "$(SECTOR)"
+	end
+	local obj = galaxy[sec]
+	if obj == nil or obj.n == 0 then
+		desc.desc = "$(EMPTY_SECTOR)"
+	else
+		desc.people = obj.n
+		if obj.camp == "player" then
+			desc.desc = "$(FRIEND_SECTOR)"
+		else
+			desc.desc = "$(HOSTILE_SECTOR)"
+		end
+	end
+end
 
 return map

@@ -54,6 +54,15 @@ schinese:
   tips.advance.physics.need : "$(adv.physics.name)：自主选择提升\n - 还需要 ${n} 个效果"
   tips.advance.physics.confirm : "[lbutton]选择提升：${name}\n - ${desc}"
   tips.advance.physics.invalid : "请在${suit}类型的 6 种提升中选择一个"
+  tips.grow.limit : "\n - 星区人口[people]上限为${limit}"
+  tips.grow.advice : "请选择你所控制的星区\n - 添加[blue][people][n]$(tips.grow.limit)"
+  tips.grow.desc : "${what}\n - ${desc}"
+  tips.grow.execute : "[lbutton]在这个星区添加[blue][people][n]$(tips.grow.limit)"
+  BLACKHOLE : 黑洞
+  SECTOR : "星区 ${sec}"
+  EMPTY_SECTOR : 无人区
+  FRIEND_SECTOR : "你所控制的星区 [blue][people][n]x${people}"
+  HOSTILE_SECTOR : "敌对星区 [people]x${people}"
   tips.look.focus : "[lbutton][rbutton]放回抽牌堆顶\n - 这是抽牌堆顶部第${n}张卡"
   tips.look.pile : "[lbutton]查看抽牌堆顶的 ${seen} 张卡"
   tips.track.valid : "[lbutton]将 ${type} 进度条后退一格\n - ${effect}"
