@@ -605,7 +605,7 @@ end
 card.suit_info = suit_info
 
 local function suit_text(s)
-	if s == nil then
+	if s == nil or s.value == nil then
 		return ""
 	else
 		return suit_info(s)
