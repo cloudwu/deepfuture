@@ -307,6 +307,10 @@ function card.putdown(where, card)
 	if where == "homeworld" and card.type == "world" then
 		table.insert(area,1,id)
 	else
+		if card._id == GAME.settling then
+			assert(where == "colony")
+			GAME.settling = nil
+		end
 		area[#area+1] = id
 	end
 end
@@ -400,7 +404,12 @@ function card.gen_desc(c)
 end
 
 function card.complete(c)
-	return c.adv1 and c.adv1.value and c.adv2 and c.adv2.value and c.adv3 and c.adv3.value
+	if c.type == "tech" then
+		return c.adv1 and c.adv1.value and c.adv2 and c.adv2.value and c.adv3 and c.adv3.value
+	else
+		-- world card check adv3 only
+		return c.adv3 and c.adv3.suit
+	end
 end
 
 function card.test_newcard(args)
@@ -651,6 +660,16 @@ function card.chosen(c)
 		end
 	end
 	return n
+end
+
+function card.settling(c)
+	if not c then
+		return DECK[GAME.settling]
+	else
+		local id = c._id
+		GAME.settling = id
+		return c
+	end
 end
 
 -- todo: load deck

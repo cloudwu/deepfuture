@@ -481,8 +481,13 @@ function effect:discard_one_card(phase, advname, action)
 	end
 end
 
+local function check_any_track()
+	return track.check("C", -1) or track.check("M", -1) or track.check("S", -1) or track.check("X", -1)
+end
+
 local adv_check = {}
 
+-- START
 function adv_check.computation(draw_pile, discard_pile)
 	local n = card.count "draw" + card.count "discard"
 	return n > 0
@@ -490,10 +495,6 @@ end
 
 function adv_check.art()
 	return track.check("C", 1)
-end
-
-local function check_any_track()
-	return track.check("C", -1) or track.check("M", -1) or track.check("S", -1) or track.check("X", -1)
 end
 
 function adv_check.infrastructure()
@@ -518,6 +519,7 @@ function adv_check.exploration()
 	return r
 end
 
+--POWER
 function adv_check.industry(advs, current_card)
 	local n = 1
 	while true do
@@ -550,6 +552,7 @@ function adv_check.devices()
 	return track.check("C", 2)
 end
 
+-- ADVANCE
 function adv_check.chemistry()
 	return true
 end
@@ -570,6 +573,7 @@ function adv_check.engineering()
 	return track.check("M", 1)
 end
 
+-- GROW
 function adv_check.biology()
 	return not not map.can_grow_extra()
 end
@@ -588,6 +592,28 @@ end
 
 function adv_check.construction()
 	return track.check("C", 2)
+end
+
+-- SETTLE
+function adv_check.leisure()
+	return track.check("C", 2)
+end
+
+function adv_check.government()
+	local c = card.settling()
+	return not card.complete(c)
+end
+
+function adv_check.society()
+	return card.settling() == nil
+end
+
+function adv_check.medicine()
+	return track.check("S", 1)
+end
+
+function adv_check.ecology()
+	return track.check("X", 1)
 end
 
 function effect:check_adv(adv_name, c)

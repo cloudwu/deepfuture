@@ -58,6 +58,12 @@ schinese:
   tips.grow.advice : "请选择你所控制的星区\n - 添加[blue][people][n]$(tips.grow.limit)"
   tips.grow.desc : "${what}\n - ${desc}"
   tips.grow.execute : "[lbutton]在这个星区添加[blue][people][n]$(tips.grow.limit)"
+  tips.settle.capture : "[lbutton]占领位于 ${world.sector} 星区的${world.name}\n - 移动到$(desc.place.colony)\n - [blue]$(action.power)[n]行动\n - [blue]$(action.advance)[n]行动"
+  tips.settle.hand : "[lbutton]殖民这张$(card.type.world)\n - 放置到$(desc.place.colony)\n - 抽 1 [card]"
+  tips.settle.blank : "[lbutton]在你所控制的星区内殖民\n - 这张$(card.type.blank)变为$(card.type.world)\n - 星区在领地中选择\n - 放置到$(desc.place.colony)\n - 抽 1 [card]"
+  tips.settle.newworld : "[lbutton]在你所控制的星区内殖民\n - 创建一张新的$(card.type.world)\n - 星区在领地中选择\n - 放置到$(desc.place.colony)"
+  tips.settle.society : "[lbutton]开启新建$(card.type.world)殖民的选择\n - 点击抽牌堆创建$(card.type.world)"
+  tips.settle.advice : "选择需要殖民的星球卡"
   BLACKHOLE : 黑洞
   SECTOR : "星区 ${sec}"
   EMPTY_SECTOR : 无人区
@@ -164,7 +170,7 @@ schinese:
   action.settle : "[moon]$(SETTLE)"
   action.settle.desc : "殖民[planet]星球"
   action.settle.detail : "手牌中有$(card.type.world)位于你所控制星区，可将该卡放置到$(desc.place.colony)\n - 你控制了中立星球所在星区，可将$(desc.place.neutral)中对应$(card.type.world)移动到$(desc.place.colony)\n - 将手牌中的$(card.type.blank)转换为位于你所控制星区的$(card.type.world)并放置到$(desc.place.colony)。手牌中必须没有$(card.type.world)\n - 创建一张新的位于你所控制星区的$(card.type.world)放置到$(desc.place.colony)。手牌必须没有$(card.type.world)及$(card.type.blank)\n - 若无法在你所控制的星区中放置$(card.type.world)，不能发起$(action.settle)行动"
-  action.settle.desc.invalid : "没能控制手牌中星球卡所在星区"
+  action.settle.desc.invalid : "没能控制手牌中$(card.type.world)所在星区"
   action.advance : "[skull]$(ADVANCE)"
   action.advance.desc : "提升[planet]星球或[tech]科技"
   action.advance.detail : "对你的母星或殖民地进行一次提升，或向母星添加一张新的$(card.type.tech)，亦或提升一张母星中未完成的$(card.type.tech)"

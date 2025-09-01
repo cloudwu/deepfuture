@@ -3,8 +3,6 @@ local vdesktop = require "visual.desktop"
 local rules = require "core.rules".phase
 local card = require "gameplay.card"
 local class = require "core.class"
-local look = require "gameplay.look"
-local advancement = require "gameplay.advancement"
 local track = require "gameplay.track"
 
 global none

@@ -1,0 +1,31 @@
+# test SETTLE action
+
+setup :
+	---
+	type : world
+	to : neutral
+	name : TEST
+	sector : 66
+	adv : art
+	---
+	type : galaxy
+	sector : 66
+	n : 1
+	camp : player
+start:
+	---
+	type : blank
+	suit : M
+	---
+	type : tech
+	adv :
+		leisure
+		government
+		society
+	---
+	type : tech
+	adv :
+		medicine
+		ecology
+		government
+	

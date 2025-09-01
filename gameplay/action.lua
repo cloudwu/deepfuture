@@ -52,6 +52,7 @@ local ACTION = {
 	power = require "gameplay.power",
 	advance = require "gameplay.advance",
 	grow = require "gameplay.grow",
+	settle = require "gameplay.settle",
 }
 
 local SUITS <const> = util.keys(rules.action)
@@ -151,7 +152,7 @@ local function has_society(pile)
 			return
 		end
 		if card.has_advancement(c, pile, "society") then
-			return true
+			return c
 		end
 		n = n + 1
 	end
@@ -222,11 +223,7 @@ local function check_action(last)
 			hands[c] = true
 		end
 	end
-	-- check settle
-	if ctrl_neutral() then
-		return true
-	end
-	if has_society "homeworld" or has_society "colony" then
+	if ctrl_neutral() or has_society "homeworld" or has_society "colony" then
 		return merge_last(hands, last)
 	end
 	
