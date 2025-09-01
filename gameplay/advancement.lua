@@ -1,4 +1,5 @@
 local rules = require "core.rules".advancement
+local suits = require "core.rules".phase.action
 local util = require "core.util"
 
 global pairs, tonumber, print
@@ -41,7 +42,12 @@ function advancement.info(adv, what)
 end
 
 function advancement.config(name)
-	return rules[name]
+	local c = rules[name]
+	if c then
+		return c
+	elseif suits[name] then
+		return { suit = name }
+	end
 end
 
 return advancement

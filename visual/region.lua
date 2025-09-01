@@ -17,6 +17,15 @@ function region:add(c)
 	self._dirty = true
 end
 
+function region:remove(c)
+	for i, card in ipairs(self) do
+		if card.card == c then
+			table.remove(self, i)
+			return
+		end
+	end
+end
+
 function region:replace(from, to)
 	for i, card in ipairs(self) do
 		if card.card == from then

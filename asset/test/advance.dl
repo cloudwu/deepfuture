@@ -1,0 +1,79 @@
+# test POWER action
+
+setup :
+	to : colony
+	type : world
+	name : TEST
+	adv :
+		chemistry
+		chemistry
+		physics
+start :
+	---
+	to : homeworld
+	type : tech
+	name : TEST
+	adv :
+		chemistry
+		M
+	---
+	to : colony
+	type : world
+	name : TEST
+	adv :
+		physics
+	---
+	type : blank
+	suit : K
+	---
+	type : blank
+	suit : K
+	---
+	type : tech
+	name : TEST
+	adv :
+		engineering
+		philosophy
+		literature
+	---
+	type : tech
+	name : TEST
+	adv :
+		chemistry
+		physics
+		physics
+	---
+	to : seen
+	type : world
+	name : TEST
+	adv : art
+	suit : F
+	value : 2
+	---
+	to : seen
+	type : world
+	name : TEST
+	adv : art
+	suit : R
+	value : 3
+	---
+	to : seen
+	type : world
+	name : TEST
+	adv : art
+	suit : K
+	value : 4
+	---
+	to : seen
+	type : world
+	name : TEST
+	adv : art
+	suit : M
+	value : 5
+	---
+	to : seen
+	type : world
+	name : TEST
+	adv : art
+	suit : S
+	value : 6

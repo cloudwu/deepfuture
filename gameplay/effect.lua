@@ -20,16 +20,17 @@ function effect:add(c, from)
 	if from == "hand" and (c.type ~= "tech" or not card.complete(c)) then
 		return
 	end
-	assert(self[c] == nil)
+	self:remove(c)
 	local obj = {}
 	self[c] = obj
 	local stage = self[false]
 	for i = 1, 3 do
 		local adv = c["adv"..i]
 		if adv and adv.value then
+			local name = advancement.name(adv.suit, adv.value)
 			if advancement.stage(adv.suit, adv.value) == stage then
 				obj[i] = {
-					name = advancement.name(adv.suit, adv.value),
+					name = name,
 					enable = true,
 					use = false,
 				}
@@ -78,7 +79,7 @@ function effect:focus(c)
 	return obj[focus].name
 end
 
-function effect:update()
+function effect:update(select_adv)
 	local tmp = {}
 	local n = 0
 	for c, adv in pairs(self) do
@@ -92,7 +93,12 @@ function effect:update()
 						adv.focus = nil
 					end
 				else
-					local enable = self:check_adv(obj.name, c)
+					local enable
+					if select_adv == nil or select_adv[obj.name] then
+						enable = self:check_adv(obj.name, c)
+					else
+						enable = false
+					end
 					obj.enable = enable
 					if enable then
 						n = n + 1
@@ -190,13 +196,13 @@ function effect:reset()
 	end
 end
 
-function effect:used_cards()
-	local cards = {}
+function effect:used_cards(cards)
+	cards = cards or {}
 	for c, obj in pairs(self) do
 		for i = 1, 3 do
 			local adv = obj[i]
 			if adv and adv.use then
-				cards[#cards+1] = c
+				cards[c] = true
 			end
 		end
 	end
@@ -226,7 +232,7 @@ end
 
 function effect:discard_used_cards()
 	local cards = self:used_cards()
-	for _, c in ipairs(cards) do
+	for c in pairs(cards) do
 		if card.pickup("hand", c) then
 			card.discard(c)
 			vdesktop.transfer("hand", c, "deck")
@@ -240,7 +246,7 @@ function effect:discard_used_cards()
 	self:reset()
 end
 
-function effect:look_drawpile(button)
+function effect:look_drawpile(button, adv_select)
 	local n = card.seen()
 	if n == 0 then
 		return
@@ -250,7 +256,7 @@ function effect:look_drawpile(button)
 	end
 	self:reset()
 	look.start(n)
-	self:update()
+	self:update(adv_select)
 	if button then
 		vdesktop.button_enable("button1", button)
 	end
@@ -272,10 +278,11 @@ end
 function effect:choose_cards(args)
 	local adv_focus = args.adv_focus
 	local adv_func = args.adv_func
+	local adv_select = args.adv_select
 	local button = {
 		text = "button.advancement.skip",
 		n = args.n,
-		phase = "$(phase." .. args.phase .. ")",
+		phase = "$(tips.advancement." .. args.phase .. ")",
 	}
 	local desc = {
 		seen = nil,
@@ -354,7 +361,7 @@ function effect:choose_cards(args)
 				-- do adv
 				f(self)
 				vdesktop.button_enable("button1", button)
-				local n = self:update()
+				local n = self:update(adv_select)
 				if n == 0 then
 					-- no more advs available
 					break
@@ -366,7 +373,7 @@ function effect:choose_cards(args)
 					vbutton.update "button1"
 				end
 			elseif btn == "discard" then
-				self:look_drawpile(button)
+				self:look_drawpile(button, adv_select)
 			else
 				vtips.set(nil)
 			end
@@ -499,6 +506,26 @@ end
 
 function adv_check.devices()
 	return track.check("C", 2)
+end
+
+function adv_check.chemistry()
+	return true
+end
+
+function adv_check.physics()
+	return true
+end
+
+function adv_check.philosophy()
+	return track.check("X", 1)
+end
+
+function adv_check.literature()
+	return track.check("C", 2)
+end
+
+function adv_check.engineering()
+	return track.check("M", 1)
 end
 
 function effect:check_adv(adv_name, c)

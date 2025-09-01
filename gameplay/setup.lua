@@ -166,7 +166,7 @@ local function new_world(hands)
 
 	card.putdown("hand", newcard)
 	
-	local clone = { type = "blank", _marker = "" }
+	local clone = { type = "blank" }
 	clone.adv1 = {}
 	
 	vdesktop.add("deck", clone)
@@ -188,7 +188,7 @@ local function new_world(hands)
 	interval()
 
 	moving(card1, function ()
-		clone._marker = tostring(newcard.value)
+		clone._marker = newcard.value
 	end)
 
 	moving(card2, function ()

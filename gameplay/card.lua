@@ -224,6 +224,12 @@ function card.plan_blankcard()
 	return card
 end
 
+function card.blank_tech(c)
+	c.type = "tech"
+	c.era = HISTORY.era
+	vcard.flush(c)
+end
+
 function card.generate_newcard()
 	local card1 = draw_card()
 	local card2 = draw_card()
@@ -355,6 +361,9 @@ local function gen_adv_desc(adv)
 		adv._stage_use = "[40000000]" .. adv._stage .. "[n]"
 		adv._stage_normal = adv._stage
 	end
+	if adv.chosen then
+		adv._circle = "[circle]"
+	end
 end
 
 function card.add_adv_suit(c, suit)
@@ -387,6 +396,7 @@ function card.gen_desc(c)
 		gen_adv_desc(c.adv2)
 		gen_adv_desc(c.adv3)
 	end
+	gen_marker(c)
 end
 
 function card.complete(c)
@@ -407,14 +417,19 @@ function card.test_newcard(args)
 		card.value = tonumber(args.marker:sub(1,1))
 		card.suit = args.marker:sub(2,2)
 	end
+	local def
+	if card.type == "tech" then
+		def = "S"
+		card.sector = nil
+	end
 	gen_marker(card)
 	if args.adv then
 		if type(args.adv) == "string" then
 			card.adv1 = convert_adv(args.adv)
 		else
-			card.adv1 = convert_adv(args.adv[1])
-			card.adv2 = convert_adv(args.adv[2])
-			card.adv3 = convert_adv(args.adv[3])
+			card.adv1 = convert_adv(args.adv[1] or def)
+			card.adv2 = convert_adv(args.adv[2] or def)
+			card.adv3 = convert_adv(args.adv[3] or def)
 		end
 		gen_adv_desc(card.adv1)
 		gen_adv_desc(card.adv2)
@@ -613,7 +628,7 @@ function card.payment_text(c)
 	return table.concat(markers)
 end
 
-function card.has_advancement(c, from, adv_name)
+function card.has_advancement(c, from, adv_name, focus)
 	if from == "hand" and (c.type ~= "tech" or not card.complete(c)) then
 		return
 	end
@@ -625,6 +640,17 @@ function card.has_advancement(c, from, adv_name)
 			end
 		end
 	end
+end
+
+function card.chosen(c)
+	local n = 0
+	for i = 1, 3 do
+		local adv = c["adv"..i]
+		if adv and adv.chosen then
+			n = n + 1
+		end
+	end
+	return n
 end
 
 -- todo: load deck

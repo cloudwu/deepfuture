@@ -92,8 +92,4 @@ return function()
 		}
 		advs:discard_used_cards()
 	end
-
---	while true do
---		flow.sleep(0)
---	end
 end

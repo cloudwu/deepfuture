@@ -36,6 +36,15 @@ content :
 				env : adv1
 				height : 50%
 				size : 16
+				circle :
+					position : absolute
+					left : -6
+					top : 1
+					width : 100%
+					height : 100%
+					text : card.circle
+					env : adv1
+					size : 28
 			desc :
 				left : 20
 				text : card.desc
@@ -49,6 +58,15 @@ content :
 				env : adv2
 				height : 50%
 				size : 16
+				circle :
+					position : absolute
+					left : -6
+					top : 1
+					width : 100%
+					height : 100%
+					text : card.circle
+					env : adv2
+					size : 28
 			desc :
 				left : 20
 				text : card.desc
@@ -62,6 +80,15 @@ content :
 				env : adv3
 				height : 50%
 				size : 16
+				circle :
+					position : absolute
+					left : -6
+					top : 1
+					width : 100%
+					height : 100%
+					text : card.circle
+					env : adv3
+					size : 28
 			desc :
 				left : 20
 				text : card.desc

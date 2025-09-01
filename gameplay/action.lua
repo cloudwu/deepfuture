@@ -50,6 +50,7 @@ local expain_region = {
 -- todo : other action
 local ACTION = {
 	power = require "gameplay.power",
+	advance = require "gameplay.advance",
 }
 
 local SUITS <const> = util.keys(rules.action)
@@ -338,7 +339,9 @@ local function choose_action(hands)
 				c = card.pickup("hand", c)
 				card.discard(c)
 				vdesktop.transfer("hand", c, "deck")
+				button_enable(nil)
 				f()
+				button_enable(nil, true)
 				hands = check_action(hands)
 				vtips.set()
 				vdesktop.set_text("phase", { extra = false } )
