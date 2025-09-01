@@ -100,7 +100,7 @@ local function add_suit(advs, c)
 	vdesktop.transfer("float", suit_card, "deck")
 	local n = advs:update(REDRAW)
 	if n == 0 then
-		return
+		return adv_index
 	end
 	-- wait for redraw
 	vcard.mask(c, true)
@@ -526,9 +526,8 @@ local function advance(c, advs)
 		end
 		local click_card, where = focus.click "left"
 		if click_card then
-			if where == "discard" then
+			if where == "discard" and card.seen() > 0 then
 				vtips.set()
-				local advs = class.effect "advance"
 				for _, c in ipairs(choose) do
 					flow.sleep(1)
 					vdesktop.transfer("float", c, "deck")

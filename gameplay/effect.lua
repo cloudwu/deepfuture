@@ -187,12 +187,54 @@ function effect:nextadv(c, switch)
 	end
 end
 
-function effect:reset()
-	for c in pairs(self) do
-		vcard.mask(c)
-		vcard.focus_adv(c, 1)
-		vcard.focus_adv(c, 2)
-		vcard.focus_adv(c, 3)
+local function reset_enable(self)
+	local tmp = {}
+	local n = 0
+	for c, adv in pairs(self) do
+		tmp[c] = false
+		for index = 1, 3 do
+			local obj = adv[index]
+			if obj then
+				if obj.use then
+					vcard.focus_adv(c, index, false)
+					if adv.focus == index then
+						adv.focus = nil
+					end
+				else
+					local enable = obj.enable
+					if enable then
+						n = n + 1
+						tmp[c] = index
+					end
+					vcard.focus_adv(c, index, nil)
+				end
+			end
+		end
+	end
+	
+	for c, index in pairs(tmp) do
+		if index then
+			vcard.mask(c, true)
+			self[c].focus = index
+			vcard.focus_adv(c, index, true)
+		else
+			vcard.mask(c)
+		end
+	end
+	return n
+end
+
+
+function effect:reset(enable)
+	if enable then
+		reset_enable(self)
+	else
+		for c in pairs(self) do
+			vcard.mask(c)
+			vcard.focus_adv(c, 1)
+			vcard.focus_adv(c, 2)
+			vcard.focus_adv(c, 3)
+		end
 	end
 end
 
@@ -246,7 +288,7 @@ function effect:discard_used_cards()
 	self:reset()
 end
 
-function effect:look_drawpile(button, adv_select)
+function effect:look_drawpile(button)
 	local n = card.seen()
 	if n == 0 then
 		return
@@ -256,7 +298,7 @@ function effect:look_drawpile(button, adv_select)
 	end
 	self:reset()
 	look.start(n)
-	self:update(adv_select)
+	self:reset(true)
 	if button then
 		vdesktop.button_enable("button1", button)
 	end
@@ -373,7 +415,7 @@ function effect:choose_cards(args)
 					vbutton.update "button1"
 				end
 			elseif btn == "discard" then
-				self:look_drawpile(button, adv_select)
+				self:look_drawpile(button)
 			else
 				vtips.set(nil)
 			end
