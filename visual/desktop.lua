@@ -369,6 +369,7 @@ end
 -- for test
 function M.sync(where, pile)
 	local r = region[where]
+	r:update()
 	local draw = {}
 	local discard = {}
 	for i, c in ipairs(r) do

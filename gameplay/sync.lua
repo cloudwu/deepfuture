@@ -24,6 +24,7 @@ local function sync(where)
 end
 
 return function()
+	flow.sleep(1)	-- wait for transfer
 	sync "hand"
 	sync "homeworld"
 	sync "colony"

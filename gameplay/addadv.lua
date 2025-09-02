@@ -18,6 +18,7 @@ local function add_random_choice(c, adv_index, r)
 	if adv == nil or adv.value then
 		return
 	end
+	adv._name = nil
 	local clone = util.shallow_clone(c, {})
 	clone.name = CARD_COPY
 	clone[adv_index] = util.shallow_clone(adv, { _name = "$(adv.random.value)" })
@@ -27,9 +28,6 @@ end
 
 function addadv.choose_random_adv(c)
 	local choose = {}
-	c.adv1._name = nil
-	c.adv2._name = nil
-	c.adv3._name = nil
 	add_random_choice(c, "adv1", choose)
 	add_random_choice(c, "adv2", choose)
 	add_random_choice(c, "adv3", choose)

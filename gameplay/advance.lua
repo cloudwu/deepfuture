@@ -101,6 +101,7 @@ local function add_suit(advs, c)
 	vdesktop.transfer("float", suit_card, "deck")
 	local n = advs:update(REDRAW)
 	if n == 0 then
+		vcard.mask(c)
 		return adv_index
 	end
 	-- wait for redraw
@@ -157,7 +158,7 @@ local function add_suits(c, advs)
 end
 
 local function draw_new(advs)
-	local c = card.draw_hand() or error "No more card"
+	local c = card.draw_card() or error "No more card"
 	vdesktop.add("deck", c)
 	vdesktop.transfer("deck", c, "float")
 	flow.sleep(5)
@@ -176,17 +177,6 @@ local function draw_new(advs)
 		end
 		vtips.set()
 		add_suits(c, advs)
-
--- for debug		
---		c.adv1.value = 1
---		c.adv1.era = 1
---		c.adv1.chosen = true
---		c.adv2.value = 1
---		c.adv2.era = 1
---		c.adv2.chosen = true
---		card.gen_desc(c)
---		vcard.flush(c)
-		
 		return c
 	end
 end
@@ -239,6 +229,7 @@ local function choose_or_random(random_value_choice, advs, need_physics)
 				advs:reset()
 				vdesktop.transfer("float", random_value_choice, "deck")
 				flow.sleep(5)
+				vcard.mask(random_value_choice)
 				return choose_physics(random_value_choice)
 			else
 				advs:update(CHOOSE)

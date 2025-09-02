@@ -381,6 +381,7 @@ return function()
 		-- choose adv if government
 		choose_adv(newworld, advs)
 		advs:discard_used_cards()
+		advs:reset()
 	end
 	
 	card.putdown("colony", newworld)

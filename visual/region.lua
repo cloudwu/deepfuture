@@ -172,6 +172,7 @@ function region:update(w, h, x, y)
 	if ww == w and hh == h then
 		return dirty
 	end
+	
 	self.x = x
 	self.y = y
 	self.w = w

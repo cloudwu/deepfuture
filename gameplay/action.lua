@@ -364,7 +364,6 @@ return function ()
 
 	vdesktop.set_text("phase", { text = "$(phase.action)" } )
 	plan_card, hands = choose_action(hands)
-	
 	button_enable()
 	clear_mask(hands)
 	

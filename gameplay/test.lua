@@ -65,4 +65,28 @@ function test.patch(phase)
 	patch[phase](data)
 end
 
+local function dump(what)
+	if card.count(what) == 0 then
+		return
+	end
+	local tmp = { what }
+	local n = 1
+	while true do
+		local c = card.card(what, n)
+		if c then
+			tmp[#tmp+1] = tostring(c)
+			n = n + 1
+		else
+			break
+		end
+	end
+	print(table.concat(tmp, " "))
+end
+
+function test.dump()
+	dump "hand"
+	dump "homeworld"
+	dump "colony"
+end
+
 return test
