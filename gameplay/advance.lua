@@ -415,8 +415,12 @@ local function unmask(cards)
 	vdesktop.draw_pile_focus()
 end
 
-return function()
-	vdesktop.set_text("phase", { extra = "[blue]$(ADVANCE)[n]" } )
+return function(extra)
+	local phase_desc = { extra = "[blue]$(ADVANCE)[n]" }
+	if extra then
+		phase_desc.extra = extra .. phase_desc.extra
+	end
+	vdesktop.set_text("phase", phase_desc)
 	local cards = find_uncomplete("homeworld", {})
 	find_uncomplete("colony", cards)
 	for c in pairs(cards) do

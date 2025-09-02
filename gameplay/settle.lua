@@ -12,6 +12,8 @@ local focus = require "core.focus"
 local util = require "core.util"
 local name = require "gameplay.name"
 local addadv = require "gameplay.addadv"
+local power = require "gameplay.power"
+local advance = require "gameplay.advance"
 
 global next, pairs, print, assert
 
@@ -156,6 +158,7 @@ local function settling(advs)
 	local desc = {}
 	local focus_state = {}
 	local settling
+	local from
 	
 	while true do
 		if focus.get(focus_state) then
@@ -188,6 +191,7 @@ local function settling(advs)
 				-- settle a world
 				set_mask()
 				settling = card.pickup(where, c)
+				from = where
 				vdesktop.transfer(where, settling, "float")
 				flow.sleep(5)
 				if where == "hand" then
@@ -216,7 +220,7 @@ local function settling(advs)
 		flow.sleep(0)
 	end
 	vtips.set()
-	return settling
+	return settling, from
 end
 
 local function choose_sector(c)
@@ -335,9 +339,6 @@ local function choose_adv(c, advs)
 	end
 	if #choose == 1 then
 		-- only one random choise
-		vdesktop.add("deck", c)
-		vdesktop.transfer("deck", c, "float")
-		flow.sleep(5)
 		draw_value(c, choose[1]._random)
 		return
 	end
@@ -363,7 +364,7 @@ return function()
 	advs:add_pile "homeworld"
 	advs:add_pile "colony"
 	
-	local newworld = settling(advs)
+	local newworld, from = settling(advs)
 	if newworld.type == "blank" then
 		choose_sector(newworld)
 	end
@@ -385,4 +386,10 @@ return function()
 	card.putdown("colony", newworld)
 	vdesktop.transfer("float", newworld, "colony")
 	flow.sleep(5)
+	if from == "neutral" then
+		-- free power and advance
+		-- todo : persisit
+		power "$(FREEACTION)"
+		advance "$(FREEACTION)"
+	end
 end

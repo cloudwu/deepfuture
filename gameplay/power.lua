@@ -60,8 +60,12 @@ function power_adv.devices()
 	track.advance("C", 2)
 end
 
-return function()
-	vdesktop.set_text("phase", { extra = ACTION_TEXT } )
+return function(extra)
+	local phase_desc = { extra = ACTION_TEXT }
+	if extra then
+		phase_desc.extra = extra .. phase_desc.extra
+	end
+	vdesktop.set_text("phase", phase_desc )
 	-- default behaviour : draw cards
 	for i = 1, DEFAULT_DRAW do
 		local c = card.draw_hand()
