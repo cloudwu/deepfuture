@@ -3,7 +3,7 @@ local util = require "core.util"
 local mask = require "soluna.material.mask"
 local config = require "core.rules".ui
 
-global assert, print
+global assert, print, print_r
 
 local card = {}
 
@@ -23,7 +23,11 @@ local mask_color <const> = config.card.mask
 local _, _, card_w, card_h = widget.get("blankcard", "card")
 
 local function flush_card(data)
-	return widget.draw_list(card_type[data.type], data, FONT_ID, SPRITES)
+	local ct = card_type[data.type]
+	if ct == nil then
+		print_r("Invalid card", data)
+	end
+	return widget.draw_list(ct, data, FONT_ID, SPRITES)
 end
 
 local card_draw_list = util.cache(flush_card)

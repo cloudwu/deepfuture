@@ -391,6 +391,7 @@ function effect:choose_cards(args)
 		local c, btn = focus.click "left"
 		if c then
 			if btn == "button1" then
+				self:reset()
 				break
 			end
 			if self:can_use(c) then

@@ -434,6 +434,8 @@ return function(extra)
 	advs:add_pile "hand"
 	advs:add_pile "homeworld"
 	advs:add_pile "colony"
+	
+	local advcard
 
 	while true do
 		if focus.get(focus_state) then
@@ -453,7 +455,7 @@ return function(extra)
 				unmask(cards)
 				local newcard = draw_new(advs)
 				advance(newcard, advs)
-				advs:add(newcard)
+				advcard = newcard
 				card.putdown("homeworld", newcard)
 				vdesktop.transfer("float", newcard, "homeworld")
 				break
@@ -474,7 +476,7 @@ return function(extra)
 				c.adv3 = clone.adv3
 				c.name = clone.name
 				vcard.flush(c)
-				advs:add(c)
+				advcard = c
 				vdesktop.replace("float", clone, c)
 				vdesktop.transfer("float", c, where)
 				flow.sleep(5)
@@ -495,4 +497,8 @@ return function(extra)
 		}
 		advs:discard_used_cards()
 	end
+	
+	advs:add(advcard)
+	advs:reset()
+	vcard.mask(advcard)
 end

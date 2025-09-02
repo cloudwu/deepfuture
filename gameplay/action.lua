@@ -322,7 +322,7 @@ local function choose_action(hands)
 		elseif BUTTONS[where] then
 			if BUTTONS[where].action == "plan" then
 				vtips.set()
-				return card.plan_blankcard()
+				return card.plan_blankcard(), hands
 			else
 				-- action skip
 				break
@@ -352,15 +352,18 @@ local function choose_action(hands)
 		end
 		flow.sleep(0)
 	end
+	-- no plan (nil)
+	return nil, hands
 end
 
 return function ()
 	sync()
+	local plan_card
 	local hands = check_action()
 	button_enable(nil, true)
 
 	vdesktop.set_text("phase", { text = "$(phase.action)" } )
-	local plan_card = choose_action(hands)
+	plan_card, hands = choose_action(hands)
 	
 	button_enable()
 	clear_mask(hands)
