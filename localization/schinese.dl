@@ -64,6 +64,11 @@ schinese:
   tips.settle.newworld : "[lbutton]在你所控制的星区内殖民\n - 创建一张新的$(card.type.world)\n - 星区在领地中选择\n - 放置到$(desc.place.colony)"
   tips.settle.society : "[lbutton]开启新建$(card.type.world)殖民的选择\n - 点击抽牌堆创建$(card.type.world)"
   tips.settle.advice : "选择需要殖民的星球卡"
+  tips.settle.confirm : "[lbutton]在领地内选择一个星区殖民\n - 这张$(card.type.blank)将转换为$(card.type.world)"
+  tips.settle.confirm.advice : "确认殖民所使用的$(card.type.blank)"
+  tips.settle.map.confirm : "[lbutton]向星区 ${sec} 殖民\n - $(card.type.blank)将转换为$(card.type.world)\n - $(card.type.world)将设为星区 ${sec}"
+  tips.settle.map.desc : "$(tips.grow.desc)"
+  tips.settle.map.advice : "请选择你所控制的星区\n - $(card.type.blank)将转换为$(card.type.world)"
   BLACKHOLE : 黑洞
   SECTOR : "星区 ${sec}"
   EMPTY_SECTOR : 无人区
