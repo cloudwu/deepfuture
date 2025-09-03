@@ -41,7 +41,7 @@ end
 function track.check(type, diff)
 	local pos = TRACK[type] or error ("Invalid track type " .. type)
 	if diff > 0 then
-		return pos <= rules[type].min
+		return pos > rules[type].min
 	else
 		if rules[type].loss then
 			return pos - diff >= rules[type].loss

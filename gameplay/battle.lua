@@ -151,7 +151,7 @@ local function inc_track()
 				local what = focus_state.object	-- C/M/S/X
 				track.focus(false)
 				desc.type = "$(hud." .. what .. ")"
-				if track.check(what, 1) then
+				if not track.check(what, 1) then
 					vtips.set("tips.battle.safe.invalid", desc)
 				else
 					vtips.set("tips.battle.safe.valid", desc)
@@ -168,7 +168,7 @@ local function inc_track()
 		
 		local t, where = focus.click "left"
 		if where == "track" then
-			if not track.check(t, 1) then
+			if track.check(t, 1) then
 				track.advance(t, 1)
 				track.focus(false)
 				vtips.set()
