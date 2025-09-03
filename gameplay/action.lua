@@ -221,9 +221,6 @@ local function ctrl_neutral()
 	end
 end
 
-local function how_many_ftl(c)
-end
-
 local function check_action(last)
 	local can_grow = map.can_grow()
 	local desktop_ftl = count_ftl "homeworld" + count_ftl "colony"
@@ -365,6 +362,7 @@ local function choose_action(hands)
 				card.discard(c)
 				vdesktop.transfer("hand", c, "deck")
 				button_enable(nil)
+				flow.sleep(5)
 				f()
 				button_enable(nil, true)
 				hands = check_action(hands)

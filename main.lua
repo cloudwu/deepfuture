@@ -5,7 +5,8 @@ local flow = require "core.flow"
 local focus = require "core.focus"
 local vdesktop = require "visual.desktop"
 local utf8 = utf8
-
+local math = math
+local io = io
 global require, assert, print
 
 local initial = require "gameplay.initial"
@@ -28,6 +29,27 @@ local function font_init()
 	text.init "asset/icons.dl"
 	return font.name ""
 end
+
+local function init_random_seed()
+	local file = require "soluna.file"
+	local datalist = require "soluna.datalist"
+	local filename <const> = "seed.dl"
+	local seed
+	if file.exist(filename) then
+		local t = datalist.parse (file.loader(filename))
+		seed = t.seed
+	end
+	if not seed then
+		seed = math.random(2^31)
+		local f = io.open(filename, "wb")
+		f:write("seed : " .. seed)
+		f:close()
+	end
+	math.randomseed(seed)
+	print("Seed =", seed)
+end
+
+init_random_seed()
 
 local callback = {}
 

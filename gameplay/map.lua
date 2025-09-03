@@ -600,6 +600,13 @@ function map.reset()
 			vmap.set_sector_mask(sec)
 		end
 	end
+	local s = galaxy[expand.start]
+	if s and s.extra then
+		s.n = s.n - s.extra
+		util.dirty_trigger(map.is_safe)
+		util.dirty_trigger(map.update)
+		map.update()
+	end
 	expand = {}
 end
 

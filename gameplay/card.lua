@@ -31,6 +31,7 @@ type : blank world tech civ deleted
 ]]
 
 local actions = util.keys(ui.suit)
+table.sort(actions)
 
 local DECK
 local HISTORY
