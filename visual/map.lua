@@ -18,6 +18,7 @@ local HEX_SIZE = config.map.size
 local MASK_COLOR <const> = config.map.mask_color
 local focus_color <const> = config.map.focus_color
 local token <const> = config.map.token
+local black <const> = config.map.token_black
 local tokens_width <const> = config.map.tokens_width
 local SECTOR_TO_AXIAL <const> = {
 	[11] = 30, [12] = 40, [13] = 50, [14] = 31, [15] = 41, [16] = 32,
@@ -73,23 +74,46 @@ end
 local hex_drawlist = {}
 local hex_people = {}
 
-local function people_icons(color, n)
+local function people_icons(color, n, extra)
 	local r =  color
 	if n <= tokens_width then
-		r = r .. (token:rep(n))
+		if extra then
+			if extra >= n then
+				r = r .. black:rep(n)
+			else
+				r = r .. token:rep(n-extra) .. black:rep(extra)
+			end
+		else
+			r = r .. token:rep(n)
+		end
 	else
 		local line1 = n // 2
 		local line2 = n - line1
-		r = r .. (token:rep(line1)) .. "\n" .. (token:rep(line2))
+		if extra then
+			if extra >= line2 then
+				r = black:rep(line2)
+				extra = extra - line2
+			else
+				r = token:rep(line2-extra) .. black:rep(extra)
+				extra = 0
+			end
+			if extra >= line1 then
+				r = color .. black:rep(line1) .. "\n" .. r
+			else
+				r = color .. token:rep(line1-extra) .. black:rep(extra) .. "\n" .. r
+			end
+		else
+			r = color .. (token:rep(line1)) .. "\n" .. (token:rep(line2))
+		end
 	end
-	return r
+	return r.."[n]"
 end
 
-function map.set(sector, color, n)
+function map.set(sector, color, n, extra)
 	if not color then
 		hex_people[sector] = nil
 	else
-		hex_people[sector] = {color, n}
+		hex_people[sector] = {color, n, extra}
 	end
 end
 

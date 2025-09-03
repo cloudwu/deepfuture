@@ -21,6 +21,7 @@ map :
 	neutral : "[black]"
 	player  : "[blue]"
 	token : "[people]"
+	token_black : "[blackman]"
 	tokens_width : 3
 	size : 48
 button :

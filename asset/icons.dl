@@ -80,11 +80,14 @@ image : icons/coin.png
 name : eye
 image : icons/eye.png
 --
-name : xeno
-image : icons/alien.png
---
 name : stable
 image : icons/balance.png
 --
 name : culture
 image : icons/mask.png
+--
+name : xeno
+image : icons/alien.png
+--
+name : blackman
+image : icons/blackpeople.png

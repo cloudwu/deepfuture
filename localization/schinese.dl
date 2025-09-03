@@ -5,6 +5,7 @@ schinese:
   button.action.plan : "计划"
   button.action.skip : "跳过(${n})"
   button.restart : "再来一盘"
+  button.battle.confirm : "战斗结算"
   tips.setup.homeworld : "[lbutton]选择 [blue]${world}[n] 作为母星"
   tips.setup.invalid : "请选择$(card.type.world)，这是${type}"
   tips.setup.newworld : "[lbutton]创建一张[blue]新的$(card.type.world)[n]作为母星\n - 因为手牌中没有$(card.type.world)"
@@ -69,6 +70,20 @@ schinese:
   tips.settle.map.confirm : "[lbutton]向星区 ${sec} 殖民\n - $(card.type.blank)将转换为$(card.type.world)\n - $(card.type.world)将设为星区 ${sec}"
   tips.settle.map.desc : "$(tips.grow.desc)"
   tips.settle.map.advice : "请选择你所控制的星区\n - $(card.type.blank)将转换为$(card.type.world)"
+  tips.battle.set : "[lbutton]将星区 ${sec} 加入战场\n - ${desc}"
+  tips.battle.set.invalid : "这个星区无法作为战场\n - 需要你所控制的星区\n - 需要邻接敌对星区"
+  tips.battle.set.advice : "请在星图中选择战场"
+  tips.battle.buildup : "[lbutton]向战场增加一支部队[blue][people][n]"
+  tips.battle.effect : " - 敌我双方以 1:1 消除[blackman]"
+  tips.battle.prepare : "$(tips.battle.buildup)\n[rbutton]从战场撤回一支部队[blue][people][n]\n$(tips.battle.effect)"
+  tips.battle.prepare.invalid : "$(tips.battle.retreat)\n$(tips.battle.effect)\n - [800000]不能失去所有殖民地[n]"
+  tips.battle.prepare.lost : "$(tips.battle.buildup)\n[800000] - 将失去殖民地[n]\n$(tips.battle.retreat)\n$(tips.battle.effect)"
+  tips.battle.retreat : "[rbutton]从战场撤回一支部队[blue][people][n]"
+  tips.battle.battlefield : "[blue]选择战场[n]"
+  tips.battle.confirm : "[lbutton]结算所有战场上的伤亡"
+  tips.battle.safe.valid :"[lbutton]将 ${type} 进度条推进一格\n - 推进进度条是游戏的目标"
+  tips.battle.safe.invalid : "${type} 进度条已经无法推进"
+  tips.battle.safe.out : "请选择一个进度条推进一格"
   BLACKHOLE : 黑洞
   SECTOR : "星区 ${sec}"
   EMPTY_SECTOR : 无人区
@@ -340,7 +355,7 @@ schinese:
   adv.construction.desc : "C+2"
   adv.construction.detail : "$(adv.track.C2)"
   adv.military.name : 军事
-  adv.military.desc : "开辟一对新战场"
+  adv.military.desc : "开辟新战场"
   adv.military.detail : "额外指定一个我方星区和一个敌方星区加入战争，可以指定已选择过的星区。"
   adv.defense.name : 防御
   adv.defense.desc : "移除敌对1[people]"

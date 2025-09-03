@@ -1,0 +1,46 @@
+# test BATTLE action
+
+setup :
+	---
+	to : colony
+	type : world
+	name : TEST
+	sector : 25
+	adv :
+		weapons
+		machinery
+		diplomacy
+	---
+	to : homeworld
+	type : tech
+	name : TEST
+	adv :
+		military
+		defense
+		military
+	---
+	type : galaxy
+	sector : 22
+	n : 5
+	camp : player
+	---
+	type : galaxy
+	sector : 25
+	n : 3
+	camp : player
+	---
+	type : galaxy
+	sector : 23
+	n : 1
+	camp : neutral
+	---
+	type : galaxy
+	sector : 24
+	n : 3
+	camp : neutral
+start:
+	---
+	type : blank
+	suit : H
+	---
+	type : tech

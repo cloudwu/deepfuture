@@ -53,6 +53,7 @@ local ACTION = {
 	advance = require "gameplay.advance",
 	grow = require "gameplay.grow",
 	settle = require "gameplay.settle",
+	battle = require "gameplay.battle",
 }
 
 local SUITS <const> = util.keys(rules.action)

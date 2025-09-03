@@ -3,6 +3,7 @@ local vmap = require "visual.map"
 local config = require "core.rules".ui
 local util = require "core.util"
 local rules = require "core.rules".map
+local card = require "gameplay.card"
 
 global pairs, assert, print, print_r, error
 
@@ -10,6 +11,7 @@ local map = {}
 
 local galaxy = {}
 local colony = {}
+local battlefield = {}
 
 local COLOR = {
 	neutral = config.map.neutral,
@@ -219,7 +221,7 @@ map.is_safe = util.dirty_update(function()
 			local conn = connection[player]
 			for sec in pairs(conn) do
 				local s = galaxy[sec]
-				if s and s.camp == "neutral" then
+				if s and s.camp == "neutral" and s.n ~= s.extra then
 					return false
 				end
 			end
@@ -280,6 +282,28 @@ function map.territory(limit)
 	return r
 end
 
+function map.find_enemy(sec, r)
+	local s = galaxy[sec]
+	if s == nil then
+		return
+	end
+	local camp = s.camp
+	local conn = connection[sec]
+	local enemy = 0
+	for nsec in pairs(conn) do
+		local ns = galaxy[nsec]
+		if ns and ns.n ~= ns.extra and ns.camp ~= camp then
+			r[nsec] = ns.n
+			enemy = enemy + 1
+		end
+	end
+	if enemy == 0 then
+		return
+	else
+		return enemy
+	end
+end
+
 function map.can_grow_more()
 	for sec, obj in pairs(galaxy) do
 		if obj.grow and obj.n < LIMIT then
@@ -306,11 +330,22 @@ function map.list_grow_extra()
 	return r
 end
 
+local function clear_battlefield()
+	if battlefield.player then
+		vmap.set_sector_mask(battlefield.player)
+	end
+	if battlefield.neutral then
+		vmap.set_sector_mask(battlefield.neutral)
+	end
+end
+
 function map.reset()
 	for sec, obj in pairs(galaxy) do
 		obj.grow = nil
 		obj.extra = nil
 	end
+	clear_battlefield()
+	battlefield = {}
 end
 
 function map.grow(sec)
@@ -354,6 +389,156 @@ function map.info(sec, desc)
 			desc.desc = "$(HOSTILE_SECTOR)"
 		end
 	end
+end
+
+function map.battle(sec1, sec2)
+	local conn = connection[sec1]
+	if not conn[sec2] then
+		error ("Not connected " .. sec1 .. ":" .. sec2)
+	end
+	local obj1 = galaxy[sec1] or error (sec1 .. " is empty")
+	local obj2 = galaxy[sec2] or error (sec2 .. " is empty")
+	if obj2.camp == "player" then
+		sec1, sec2 = sec2, sec1
+		obj1, obj2 = obj2, obj1
+	end
+	if obj1.camp ~= "player" then
+		error (sec1 .. "is not player")
+	end
+	if obj2.camp ~= "neutral" then
+		error (sec2 .. "is not neutral")
+	end
+	clear_battlefield()
+	battlefield.player = sec1
+	battlefield.neutral = sec2
+	vmap.set_sector_mask(sec1, true)
+	vmap.set_sector_mask(sec2, true)
+	return sec1, sec2
+end
+
+local function set_extra(sec)
+	local s = galaxy[sec]
+	if s.n == 0 then
+		vmap.set(sec, nil)
+	else
+		vmap.set(sec, COLOR[s.camp], s.n, s.extra)
+	end
+end
+
+function map.army(def)
+	local player = galaxy[battlefield.player]
+	local neutral = galaxy[battlefield.neutral]
+	if def > 0 then
+		local player_extra = (player.extra or 0) + def
+		local neutral_extra = (neutral.extra or 0) + def
+		if player_extra > player.n then
+			local diff = player_extra - player.n
+			player_extra = player.n
+			neutral_extra = neutral_extra - diff
+		end
+		if neutral_extra > neutral.n then
+			local diff = neutral_extra - neutral.n
+			neutral_extra = neutral.n
+			player_extra = player_extra - diff
+		end
+		player.extra = player_extra
+		neutral.extra = neutral_extra
+	elseif def <= 0 then
+		local player_extra = player.extra or 0
+		local neutral_extra = neutral.extra or 0
+		if player_extra < -def then
+			def = -player_extra
+		end
+		player_extra = player_extra + def
+		neutral_extra = neutral_extra + def
+		
+		if player_extra <= 0 then
+			player.extra = nil
+		else
+			player.extra = player_extra
+		end
+		if neutral_extra <= 0 then
+			neutral.extra = nil
+		else
+			neutral.extra = neutral_extra
+		end
+	end
+	set_extra(battlefield.player)
+	set_extra(battlefield.neutral)
+	util.dirty_trigger(map.is_safe)
+	util.dirty_trigger(map.update)
+	map.update()
+	return player.extra
+end
+
+function map.battle_confirm()
+	local lost = {}
+	for sec, obj in pairs(galaxy) do
+		if obj.extra then
+			obj.n = obj.n - obj.extra
+			obj.extra = nil
+			if obj.n == 0 then
+				galaxy[sec] = nil
+				vmap.set(sec, nil)
+				lost[sec] = true
+			else
+				vmap.set(sec, COLOR[obj.camp], obj.n)
+			end
+		end
+	end
+	clear_battlefield()
+	battlefield = {}
+	util.dirty_trigger(map.update)
+	map.update()
+	return lost
+end
+
+function map.hostile(def)
+	local sec = battlefield.neutral
+	if sec == nil then
+		return
+	end
+	local obj = galaxy[sec]
+	local extra = (obj.extra or 0) + (def or 0)
+	if def then
+		if extra > obj.n then
+			extra = obj.n
+		elseif extra < 0 then
+			extra = nil
+		end
+		obj.extra = extra
+		set_extra(sec)
+		util.dirty_trigger(map.update)
+		util.dirty_trigger(map.is_safe)
+		map.update()
+	end
+	return extra
+end
+
+function map.battlefield()
+	local player = battlefield.player
+	if player == nil then
+		return
+	end
+	local neutral = battlefield.neutral
+	local player_sec = galaxy[player]
+	local neutral_sec = galaxy[neutral]
+	return neutral, neutral_sec.n, player, player_sec.n
+end
+
+function map.in_battle(sec)
+	if sec == battlefield.neutral or sec == battlefield.player then
+		return battlefield.player, battlefield.neutral
+	end
+end
+
+function map.battle_lostctrl(def)
+	local sec = battlefield.player
+	local obj = galaxy[sec]
+	if obj == nil or obj.extra == nil then
+		return
+	end
+	return obj.extra + (def or 0) >= obj.n
 end
 
 return map

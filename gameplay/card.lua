@@ -551,6 +551,20 @@ function card.check_only_sector(sec)
 	return true	
 end
 
+function card.has_player_world(sec)
+	local homeworld = DECK[GAME.homeworld[1]]
+	if homeworld.sector == sec then
+		return true
+	end
+	for _, id in ipairs(GAME.colony) do
+		local c = DECK[id] 
+		if c.sector == sec then
+			return true
+		end
+	end
+	return false
+end
+
 local function get_adv_suit(c, key, r)
 	local adv = c[key]
 	if adv == nil then

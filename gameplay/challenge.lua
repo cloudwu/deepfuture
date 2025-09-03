@@ -12,8 +12,8 @@ local track = require "gameplay.track"
 local vmap = require "visual.map"
 local map = require "gameplay.map"
 local look = require "gameplay.look"
-local relocate = require "gameplay.relocate"
 local sync = require "gameplay.sync"
+local lost_sectors = require "gameplay.lostsectors"
 
 global pairs, print, ipairs, print_r, error, next, print_r, next, assert
 
@@ -352,52 +352,6 @@ local function execute_challenge(lost, name)
 	local rival = rule.world
 	if rival then
 		add_neutral(lost, rival)
-	end
-end
-
-local function lost_sectors(lost)
-	local colony_sector = {}
-	local n = 1
-	while true do
-		local c = card.card("colony", n)
-		if c == nil then
-			break
-		end
-		n = n + 1
-		local list = colony_sector[c.sector] or {}
-		colony_sector[c.sector] = list
-		list[#list+1] = c
-	end
-	-- discard colony
-	for sector in pairs(lost) do
-		local list = colony_sector[sector]
-		if list then
-			for _, c in ipairs(list) do
-				c = card.pickup("colony", c)
-				card.discard(c)
-				vdesktop.transfer("colony", c , "deck")
-				flow.sleep(5)
-			end
-		end
-	end
-	local homeworld = card.card("homeworld", 1)
-	assert(homeworld and homeworld.type == "world")
-	if lost[homeworld.sector] then
-		-- lost homeworld
-		local c = card.pickup("homeworld", homeworld)
-		card.discard(c)
-		vdesktop.transfer("homeworld", c , "deck")
-		flow.sleep(5)
-		if not relocate() then
-			vtips.set()
-			return "loss", "homeworld"
-		end
-	end
-	local loss = track.loss()
-	if loss then
-		return "loss", loss
-	else
-		return "start"
 	end
 end
 

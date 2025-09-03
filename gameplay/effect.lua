@@ -321,6 +321,7 @@ function effect:choose_cards(args)
 	local adv_focus = args.adv_focus
 	local adv_func = args.adv_func
 	local adv_select = args.adv_select
+	local map_message = args.map_message
 	local button = {
 		text = "button.advancement.skip",
 		n = args.n,
@@ -333,6 +334,18 @@ function effect:choose_cards(args)
 	local focus_state = {}
 	
 	vdesktop.button_enable("button1", button)
+				
+	local function update_adv()
+		local n = self:update(adv_select)
+		if n == 0 then
+			-- no more advs available
+			return true
+		end
+		if n ~= button.n then
+			button.n = n
+			vbutton.update "button1"
+		end
+	end
 	
 	while true do
 		if focus.get(focus_state) then
@@ -344,6 +357,8 @@ function effect:choose_cards(args)
 				if desc.seen > 0 then
 					vtips.set("tips.look.pile", desc)
 				end
+			elseif where == "map" and map_message then
+				map_message.focus(focus_state.object)
 			else
 				local focus = self:focus(focus_state.object)
 				if focus then
@@ -393,8 +408,12 @@ function effect:choose_cards(args)
 			if btn == "button1" then
 				self:reset()
 				break
-			end
-			if self:can_use(c) then
+			elseif btn == "map" and map_message then
+				map_message.click(c, "left")
+				if update_adv() then
+					break
+				end
+			elseif self:can_use(c) then
 				advancement_unfocus()
 				vtips.set(nil)
 				local adv_name = self:focus(c)
@@ -404,27 +423,31 @@ function effect:choose_cards(args)
 				-- do adv
 				f(self)
 				vdesktop.button_enable("button1", button)
-				local n = self:update(adv_select)
-				if n == 0 then
-					-- no more advs available
+				if update_adv() then
 					break
 				end
 				advancement_unfocus()
 				vtips.set(nil)
-				if n ~= button.n then
-					button.n = n
-					vbutton.update "button1"
-				end
 			elseif btn == "discard" then
 				self:look_drawpile(button)
 			else
 				vtips.set(nil)
 			end
 		end
+		if map_message then
+			local c, where = focus.click "right"
+			if where == "map" then
+				map_message.click(c, "right")
+				if update_adv() then
+					break
+				end
+			end
+		end
 		flow.sleep(0)
 	end
 	vdesktop.button_enable("button1", nil)
 	vtips.set(nil)
+	flow.sleep(1)
 end
 
 function effect:discard_one_card(phase, advname, action)
@@ -480,6 +503,7 @@ function effect:discard_one_card(phase, advname, action)
 		end
 		flow.sleep(0)
 	end
+	flow.sleep(1)
 end
 
 local function check_any_track()
@@ -615,6 +639,32 @@ end
 
 function adv_check.ecology()
 	return track.check("X", 1)
+end
+
+-- BATTLE
+function adv_check.weapons()
+	return track.check("M", 1)
+end
+
+function adv_check.machinery()
+	return track.check("S", 1)
+end
+
+function adv_check.diplomacy()
+	return track.check("C", 2)
+end
+
+function adv_check.military()
+	return not map.is_safe()
+end
+
+function adv_check.defense()
+	local extra = map.hostile()
+	if extra == nil then
+		return false
+	end
+	local neutral, neutral_n, player, player_n = map.battlefield()
+	return extra < neutral_n
 end
 
 function effect:check_adv(adv_name, c)

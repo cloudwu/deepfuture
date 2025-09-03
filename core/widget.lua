@@ -65,6 +65,7 @@ function widget.draw_list(dom, texts, font_id, sprites)
 			end
 			if env then
 				local label = localization.convert(obj.text, env)
+				local last = label
 				label = textconv.convert[label]
 				local block = mattext.block(fontcobj, font_id, obj.size or 16, obj.color or 0, obj.text_align)
 				local label = block(label, obj.w, obj.h)

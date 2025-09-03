@@ -254,7 +254,7 @@ local function set_homeworld()
 			vdesktop.transfer("hand", c, "homeworld")
 			card.pickup("hand", c)
 			card.putdown("homeworld", c)
-			map.add_player(homeworld.sector, 3)
+			map.set_galaxy(homeworld.sector, 3, "player")
 			map.settle(homeworld.sector)
 		else
 			vdesktop.transfer("hand", c, "deck")
