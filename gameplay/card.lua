@@ -188,6 +188,7 @@ function card.draw_discard()
 		return
 	end
 	GAME.discard[#GAME.discard+1] = card_id
+--	print_r(card_id, GAME.discard)
 	return DECK[card_id] or error ("No card id " .. tostring(card_id))
 end
 
@@ -327,6 +328,7 @@ function card.discard(card)
 		GAME.upkeep[card._id] = nil
 	end
 	GAME.discard[#GAME.discard + 1] = card._id
+--	print_r(card._id, GAME.discard)
 end
 
 function card.count(pile)
@@ -517,6 +519,7 @@ function card.upkeep_change(c, def)
 		else
 			c._upkeep = nil
 		end
+		vcard.flush(c)
 		return n2
 	end
 end
@@ -688,6 +691,54 @@ function card.settling(c)
 		local id = c._id
 		GAME.settling = id
 		return c
+	end
+end
+
+local function check_pile(err, cards, name)
+	local p = GAME[name]
+	for _, id in ipairs(p) do
+		if type(id) ~= "number" then
+			err[#err+1] = "Invalid card in " .. name
+		end
+		if cards[id] ~= true then
+			if cards[id] == nil then
+				err[#err+1] = "No card " .. id .. " in " .. name
+			else
+				err[#err+1] = "card " .. id .. " from " .. name .. " already exist in " .. name
+			end
+		else
+			cards[id] = name
+		end
+	end
+end
+
+-- for debug
+-- todo : remove it if slow
+function card.verify()
+	local all_cards = {}
+	local err = {}
+	for id in pairs(DECK) do
+		if type(id) == "number" then
+			if all_cards[id] then
+				err[#err+1] = "Card " .. id .. " is duplicate"
+			end
+			all_cards[id] = true
+		end
+	end
+	check_pile(err, all_cards, "hand")
+	check_pile(err, all_cards, "draw")
+	check_pile(err, all_cards, "discard")
+	check_pile(err, all_cards, "homeworld")
+	check_pile(err, all_cards, "colony")
+	check_pile(err, all_cards, "neutral")
+	check_pile(err, all_cards, "challenge")
+	for id, where in pairs(all_cards) do
+		if where == true then
+			err[#err+1] = "Card " .. tostring(id) .. " is missing"
+		end
+	end
+	if #err > 0 then
+		error(table.concat(err, "\n"))
 	end
 end
 

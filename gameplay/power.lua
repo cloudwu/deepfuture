@@ -61,6 +61,7 @@ function power_adv.devices()
 end
 
 return function(extra)
+	card.verify()
 	local phase_desc = { extra = ACTION_TEXT }
 	if extra then
 		phase_desc.extra = extra .. phase_desc.extra

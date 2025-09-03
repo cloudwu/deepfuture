@@ -103,7 +103,6 @@ local function challenge(challenge_card)
 	end
 
 	set_mask()
-	
 	vtips.set()
 	
 	return accept
@@ -159,7 +158,7 @@ local function accept_challenge(card_suit)
 	vcard.mask(card_value, true)
 	vdesktop.add("deck", card_value)	
 	vdesktop.transfer("deck", card_value, "float")
-	flow.sleep(0)
+	flow.sleep(1)
 	local challenge_type = card_value.value .. card_suit.suit
 	local challenge_type_text = card_value.value .. card.suit_info(card_suit)
 	local desc = {
@@ -189,7 +188,6 @@ local function accept_challenge(card_suit)
 			vcard.mask(card_suit)
 			vdesktop.transfer("float", card_suit, "deck")
 			flow.sleep(5)
-			card.discard(card_value)
 			vcard.mask(card_value)
 			vdesktop.transfer("float", card_value, "deck")
 			flow.sleep(5)
@@ -356,6 +354,7 @@ local function execute_challenge(lost, name)
 end
 
 return function ()
+	card.verify()
 	sync()
 	vdesktop.set_text("phase", { text = "$(phase.challenge)" })
 	local lost = {}
@@ -373,6 +372,7 @@ return function ()
 			card.discard(c)
 			vdesktop.transfer("float", c, "deck")
 		end
+		flow.sleep(0)
 	end
 	map.set_galaxy(0, 0)
 	return lost_sectors(lost)

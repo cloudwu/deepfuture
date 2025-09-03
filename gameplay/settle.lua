@@ -356,6 +356,7 @@ local function choose_adv(c, advs)
 end
 
 return function()
+	card.verify()
 	vdesktop.set_text("phase", { extra = "[blue]$(SETTLE)[n]" } )
 	-- default behaviour : choose settle world
 	

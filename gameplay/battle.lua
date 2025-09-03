@@ -128,13 +128,15 @@ local function choose_battlefield_()
 	return map.battle(sec1, sec2)
 end
 
+local function set_title()
+	vdesktop.set_text("phase", { extra = "[blue]$(BATTLE)[n]" } )
+end
+
 local function choose_battlefield()
-	local phase = { extra = "$(tips.battle.battlefield)" }
-	vdesktop.set_text("phase", phase)
+	vdesktop.set_text("phase", { extra = "$(tips.battle.battlefield)" })
 	choose_battlefield_()
 	flow.sleep(1)	-- reset mouse click
-	phase.extra = "[blue]$(BATTLE)[n]"
-	vdesktop.set_text("phase", phase)
+	set_title()
 end
 
 function battle_adv.military()
@@ -142,6 +144,8 @@ function battle_adv.military()
 end
 
 local function inc_track()
+	set_title()
+	
 	local focus_state = {}
 	track.focus(true)
 	local desc = {}
@@ -181,6 +185,7 @@ local function inc_track()
 end
 
 return function()
+	card.verify()
 	if map.is_safe() then
 		inc_track()
 	else

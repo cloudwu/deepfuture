@@ -14,6 +14,8 @@ local util = require "core.util"
 local persist = require "gameplay.persist"
 local sync = require "gameplay.sync"
 local effect = require "gameplay.effect"
+local table = table
+
 require "gameplay.effect"
 
 global pairs, print, ipairs, print_r, error, require
@@ -58,11 +60,13 @@ local ACTION = {
 	expand = require "gameplay.expand",
 }
 
-local SUITS <const> = util.keys(rules.action)
+local SUITS = util.keys(ui.suit)
+table.sort(SUITS)
 
 local function create_plan_card(newcard)
 	local suit_card = {}
 	for idx,suit in ipairs(SUITS) do
+		print(suit)
 		local c = util.shallow_clone(newcard, {})
 		c.suit = suit
 		c._marker = card.suit_info(c)
@@ -383,6 +387,7 @@ local function choose_action(hands)
 end
 
 return function ()
+	card.verify()
 	sync()
 	BUTTONS.button2.n = ACTION_N
 	local plan_card

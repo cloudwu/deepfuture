@@ -423,6 +423,7 @@ function start_adv.exploration(advs)
 end
 
 return function ()
+	card.verify()
 	card.next_turn()
 	vdesktop.set_text("phase", {
 		text = "$(phase.start)",

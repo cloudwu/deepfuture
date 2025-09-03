@@ -304,6 +304,8 @@ return function ()
 	clear "colony"
 	clear "neutral"
 	card.setup()
+	card.verify()
+	
 	track.setup()
 	map.setup()
 	test.patch "setup"
@@ -314,6 +316,7 @@ return function ()
 	vdesktop.set_text("turn", {
 		turn = card.turn(),
 	})
+	
 	draw_hands()
 	local homeworld = set_homeworld()
 	set_neutral()

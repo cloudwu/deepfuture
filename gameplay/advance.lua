@@ -407,6 +407,7 @@ local function unmask(cards)
 end
 
 return function(extra)
+	card.verify()
 	local phase_desc = { extra = "[blue]$(ADVANCE)[n]" }
 	if extra then
 		phase_desc.extra = extra .. phase_desc.extra

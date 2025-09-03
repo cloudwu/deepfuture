@@ -118,6 +118,7 @@ function grow_adv.construction()
 end
 
 return function()
+	card.verify()
 	vdesktop.set_text("phase", { extra = "[blue]$(GROW)[n]" })
 
 	-- default behaviour : add peoples

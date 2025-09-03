@@ -220,7 +220,7 @@ schinese:
   action.expand : "[foot]$(EXPAND)"
   action.expand.desc : "向邻接星区派遣[people]人口"
   action.expand.detail : "向邻接星区派遣至少一个[people]人口\n - 目的地没有敌人\n - 目的地的人口未达上限\n - 不可以因此失去对出发星区的控制"
-  action.expand.desc.invalid : "没有满足要求的邻接星区"
+  action.expand.desc.invalid : "没有可供移动的人口[blue][people][n]"
   phase.setup : 布局
   phase.start : 开始
   phase.discard : 弃牌

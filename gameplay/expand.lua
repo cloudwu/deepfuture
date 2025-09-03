@@ -26,6 +26,7 @@ function adv_focus.religion()
 end
 
 return function()
+	card.verify()
 	local dist = 1
 	local spacecraft = 0
 	local start_region = map.expand_start(dist)

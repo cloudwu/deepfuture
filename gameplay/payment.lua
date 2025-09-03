@@ -103,6 +103,7 @@ local function add_challenge(challenge_card)
 end
 
 return function ()
+	card.verify()
 	sync()
 	vdesktop.set_text("phase", { text = "$(phase.payment)" })
 	local n = 1
