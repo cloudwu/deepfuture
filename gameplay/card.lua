@@ -655,13 +655,17 @@ function card.has_advancement(c, from, adv_name, focus)
 	if from == "hand" and (c.type ~= "tech" or not card.complete(c)) then
 		return
 	end
+	local count = 0
 	for i = 1, 3 do
 		local adv = c["adv"..i]
 		if adv and adv.value then
 			if advancement.name(adv.suit, adv.value) == adv_name then
-				return true
+				count = count + 1
 			end
 		end
+	end
+	if count > 0 then
+		return count
 	end
 end
 

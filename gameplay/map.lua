@@ -12,6 +12,7 @@ local map = {}
 local galaxy = {}
 local colony = {}
 local battlefield = {}
+local expand = {}
 
 local COLOR = {
 	neutral = config.map.neutral,
@@ -28,6 +29,7 @@ local connection = (function ()
 			connection[sec] = vmap.neighbors(sec)
 		end
 	end
+	connection[0] = vmap.neighbors(0)
 	return connection
 end) ()
 
@@ -99,7 +101,9 @@ end
 
 function map.player_ctrl(sec)
 	local s = galaxy[sec]
-	return s and s.camp == "player"
+	if s and s.camp == "player" then
+		return s.n
+	end
 end
 
 function map.neighbor(sector, idx)
@@ -271,6 +275,251 @@ map.can_grow = util.dirty_update(function()
 	end
 end)
 
+local function find_map_(sec, result)
+	local conn = connection[sec]
+	for nsec in pairs(conn) do
+		if result[nsec] == nil then
+			local s = galaxy[nsec]
+			if nsec ~= 0 then
+				if s == nil or (s.camp == "player" and s.n < LIMIT) then
+					-- can expand to this sector
+					return true
+				end
+			end
+			result[nsec] = true
+		end
+	end
+end
+
+local function find_map(result, dist)
+	if dist <= 0 then
+		return
+	end
+	local nset = {}
+	local n = 0
+	for sec, enable in pairs(result) do
+		if enable then
+			result[sec] = false
+			n = n + 1
+			nset[n] = sec
+		end
+	end
+	for i = 1, n do
+		if find_map_(nset[i], result) then
+			return true
+		end
+	end
+	return find_map(result, dist - 1)
+end
+
+function map.can_expand(dist)
+	dist = dist or 1
+	local set = {}
+	for sec, obj in pairs(galaxy) do
+		if obj.camp == "player" and obj.n > 1 then
+			set[sec] = true
+		end
+	end
+	return find_map(set, dist)
+end
+
+local function mark_expand_(sec, result)
+	local conn = connection[sec]
+	for nsec in pairs(conn) do
+		if result[nsec] == nil then
+			local s = galaxy[nsec]
+			result[nsec] = false
+		end
+	end
+end
+
+local function mark_expand(result, dist)
+	if dist <= 0 then
+		return
+	end
+	local nset = {}
+	local n = 0
+	for sec, flag in pairs(result) do
+		if flag == false then
+			result[sec] = true
+			n = n + 1
+			nset[n] = sec
+		end
+	end
+	for i = 1, n do
+		mark_expand_(nset[i], result)
+	end
+	mark_expand(result, dist - 1)
+end
+
+function map.expand_start(dist)
+	local set = {}
+	for sec, obj in pairs(galaxy) do
+		if obj.camp == "player" and obj.n > 1 then
+			local tmp = { [sec] = true }
+			if find_map(tmp, dist) then
+				set[sec] = true
+			end
+		end
+	end
+	return set
+end
+
+function map.expand_count()
+	local s = galaxy[expand.start]
+	if not s then
+		return
+	end
+	return s.extra, expand.start
+end
+
+function map.expand_choose_start(sec)
+	assert(expand.start == nil)
+	expand.start = sec
+end
+
+function map.expand(dist)
+	local sec = expand.start or error "No start sector"
+	expand = {
+		[sec] = false
+	}
+	mark_expand(expand, dist)
+	expand[sec] = nil
+	expand[0] = nil
+	for sec in pairs(expand) do
+		local s = galaxy[sec]
+		if s == nil or (s.n ~= LIMIT and s.camp == "player") then
+			expand[sec] = true
+			vmap.set_sector_mask(sec, true)
+		else
+			expand[sec] = nil
+		end
+	end
+	expand.start = sec
+end
+
+local function set_extra(sec)
+	local s = galaxy[sec]
+	if s == nil or s.n == 0 then
+		vmap.set(sec, nil)
+	else
+		vmap.set(sec, COLOR[s.camp], s.n, s.extra)
+	end
+end
+
+function map.check_expand(sec, spacecraft)
+	local start = galaxy[expand.start]
+	if start == nil then
+		-- no start
+		return
+	end
+	local people = start.n - (start.extra or 0)
+	if people <= 1 then
+		return false, "$(tips.expand.invalid.lastpeople)"
+	end
+	if not expand[sec] then
+		return false, "$(tips.expand.invalid.dest)"
+	end
+	local s = galaxy[sec]
+	if s and s.n + 1 > LIMIT then
+		return false, "$(tips.expand.invalid.full)"
+	end
+	local extra = (s and s.extra) or 0
+	if extra > 1 then
+		-- already expand
+		return true
+	end
+	
+	local dest
+	local need_spacecraft = 0
+	
+	for dsec, enable in pairs(expand) do
+		if enable then
+			local s = galaxy[dsec]
+			if s and s.extra then
+				need_spacecraft = need_spacecraft + 1
+				if s.extra > 1 then
+					dest = dsec
+				end
+			end
+		end
+	end
+	
+	if dest then
+		if dest == sec then
+			-- expand to dest
+			return true
+		end
+		if extra == 1 then
+			return false, "$(tips.expand.invalid.already)"
+		else
+			assert(extra == 0)
+			return need_spacecraft + 1 <= spacecraft, "$(tips.expand.invalid.spacecraft)"
+		end
+	elseif extra == 1 then
+		-- new dest
+		return true
+	else
+		assert(extra == 0)
+		return need_spacecraft <= spacecraft, "$(tips.expand.invalid.spacecraft)"
+	end
+end
+
+function map.expand_back(sec, test)
+	if not expand.start then
+		return
+	end
+	if not expand[sec] then
+		return
+	end
+	local s = galaxy[sec]
+	if not s or not s.extra then
+		return
+	end
+	if not test then
+		local start = galaxy[expand.start]
+		start.extra = start.extra - 1
+		if start.extra == 0 then
+			start.extra = nil
+		end
+		s.n = s.n - 1
+		if s.n == 0 then
+			galaxy[sec] = nil
+		else
+			s.extra = s.extra - 1
+			if s.extra == 0 then
+				s.extra = nil
+			end
+		end
+		set_extra(sec)
+		set_extra(expand.start)
+		util.dirty_trigger(map.update)
+		map.update()
+	end
+	return true
+end
+
+function map.expand_people(sec)
+	local s = expand[sec] or error ("Invalid dest sec " .. sec)
+	s = galaxy[sec]
+	local start = galaxy[expand.start]
+	local start_n = start.n - (start.extra or 0)
+	-- add to sec
+	start.extra = (start.extra or 0) + 1
+	if not s then
+		add_people(sec, 1, "player")
+		s = galaxy[sec]
+		s.extra = 1
+	else
+		s.n = s.n + 1
+		s.extra = (s.extra or 0) + 1
+	end
+	set_extra(sec)
+	set_extra(expand.start)
+	util.dirty_trigger(map.update)
+	map.update()
+end
+
 function map.territory(limit)
 	limit = LIMIT - (limit or 0)
 	local r = {}
@@ -346,6 +595,12 @@ function map.reset()
 	end
 	clear_battlefield()
 	battlefield = {}
+	for sec, enable in pairs(expand) do
+		if enable then
+			vmap.set_sector_mask(sec)
+		end
+	end
+	expand = {}
 end
 
 function map.grow(sec)
@@ -414,15 +669,6 @@ function map.battle(sec1, sec2)
 	vmap.set_sector_mask(sec1, true)
 	vmap.set_sector_mask(sec2, true)
 	return sec1, sec2
-end
-
-local function set_extra(sec)
-	local s = galaxy[sec]
-	if s.n == 0 then
-		vmap.set(sec, nil)
-	else
-		vmap.set(sec, COLOR[s.camp], s.n, s.extra)
-	end
 end
 
 function map.army(def)

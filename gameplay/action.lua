@@ -54,6 +54,7 @@ local ACTION = {
 	grow = require "gameplay.grow",
 	settle = require "gameplay.settle",
 	battle = require "gameplay.battle",
+	expand = require "gameplay.expand",
 }
 
 local SUITS <const> = util.keys(rules.action)
@@ -153,7 +154,22 @@ local function has_society(pile)
 			return
 		end
 		if card.has_advancement(c, pile, "society") then
-			return c
+			return true
+		end
+		n = n + 1
+	end
+end
+
+local function count_ftl(pile, current_card)
+	local n = 1
+	local count = 0
+	while true do
+		local c = card.card(pile, n)
+		if not c then
+			return count
+		end
+		if current_card ~= c and card.has_advancement(c, pile, "ftl") then
+			count = count + 1
 		end
 		n = n + 1
 	end
@@ -174,9 +190,6 @@ local function merge_last(hands, last)
 end
 
 local function check_settle(hands, play_card)
-	if play_card.suit ~= "M" then
-		return true
-	end
 	local can_settle = true
 	for c in pairs(hands) do
 		if c ~= play_card then
@@ -208,8 +221,13 @@ local function ctrl_neutral()
 	end
 end
 
+local function how_many_ftl(c)
+end
+
 local function check_action(last)
 	local can_grow = map.can_grow()
+	local desktop_ftl = count_ftl "homeworld" + count_ftl "colony"
+	local can_expand = map.can_expand(1 + desktop_ftl)
 	local hands = {}
 	local n = 1
 	while true do
@@ -223,13 +241,21 @@ local function check_action(last)
 		else
 			hands[c] = true
 		end
+		if not can_expand and c.suit == "F" then
+			local hand_ftl = count_ftl("hand", c)
+			hands[c] = hand_ftl > 0 and map.can_expand(1 + desktop_ftl + hand_ftl)
+		else
+			hands[c] = true
+		end
 	end
 	if ctrl_neutral() or has_society "homeworld" or has_society "colony" then
 		return merge_last(hands, last)
 	end
 	
 	for c in pairs(hands) do
-		hands[c] = check_settle(hands, c)
+		if c.suit == "M" then
+			hands[c] = check_settle(hands, c)
+		end
 	end
 
 	return merge_last(hands, last)

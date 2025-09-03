@@ -1,0 +1,58 @@
+# test EXPAND action
+
+setup :
+	---
+	to : hand
+	type : world
+	sector : 66
+	adv :
+		spacecraft
+		ftl
+		astronomy
+	---
+	to : homeworld
+	type : tech
+	name : TEST
+	adv :
+		spacecraft
+		ftl
+		ftl
+	---
+	type : galaxy
+	sector : 16
+	n : 1
+	camp : neutral
+	---
+	type : galaxy
+	sector : 64
+	n : 1
+	camp : neutral
+	---
+	type : galaxy
+	sector : 65
+	n : 1
+	camp : neutral
+	---
+	type : galaxy
+	sector : 55
+	n : 1
+	camp : neutral
+	---
+	type : galaxy
+	sector : 56
+	n : 1
+	camp : neutral
+	---
+	type : galaxy
+	sector : 34
+	n : 5
+	camp : player
+	---
+	type : galaxy
+	sector : 25
+	n : 1
+	camp : player
+start:
+	---
+	type : blank
+	suit : F

@@ -667,6 +667,28 @@ function adv_check.defense()
 	return extra < neutral_n
 end
 
+-- EXPAND
+
+function adv_check.communication()
+	return track.check("M", 1)
+end
+
+function adv_check.astronomy()
+	return track.check("X", 1)
+end
+
+function adv_check.religion()
+	return track.check("C", 2)
+end
+
+function adv_check.spacecraft()
+	return true
+end
+
+function adv_check.ftl()
+	return true
+end
+
 function effect:check_adv(adv_name, c)
 	local f = adv_check[adv_name] or error ("Invalid adv " .. adv_name)
 	return f(self, c)
