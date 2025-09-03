@@ -228,37 +228,41 @@ return function()
 		map_message.focus(sec)
 	end
 
+	local button = {
+		text = "button.battle.confirm",
+	}
+
 	local advs = class.effect "BATTLE"
 	advs:add_pile "hand"
 	advs:add_pile "homeworld"
 	advs:add_pile "colony"
-
-	local n = advs:update()
-	if n > 0 then
-		advs:choose_cards {
-			n = n,
-			phase = "battle",
-			adv_focus = adv_focus,
-			adv_func = battle_adv,
-			map_message = map_message,
-		}
-		advs:discard_used_cards()
+	
+	local function update_advs()
+		local n = advs:update()
+		if n > 0 then
+			vdesktop.button_enable("button1", nil)
+			advs:choose_cards {
+				n = n,
+				phase = "battle",
+				adv_focus = adv_focus,
+				adv_func = battle_adv,
+				map_message = map_message,
+			}
+			advs:reset()
+			vdesktop.button_enable("button1", button)
+		end
 	end
 	
-	advs:reset()
+	update_advs()
 	
 	-- confirm battle
 	if not map.hostile() then
 		-- no battle
+		vdesktop.button_enable("button1", nil)
 		return
 	end
-	local button = {
-		text = "button.battle.confirm",
-	}
 	local focus_state = {}
-	
-	vdesktop.button_enable("button1", button)
-				
+
 	while true do
 		if focus.get(focus_state) then
 			if focus_state.active == "map" then
@@ -275,15 +279,19 @@ return function()
 				break
 			elseif btn == "map" then
 				map_message.click(c, "left")
+				update_advs()
 			end
 		end
 		local c, btn = focus.click "right"
 		if btn == "map" then
 			map_message.click(c, "right")
+			update_advs()
 		end
 		flow.sleep(0)
 	end
 	vdesktop.button_enable("button1", nil)
+	advs:discard_used_cards()
+	
 	local lost = map.battle_confirm()
 	lost_sectors(lost)
 end

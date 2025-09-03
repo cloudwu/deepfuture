@@ -217,7 +217,7 @@ end
 
 map.is_safe = util.dirty_update(function()
 	for player, obj in pairs(galaxy) do
-		if obj.camp == "player" then
+		if obj.camp == "player" and obj.extra ~= obj.n then
 			local conn = connection[player]
 			for sec in pairs(conn) do
 				local s = galaxy[sec]
@@ -284,7 +284,7 @@ end
 
 function map.find_enemy(sec, r)
 	local s = galaxy[sec]
-	if s == nil then
+	if s == nil and s.extra == s.n then
 		return
 	end
 	local camp = s.camp
