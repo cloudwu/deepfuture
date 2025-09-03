@@ -44,9 +44,9 @@ function track.check(type, diff)
 		return pos <= rules[type].min
 	else
 		if rules[type].loss then
-			return pos - diff < rules[type].loss
+			return pos - diff >= rules[type].loss
 		else
-			return pos - diff <= rules[type].max
+			return pos - diff > rules[type].max
 		end
 	end
 end
