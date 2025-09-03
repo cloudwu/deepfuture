@@ -249,8 +249,8 @@ return function()
 				map_message = map_message,
 			}
 			advs:reset()
-			vdesktop.button_enable("button1", button)
 		end
+		vdesktop.button_enable("button1", button)
 	end
 	
 	update_advs()
