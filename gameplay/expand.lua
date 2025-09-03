@@ -171,7 +171,7 @@ return function()
 	expand_check()
 
 	local focus_state = {}
-
+	
 	while true do
 		if focus.get(focus_state) then
 			if focus_state.active == "map" then
@@ -203,6 +203,7 @@ return function()
 		flow.sleep(0)
 	end
 	vdesktop.button_enable("button1", nil)
+	
 	map:reset()
 	
 	-- todo : wonder

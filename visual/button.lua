@@ -46,6 +46,7 @@ function button.enable(name, text)
 		focus.trigger(name)
 		return
 	end
+	focus.trigger(name, true)
 	states[name] = update_all { _env = text }
 end
 
@@ -142,9 +143,6 @@ function button.test(name, flag, mx, my, w, h)
 	focus.trigger(name)
 	return false
 end
-
---function button.click(name, btn)
---end
 
 function button.init(args)
 	BATCH = assert(args.batch)

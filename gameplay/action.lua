@@ -18,6 +18,7 @@ require "gameplay.effect"
 
 global pairs, print, ipairs, print_r, error, require
 
+local ACTION_N <const> = rules.action.n
 local BUTTONS = {
 	button1 = {
 		action = "plan",
@@ -26,7 +27,7 @@ local BUTTONS = {
 	button2 = {
 		action = "actionskip",
 		text = "button.action.skip",
-		n = 2,
+		n = ACTION_N,
 	},
 }
 
@@ -383,6 +384,7 @@ end
 
 return function ()
 	sync()
+	BUTTONS.button2.n = ACTION_N
 	local plan_card
 	local hands = check_action()
 	button_enable(nil, true)

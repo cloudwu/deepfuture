@@ -589,6 +589,12 @@ local function clear_battlefield()
 end
 
 function map.reset()
+	local s = galaxy[expand.start]
+	if s and s.extra then
+		s.n = s.n - s.extra
+		s.extra = nil
+		set_extra(expand.start)
+	end
 	for sec, obj in pairs(galaxy) do
 		obj.grow = nil
 		obj.extra = nil
@@ -597,16 +603,13 @@ function map.reset()
 	battlefield = {}
 	for sec, enable in pairs(expand) do
 		if enable then
+			set_extra(sec)
 			vmap.set_sector_mask(sec)
 		end
 	end
-	local s = galaxy[expand.start]
-	if s and s.extra then
-		s.n = s.n - s.extra
-		util.dirty_trigger(map.is_safe)
-		util.dirty_trigger(map.update)
-		map.update()
-	end
+	util.dirty_trigger(map.is_safe)
+	util.dirty_trigger(map.update)
+	map.update()
 	expand = {}
 end
 

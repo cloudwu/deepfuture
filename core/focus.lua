@@ -18,9 +18,6 @@ function focus.clear()
 			state.focus = nil
 		end
 	end
---		FOCUS_ACTIVE = nil
---		FOCUS_OBJECT = nil
---	end
 end
 
 function focus.trigger(region, object)
