@@ -294,4 +294,10 @@ function save.load_game(name)
 	end
 end
 
+function save.init_deck(name)
+	local data = profile[name] or error ("new_profile first : " .. tostring(name))
+	data.deck = {}
+	print("INITDECK")
+end
+
 return save

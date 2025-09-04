@@ -15,6 +15,7 @@ local persist = require "gameplay.persist"
 local sync = require "gameplay.sync"
 local effect = require "gameplay.effect"
 local loadsave = require "core.loadsave"
+local menu = require "gameplay.menu"
 local table = table
 
 require "gameplay.effect"
@@ -299,7 +300,6 @@ local function choose_action(hands)
 		end
 		return false
 	end
-
 	local focus_state = {}
 	while true do
 		if focus.get(focus_state) then
@@ -357,6 +357,11 @@ local function choose_action(hands)
 				assert(BUTTONS[where].action == "actionskip")
 				return "skip"
 			end
+		elseif where == "button_setting" then
+			local r = menu()
+			if r then
+				return r
+			end
 		elseif hands[c] then
 			c = card.pickup("hand", c)
 			card.discard(c)
@@ -386,13 +391,17 @@ return function ()
 	end
 	button_enable(nil, true)
 	vdesktop.set_text("phase", { text = "$(phase.action)", extra = "[blue]$(CHOOSE)[n]" } )
+	vdesktop.button_enable("button_setting", { text = "button.setting" })
 	local next_action = choose_action(hands)
+	vdesktop.button_enable("button_setting", nil)
 	vtips.set()
 	button_enable()
 	clear_mask(hands)
 	if next_action == "plan" then
 		local plan_card = card.plan_blankcard()
 		create_plan_card(plan_card)
+	elseif next_action == "RESTART" then
+		return "init"
 	elseif next_action ~= "skip" then
 		card.add_action(next_action)
 		return next_action

@@ -13,6 +13,7 @@ local config = require "core.rules".ui
 local test = require "gameplay.test"
 local loadsave = require "core.loadsave"
 local track = require "gameplay.track"
+local vbutton = require "visual.button"
 local utf8 = utf8
 local math = math
 local io = io

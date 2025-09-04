@@ -58,6 +58,23 @@ desktop :
 		width : 50%
 		minWidth: 430
 		flex : 1
+		setting :
+			position : absolute
+			top : 0
+			left : 0
+			width : 100%
+			maxWidth : 640
+			height : 30
+			setting :
+				position : absolute
+				top : 0
+				right : 0
+				width : 30
+				height : 100%
+				text_align : C
+				size : 26
+				color : 0
+				region : button_setting
 		card :
 			margin : 5
 			region : neutral
@@ -76,6 +93,7 @@ desktop :
 			text : hud.world
 			height : 20
 			size : 16
+			maxWidth : 640
 			history :
 				flex : 1
 				text : hud.turn

@@ -9,7 +9,7 @@ local localization = require "core.localization"
 local math = math
 local sin = math.sin
 
-global pairs, assert, print
+global pairs, assert, print, print_r
 
 local states = {}
 local button = {}
@@ -60,28 +60,41 @@ function button.register(args)
 	for k,v in pairs(states) do
 		if v then
 			ui[k] = function (self)
-				button.draw(k, self.x, self.y, self.w, self.h)
+				button.draw(k, self)
 			end
-			test[k] = button.test
+			if test then
+				test[k] = button.test
+			end
 		else
 			ui[k] = nil
-			test[k] = nil
+			if test then
+				test[k] = nil
+			end
 		end
 	end
 end
 
-function button.draw(name, x, y, w, h)
+function button.draw(name, self)
+	local x, y, w, h = self.x, self.y, self.w, self.h
 	local obj = states[name]
 	if not obj then
 		return
 	end
-	BATCH:add(matquad.quad(w, h, obj.color), x, y)
+	local color = self.color or obj.color
+	if color ~= 0 then
+		BATCH:add(matquad.quad(w, h, obj.color), x, y)
+	end
 	local label = obj._text
 	local disable = obj._env.disable
 	if w ~= obj.w or h ~= obj.h or label == nil then
 		obj.w = w
 		obj.h = h
-		local func = disable and TEXT_DISABLE or TEXT
+		local func 
+		if self.size then
+			func = mattext.block(font.cobj(), FONT_ID, self.size, config.color, "CV")
+		else
+			func = disable and TEXT_DISABLE or TEXT
+		end
 		label = func(obj.text, w, h)
 		obj._text = label
 	end

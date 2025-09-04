@@ -310,6 +310,7 @@ return function ()
 	sync()
 	vdesktop.set_text("phase", {
 		text = "$(phase.setup)",
+		extra = false,
 	})
 	vdesktop.set_text("turn", {
 		turn = card.turn(),

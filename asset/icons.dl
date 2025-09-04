@@ -91,3 +91,6 @@ image : icons/alien.png
 --
 name : blackman
 image : icons/blackpeople.png
+--
+name : gear
+image : icons/gear.png

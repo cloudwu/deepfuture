@@ -346,16 +346,22 @@ end
 
 local function update_test_list()
 	TESTLIST.hud = widget.test_list("hud", test)
+	TESTLIST.desc = widget.test_list("describe", test)
 end
 
 function M.button_enable(name, obj)
 	vbutton.enable(name, obj)
-	vbutton.register {
-		draw = hud,
-		test = test,
-	}
-	update_draw_list()
-	update_test_list()
+	if obj then
+		vbutton.register {
+			draw = hud,
+			test = test,
+		}
+		vbutton.register {
+			draw = describe,
+		}
+		update_draw_list()
+		update_test_list()
+	end
 end
 
 function M.tostring(where)

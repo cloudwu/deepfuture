@@ -61,6 +61,10 @@ function M.sync_card(...)
 	ltask.send(SERVICE, "sync_card", PROFILE, ...)
 end
 
+function M.init_deck()
+	ltask.send(SERVICE, "init_deck", PROFILE)
+end
+
 function M.new_profile(name, filename)
 	PROFILE = name
 	ltask.send(SERVICE, "new_profile", name, filename)

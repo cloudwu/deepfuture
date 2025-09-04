@@ -33,8 +33,4 @@ function initial.new()
 	card.next_era()
 end
 
-function initial.load(filename)
-	error "todo"
-end
-
 return initial

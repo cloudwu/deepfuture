@@ -67,6 +67,7 @@ function M.action(args)
 		card_type = card_type .. ".complete"
 	end
 	local desc = {
+		content = "$(desc.text.info)",
 		detail = "$(desc.text." .. args.region .. "." .. card_type .. ")",
 		type = "$(card.type." .. c.type .. ")",
 		place = "$(desc.place.".. args.region .. ")",

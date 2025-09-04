@@ -34,3 +34,28 @@ workspace :
 				size : 20
 				text_align : T
 				env : text
+menu :
+	position : absolute
+	width : 100%
+	height : 100%
+	justify : center
+	alignItems : center
+	menu :
+		width : 200
+		height : 100%
+		padding : 10
+		gap : 10
+		justify : center
+		button1:
+			region : menu1
+			height : 40
+			size : 24
+		button2:
+			region : menu2
+			height : 40
+			size : 24
+		button3:
+			region : menu3
+			height : 40
+			size : 24
+			
