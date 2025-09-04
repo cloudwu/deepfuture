@@ -26,6 +26,7 @@ function initial.new()
 		card.add_adv_value(world, index, advtype.value, 0)
 		name.world(world)
 		vcard.flush(world)
+		card.sync(world)
 		card.discard(world)
 	end
 	card.cleanup()

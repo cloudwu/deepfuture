@@ -386,7 +386,7 @@ function M.sync(where, pile)
 	for c in pairs(discard) do
 		list[#list+1] = c
 	end
-	if #draw == 0 and #discard == 0 then
+	if #draw == 0 and #list == 0 then
 		return
 	end
 	return {

@@ -14,6 +14,7 @@ local util = require "core.util"
 local persist = require "gameplay.persist"
 local sync = require "gameplay.sync"
 local effect = require "gameplay.effect"
+local loadsave = require "core.loadsave"
 local table = table
 
 require "gameplay.effect"
@@ -54,7 +55,6 @@ table.sort(SUITS)
 local function create_plan_card(newcard)
 	local suit_card = {}
 	for idx,suit in ipairs(SUITS) do
-		print(suit)
 		local c = util.shallow_clone(newcard, {})
 		c.suit = suit
 		c._marker = card.suit_info(c)
@@ -114,6 +114,7 @@ local function create_plan_card(newcard)
 			newcard.suit = choose.suit
 			newcard.value = value_card.value
 			newcard._marker = value_card.value .. choose._marker
+			card.sync(newcard)
 			vcard.flush(newcard)
 			vdesktop.replace("float", choose, newcard)
 			vdesktop.transfer("float", value_card, "deck")
@@ -226,14 +227,15 @@ local function check_action(last)
 			break
 		end
 		n = n + 1
-		if not can_grow and c.suit == "R" then
-			hands[c] = false
-		else
-			hands[c] = true
-		end
-		if not can_expand and c.suit == "F" then
-			local hand_ftl = count_ftl("hand", c)
-			hands[c] = hand_ftl > 0 and map.can_expand(1 + desktop_ftl + hand_ftl)
+		if c.suit == "R" then
+			hands[c] = can_grow
+		elseif c.suit == "F" then
+			if not can_expand then
+				local hand_ftl = count_ftl("hand", c)
+				hands[c] = hand_ftl > 0 and map.can_expand(1 + desktop_ftl + hand_ftl)
+			else
+				hands[c] = true
+			end
 		else
 			hands[c] = true
 		end
@@ -367,7 +369,7 @@ local function choose_action(hands)
 end
 
 return function ()
-	card.verify()
+	loadsave.sync_game "action"
 	sync()
 	local action1, action2 = card.action()
 	if action1 and action2 then

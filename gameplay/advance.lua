@@ -11,6 +11,9 @@ local vtips = require "visual.tips".layer "hud"
 local focus = require "core.focus"
 local util = require "core.util"
 local addadv = require "gameplay.addadv"
+local loadsave = require "core.loadsave"
+local sync = require "gameplay.sync"
+
 local table = table
 
 global pairs, error, print, print_r, ipairs
@@ -406,8 +409,10 @@ local function unmask(cards)
 	vdesktop.draw_pile_focus()
 end
 
-return function(extra)
-	card.verify()
+return function(extra, action_name)
+	loadsave.sync_game(action_name or "advance")
+	sync()
+	vdesktop.set_text("phase", { text = "$(phase.action)" })
 	local phase_desc = { extra = "[blue]$(ADVANCE)[n]" }
 	if extra then
 		phase_desc.extra = extra .. phase_desc.extra
@@ -477,6 +482,7 @@ return function(extra)
 		end
 		flow.sleep(0)
 	end
+	card.sync(advcard)
 	-- advance done, any advancement ?
 	local n = advs:update(TRACK)
 	if n > 0 then

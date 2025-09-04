@@ -212,6 +212,7 @@ schinese:
   action.advance.detail : "对你的母星或殖民地进行一次提升，或向母星添加一张新的$(card.type.tech)，亦或提升一张母星中未完成的$(card.type.tech)"
   action.grow : "[heart]$(GROW)"
   action.grow.desc : "增加 2 [people]人口"
+  action.grow.desc.invalid : "没有可以增加 [people]人口的星区"
   action.grow.detail : "在你所控制的星区中增加 2 个[people]人口"
   action.battle : "[hand]$(BATTLE)"
   action.battle.desc : "攻击邻接星区"

@@ -12,6 +12,8 @@ local vtips = require "visual.tips".layer "hud"
 local map_rules = require "core.rules".map
 local focus = require "core.focus"
 local lost_sectors = require "gameplay.lostsectors"
+local loadsave = require "core.loadsave"
+local sync = require "gameplay.sync"
 
 global pairs, setmetatable, print, next
 
@@ -185,7 +187,10 @@ local function inc_track()
 end
 
 return function()
-	card.verify()
+	loadsave.sync_game "battle"
+	sync()
+	vdesktop.set_text("phase", { text = "$(phase.action)" })
+	
 	if map.is_safe() then
 		inc_track()
 	else
@@ -264,7 +269,7 @@ return function()
 	if not map.hostile() then
 		-- no battle
 		vdesktop.button_enable("button1", nil)
-		return
+		return "action"
 	end
 	local focus_state = {}
 

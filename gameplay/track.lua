@@ -87,6 +87,10 @@ function track.setup()
 	TRACK = persist.init("track", t)
 end
 
+function track.load()
+	TRACK = persist.get "track"
+end
+
 function track.sync()
 	update()
 end

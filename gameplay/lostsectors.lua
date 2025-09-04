@@ -81,12 +81,12 @@ return function(lost)
 		flow.sleep(5)
 		if not relocate() then
 			vtips.set()
-			return "loss", "homeworld"
+			return "loss"
 		end
 	end
 	local loss = track.loss()
 	if loss then
-		return "loss", loss
+		return "loss"
 	else
 		return "start"
 	end

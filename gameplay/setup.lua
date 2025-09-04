@@ -11,6 +11,7 @@ local rules = require "core.rules".phase
 local test = require "gameplay.test"
 local util = require "core.util"
 local sync = require "gameplay.sync"
+local loadsave = require "core.loadsave"
 local string = string
 
 global pairs, ipairs, tostring, print, print_r
@@ -220,6 +221,8 @@ local function new_world(hands)
 	
 	vdesktop.replace("float", clone, newcard)
 	vdesktop.transfer("float", newcard, "hand")
+	
+	card.sync(newcard)
 
 	return newcard
 end
@@ -298,16 +301,11 @@ local function clear(where)
 end
 
 return function ()
+	-- new game
+	loadsave.sync_history()
+	loadsave.sync_game "setup"
+
 	vtips.set()
-	clear "hand"
-	clear "homeworld"
-	clear "colony"
-	clear "neutral"
-	card.setup()
-	card.verify()
-	
-	track.setup()
-	map.setup()
 	test.patch "setup"
 	sync()
 	vdesktop.set_text("phase", {

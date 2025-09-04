@@ -5,7 +5,7 @@ local util = require "core.util"
 local rules = require "core.rules".map
 local card = require "gameplay.card"
 
-global pairs, assert, print, print_r, error
+global pairs, assert, print, print_r, error, type
 
 local map = {}
 
@@ -38,6 +38,15 @@ end) ()
 function map.setup()
 	galaxy = persist.init("galaxy", {})
 	colony = {}
+end
+
+function map.load()
+	galaxy = persist.get "galaxy"
+	colony = {}
+	util.dirty_trigger(map.update)
+	util.dirty_trigger(map.is_safe)
+	util.dirty_trigger(map.can_move)
+	util.dirty_trigger(map.can_grow)
 end
 
 local function add_people(sec, n, camp)
@@ -609,6 +618,8 @@ function map.reset()
 	end
 	util.dirty_trigger(map.is_safe)
 	util.dirty_trigger(map.update)
+	util.dirty_trigger(map.can_move)
+	util.dirty_trigger(map.can_grow)
 	map.update()
 	expand = {}
 end

@@ -18,7 +18,7 @@ end
 function flow.enter(state, args)
 	assert(STATE, "Call flow.load() first")
 	assert(CURRENT.thread == nil, "Running state")
-	local f = STATE[state] or error ("Missing state " .. state)
+	local f = STATE[state] or error ("Missing state " .. tostring(state))
 	CURRENT.state = state
 	CURRENT.thread = coroutine.create(function()
 		local next_state, args = f(args)

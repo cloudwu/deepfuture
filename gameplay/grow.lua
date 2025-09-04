@@ -11,6 +11,8 @@ local rules = require "core.rules".phase
 local vtips = require "visual.tips".layer "hud"
 local map_rules = require "core.rules".map
 local focus = require "core.focus"
+local loadsave = require "core.loadsave"
+local sync = require "gameplay.sync"
 
 local LIMIT <const> = map_rules.sector.limit
 
@@ -118,7 +120,9 @@ function grow_adv.construction()
 end
 
 return function()
-	card.verify()
+	loadsave.sync_game "grow"
+	sync()
+	vdesktop.set_text("phase", { text = "$(phase.action)" })
 	vdesktop.set_text("phase", { extra = "[blue]$(GROW)[n]" })
 
 	-- default behaviour : add peoples

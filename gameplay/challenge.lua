@@ -14,6 +14,7 @@ local map = require "gameplay.map"
 local look = require "gameplay.look"
 local sync = require "gameplay.sync"
 local lost_sectors = require "gameplay.lostsectors"
+local loadsave = require "core.loadsave"
 
 global pairs, print, ipairs, print_r, error, next, print_r, next, assert
 
@@ -303,11 +304,12 @@ local function add_neutral(lost, rival)
 	local draw = card.count "draw" + card.count "discard"
 	local c
 	for i = 1, draw do
-		c = card.draw_discard()
+		c = card.draw_card()
 		vdesktop.add("deck", c)
 		vdesktop.transfer("deck", c, "float")
 		flow.sleep(5)
 		if c.type ~= "world" then
+			card.discard(c)
 			vdesktop.transfer("float", c, "deck")
 		else
 			break
@@ -354,7 +356,7 @@ local function execute_challenge(lost, name)
 end
 
 return function ()
-	card.verify()
+	loadsave.sync_game "challenge"
 	sync()
 	vdesktop.set_text("phase", { text = "$(phase.challenge)" })
 	local lost = {}
@@ -375,5 +377,6 @@ return function ()
 		flow.sleep(0)
 	end
 	map.set_galaxy(0, 0)
+	card.next_turn()
 	return lost_sectors(lost)
 end

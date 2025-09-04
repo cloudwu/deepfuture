@@ -4,7 +4,7 @@ local version = require "gameplay.version"
 local table = table
 local io = io
 
-global assert, pcall, pairs, ipairs, type, tostring, next, print
+global assert, pcall, pairs, ipairs, type, tostring, next, print, error, print_r
 
 local SUPPORT_VERSION <const> = "0.1.0"
 
@@ -14,8 +14,11 @@ local persist = {}
 
 local function loadfile(filename)
 	local data = datalist.parse(file.loader(filename))
-	assert(data.version and version.older_than(data.version, SUPPORT_VERSION))
+	if data.version == nil or version.older_than(data.version, SUPPORT_VERSION) then
+		error ("Invalid version : " .. data.version)
+	end
 	DATA = data
+	return data
 end
 
 function persist.init(entry, init)
@@ -27,8 +30,12 @@ function persist.drop(entry)
 	DATA[entry] = nil
 end
 
+function persist.get(entry)
+	return DATA[entry]
+end
+
 function persist.load(filename)
-	return pcall(loadfile, filename)	
+	return pcall(loadfile, filename)
 end
 
 do
@@ -45,7 +52,8 @@ do
 		local r = {}
 		local n = 1
 		for k in pairs(t) do
-			if type(k) == "string" and k:byte() ~= 95 then	-- '_' == 95
+			local key_type = type(k)
+			if key_type == "number" or (key_type == "string" and k:byte() ~= 95) then	-- '_' == 95
 				r[n] = k; n = n + 1
 			end
 		end
@@ -65,6 +73,20 @@ do
 		end
 		return "{ " .. table.concat(t, ",") .. " }"
 	end
+	
+	local function is_list(t)
+		local n = #t
+		if n == 0 then
+			return false
+		else
+			for i = 1, n do
+				if t[i] == nil then
+					return false
+				end
+			end
+			return next(t, n) == nil
+		end
+	end
 
 	local function write_kv(f, t, ident)
 		local keys = sort_keys(t)
@@ -82,16 +104,16 @@ do
 			if t == "string" then
 				v = quote(v)
 			elseif t == "table" then
-				if #v == 0 then
+				if is_list(v) then
+					v = tolist(v)
+				else
 					if next(v) == nil then
-						v = "{}\n"
+						v = "{}"
 					else
 						f:write(ident, k, ":")
 						write_kv(f, v, ident .. "\t")
 						is_map = true
 					end
-				else
-					v = tolist(v)
 				end
 			else
 				v = tostring(v)
@@ -123,8 +145,8 @@ do
 		end
 	end
 	
-	function persist.save(filename)
-		local data = DATA
+	function persist.save(filename, data)
+		data = data or DATA
 		local f <close> = io.open(filename, "wb")
 		if not f then
 			print ("Save to " .. filename .. " failed")
@@ -136,7 +158,7 @@ do
 			local v = data[key]
 			local t = type(v)
 			if t == "table" then
-				if v._type == "list" then
+				if is_list(v) then
 					write_list(f, key, v)
 				else
 					write_object(f, key, v)
@@ -149,6 +171,5 @@ do
 		return true
 	end
 end
-
 
 return persist

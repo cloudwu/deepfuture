@@ -14,6 +14,7 @@ local relocate = require "gameplay.relocate"
 require "gameplay.effect"
 local test = require "gameplay.test"
 local sync = require "gameplay.sync"
+local loadsave = require "core.loadsave"
 
 global print, ipairs, pairs, print_r, error, tostring, next, assert
 
@@ -423,13 +424,10 @@ function start_adv.exploration(advs)
 end
 
 return function ()
-	card.verify()
-	card.next_turn()
+	loadsave.sync_history()
+	loadsave.sync_game "start"
 	vdesktop.set_text("phase", {
 		text = "$(phase.start)",
-	})
-	vdesktop.set_text("turn", {
-		turn = card.turn(),
 	})
 	draw_hands()
 	test.patch "start"

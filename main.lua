@@ -4,11 +4,6 @@ widget.scripts(require "visual.ui")
 local flow = require "core.flow"
 local focus = require "core.focus"
 local vdesktop = require "visual.desktop"
-local utf8 = utf8
-local math = math
-local io = io
-global require, assert, print
-
 local initial = require "gameplay.initial"
 local card = require "gameplay.card"
 local map = require "gameplay.map"
@@ -16,6 +11,12 @@ local persist = require "gameplay.persist"
 local localization = require "core.localization"
 local config = require "core.rules".ui
 local test = require "gameplay.test"
+local loadsave = require "core.loadsave"
+local track = require "gameplay.track"
+local utf8 = utf8
+local math = math
+local io = io
+global require, assert, print
 
 local args = ...
 
@@ -29,27 +30,6 @@ local function font_init()
 	text.init "asset/icons.dl"
 	return font.name ""
 end
-
-local function init_random_seed()
-	local file = require "soluna.file"
-	local datalist = require "soluna.datalist"
-	local filename <const> = "seed.dl"
-	local seed
-	if file.exist(filename) then
-		local t = datalist.parse (file.loader(filename))
-		seed = t.seed
-	end
-	if not seed then
-		seed = math.random(2^31)
-		local f = io.open(filename, "wb")
-		f:write("seed : " .. seed)
-		f:close()
-	end
-	math.randomseed(seed)
-	print("Seed =", seed)
-end
-
-init_random_seed()
 
 local callback = {}
 
@@ -69,7 +49,24 @@ local game = {}
 
 function game.init()
 	initial.new()
+	
+	card.setup()
+	track.setup()
+	map.setup()
+	
 	return "setup"
+end
+
+function game.load()
+	card.load()
+	track.load()
+	map.load()
+	local game = persist.get "game"
+	if game then
+		return game.phase
+	else
+		return "setup"
+	end
 end
 
 game.setup = require "gameplay.setup"
@@ -92,7 +89,19 @@ function game.idle()
 end
 
 flow.load(game)
-flow.enter "init"
+
+local function run_game()
+	local dir = soluna.gamedir "deepfuture"
+	card.profile("GAME", dir .. "save.dl")
+	local ok, phase = loadsave.load_game()
+	if ok then
+		flow.enter "load"
+	else
+		flow.enter "init"
+	end
+end
+
+run_game()
 
 callback.window_resize = vdesktop.flush
 callback.mouse_move = vdesktop.mouse_move

@@ -8,6 +8,7 @@ local focus = require "core.focus"
 local vdesktop = require "visual.desktop"
 local look = require "gameplay.look"
 local sync = require "gameplay.sync"
+local loadsave = require "core.loadsave"
 
 local UPKEEP_LIMIT <const> = rules.payment.upkeep_limit
 
@@ -95,7 +96,7 @@ end
 
 local function add_challenge(challenge_card)
 	card.putdown("challenge", challenge_card)
-	local back = { type = "back", text = "$(card.challenge)" }
+	local back = { type = "back", text = "$(card.challenge)", _challenge = challenge_card }
 	challenge_card._back = back
 	vdesktop.add("deck", back)
 	vdesktop.transfer("deck", back, "colony")
@@ -103,7 +104,7 @@ local function add_challenge(challenge_card)
 end
 
 return function ()
-	card.verify()
+	loadsave.sync_game "payment"
 	sync()
 	vdesktop.set_text("phase", { text = "$(phase.payment)", extra = false })
 	local n = 1

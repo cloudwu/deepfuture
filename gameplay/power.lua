@@ -4,6 +4,8 @@ local rules = require "core.rules".phase
 local card = require "gameplay.card"
 local class = require "core.class"
 local track = require "gameplay.track"
+local loadsave = require "core.loadsave"
+local sync = require "gameplay.sync"
 
 global none
 
@@ -60,8 +62,10 @@ function power_adv.devices()
 	track.advance("C", 2)
 end
 
-return function(extra)
-	card.verify()
+return function(extra, action_name)
+	loadsave.sync_game(action_name or "power")
+	sync()
+	vdesktop.set_text("phase", { text = "$(phase.action)" })
 	local phase_desc = { extra = ACTION_TEXT }
 	if extra then
 		phase_desc.extra = extra .. phase_desc.extra

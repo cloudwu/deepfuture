@@ -8,6 +8,8 @@ local vmap = require "visual.map"
 local vtips = require "visual.tips".layer "hud"
 local focus = require "core.focus"
 local vbutton = require "visual.button"
+local loadsave = require "core.loadsave"
+local sync = require "gameplay.sync"
 
 global pairs, setmetatable, print, next, print_r
 
@@ -26,7 +28,9 @@ function adv_focus.religion()
 end
 
 return function()
-	card.verify()
+	loadsave.sync_game "expand"
+	sync()
+	vdesktop.set_text("phase", { text = "$(phase.action)" })
 	local dist = 1
 	local spacecraft = 0
 	local start_region = map.expand_start(dist)

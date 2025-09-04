@@ -20,12 +20,25 @@ function util.cache(f)
 	return setmetatable({}, meta)
 end
 
+local function set_true()
+	return true
+end
+
+local function set_index(_, index)
+	return index
+end
+
 function util.map(func)
+	if func == true then
+		func = set_true
+	elseif func == 0 then
+		func = set_index
+	end
 	return function(list)
 		local r = {}
 		for i = 1, #list do
 			local key = list[i]
-			r[key] = func(key)
+			r[key] = func(key, i)
 		end
 		return r
 	end
@@ -39,7 +52,7 @@ function util.dirty_update(f)
 		if last == nil then
 			local r = f(...)
 			if r == nil then
-				r = true
+				r = false
 			end
 			dirty_flag[update] = r
 			return r

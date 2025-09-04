@@ -8,12 +8,18 @@ local advancement = require "gameplay.advancement"
 local rules = require "core.rules".phase
 local ui = require "core.rules".ui
 local util = require "core.util"
+local loadsave = require "core.loadsave"
 
 global tostring, setmetatable, ipairs, pairs, print, print_r, assert, tonumber, type
 
 local UPKEEP_LIMIT <const> = rules.payment.upkeep_limit
 local UPKEEP_LOGO <const> = ui.payment.upkeep
+
 local card = {}
+
+function card.profile(profile, filename)
+	loadsave.new_profile (profile, filename)
+end
 
 --[[
 suits:
@@ -33,6 +39,7 @@ type : blank world tech civ deleted
 local actions = util.keys(ui.suit)
 table.sort(actions)
 
+local GAME
 local DECK
 local HISTORY
 
@@ -56,7 +63,7 @@ local function new_card(obj)
 end
 
 function card.init_deck()
-	local init = { _type = "list" }
+	local init = {}
 	local id = 1
 	for i = 1, 6 do
 		for j = 1, 6 do
@@ -66,6 +73,7 @@ function card.init_deck()
 				type = "blank",
 				era = 0,
 			}
+			loadsave.sync_card(id, card)
 			gen_marker(card)
 			vcard.flush(card)
 			init[id] = card; id = id + 1
@@ -77,7 +85,6 @@ function card.init_deck()
 	})
 end
 
-local GAME
 local areas = { "draw", "discard", "hand", "neutral", "homeworld", "colony", "challenge" }
 
 function areas.draw(init)
@@ -93,7 +100,7 @@ end
 function card.setup()
 	local game = {}
 	for _, area in ipairs(areas) do
-		game[area] = { _type = "list" }
+		game[area] = {}
 		local init_func = areas[area]
 		if init_func then
 			init_func(game[area])
@@ -102,6 +109,17 @@ function card.setup()
 	game.seen = 0 -- seen cards of drawpile
 	game.upkeep = {}
 	GAME = persist.init("game", game)
+end
+
+function card.load()
+	GAME = persist.get "game"
+	HISTORY = persist.get "history"
+	DECK = persist.get "deck"
+	for id, c in ipairs(DECK) do
+		c._id = id
+		card.gen_desc(c)
+		new_card(c)
+	end
 end
 
 function card.next_turn()
@@ -135,11 +153,6 @@ local function draw_card()
 	end
 	seen = seen - 1
 	return table.remove(GAME.draw, 1) or error "No more card"
-end
-
-function card.debug()
-	print_r("DRAW", GAME.draw)
-	print_r("DISCARD", GAME.discard)
 end
 
 function card.draw_hand()
@@ -206,7 +219,6 @@ function card.draw_discard()
 		return
 	end
 	GAME.discard[#GAME.discard+1] = card_id
---	print_r(card_id, GAME.discard)
 	return DECK[card_id] or error ("No card id " .. tostring(card_id))
 end
 
@@ -235,13 +247,43 @@ function card.plan_blankcard()
 	local newcard = #DECK + 1
 	
 	local card = new_card {
-		_id = newcard,
+		_id = nil,
 		type = "blank",
 		era = HISTORY.era,
+		suit = "P",	-- placeholder
+		value = 0,
 	}
-	
+	loadsave.sync_card(newcard, card)
+	card._id = newcard
 	DECK[newcard] = card
 	return card
+end
+
+local function sync_adv(adv)
+	if adv == nil then
+		return
+	end
+	return {
+		suit = adv.suit,
+		value = adv.value,
+		era = adv.era,
+		chosen = adv.chosen
+	}
+end
+
+function card.sync(c)
+	local data = {
+		type = c.type,
+		suit = c.suit,
+		value = c.value,
+		name = c.name,
+		sector = c.sector,
+		era = c.era,
+		adv1 = sync_adv(c.adv1),
+		adv2 = sync_adv(c.adv2),
+		adv3 = sync_adv(c.adv3),
+	}
+	loadsave.sync_card(c._id, data)
 end
 
 function card.blank_tech(c)
@@ -267,14 +309,15 @@ function card.generate_newcard()
 	local newcard = #DECK + 1
 	
 	local card = new_card {
-		_id = newcard,
+		_id = nil,
 		value = card1.value,
 		suit = card2.suit,
 		type = "blank",
 		era = HISTORY.era,
 	}
+	loadsave.sync_card(newcard, card)
+	card._id = newcard
 	gen_marker(card)
-
 	DECK[newcard] = card
 	return card, card1, card2
 end
@@ -311,7 +354,7 @@ function card.find_value(where, value)
 	for i, id in ipairs(area) do
 		local c = DECK[id]
 		if c.value == value then
-			return DECK[id]
+			return c
 		end
 	end
 end
@@ -346,7 +389,6 @@ function card.discard(card)
 		GAME.upkeep[card._id] = nil
 	end
 	GAME.discard[#GAME.discard + 1] = card._id
---	print_r(card._id, GAME.discard)
 end
 
 function card.count(pile)
@@ -436,7 +478,7 @@ end
 function card.test_newcard(args)
 	local newcard = #DECK + 1
 	local card = new_card {
-		_id = newcard,
+		_id = nil,
 		type = args.type or "blank",
 		era = args.era or HISTORY.era,
 		value = args.value or 1,
@@ -447,6 +489,8 @@ function card.test_newcard(args)
 		card.value = tonumber(args.marker:sub(1,1))
 		card.suit = args.marker:sub(2,2)
 	end
+	loadsave.sync_card(newcard, card)
+	card._id = newcard
 	local def
 	if card.type == "tech" then
 		def = "S"
@@ -531,14 +575,14 @@ function card.upkeep_change(c, def)
 	if n == n2 then
 		return
 	else
-		GAME.upkeep[c._id] = n2
 		if n2 > 0 then
 			c._upkeep = UPKEEP_LOGO:rep(n2)
 		else
+			n2 = nil
 			c._upkeep = nil
 		end
+		GAME.upkeep[c._id] = n2
 		vcard.flush(c)
-		return n2
 	end
 end
 
@@ -711,55 +755,5 @@ function card.settling(c)
 		return c
 	end
 end
-
-local function check_pile(err, cards, name)
-	local p = GAME[name]
-	for _, id in ipairs(p) do
-		if type(id) ~= "number" then
-			err[#err+1] = "Invalid card in " .. name
-		end
-		if cards[id] ~= true then
-			if cards[id] == nil then
-				err[#err+1] = "No card " .. id .. " in " .. name
-			else
-				err[#err+1] = "card " .. id .. " from " .. name .. " already exist in " .. name
-			end
-		else
-			cards[id] = name
-		end
-	end
-end
-
--- for debug
--- todo : remove it if slow
-function card.verify()
-	local all_cards = {}
-	local err = {}
-	for id in pairs(DECK) do
-		if type(id) == "number" then
-			if all_cards[id] then
-				err[#err+1] = "Card " .. id .. " is duplicate"
-			end
-			all_cards[id] = true
-		end
-	end
-	check_pile(err, all_cards, "hand")
-	check_pile(err, all_cards, "draw")
-	check_pile(err, all_cards, "discard")
-	check_pile(err, all_cards, "homeworld")
-	check_pile(err, all_cards, "colony")
-	check_pile(err, all_cards, "neutral")
-	check_pile(err, all_cards, "challenge")
-	for id, where in pairs(all_cards) do
-		if where == true then
-			err[#err+1] = "Card " .. tostring(id) .. " is missing"
-		end
-	end
-	if #err > 0 then
-		error(table.concat(err, "\n"))
-	end
-end
-
--- todo: load deck
 
 return card

@@ -14,6 +14,8 @@ local name = require "gameplay.name"
 local addadv = require "gameplay.addadv"
 local power = require "gameplay.power"
 local advance = require "gameplay.advance"
+local loadsave = require "core.loadsave"
+local sync = require "gameplay.sync"
 
 global next, pairs, print, assert
 
@@ -356,7 +358,9 @@ local function choose_adv(c, advs)
 end
 
 return function()
-	card.verify()
+	loadsave.sync_game "settle"
+	sync()
+	vdesktop.set_text("phase", { text = "$(phase.action)" })
 	vdesktop.set_text("phase", { extra = "[blue]$(SETTLE)[n]" } )
 	-- default behaviour : choose settle world
 	
@@ -381,6 +385,7 @@ return function()
 		}
 		-- choose adv if government
 		choose_adv(newworld, advs)
+		card.sync(newworld)
 		advs:discard_used_cards()
 		advs:reset()
 	end
