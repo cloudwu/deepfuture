@@ -1,6 +1,8 @@
+local soluna = require "soluna"
 local persist = require "gameplay.persist"
 local util = require "core.util"
 local advancement = require "gameplay.advancement"
+local settings = soluna.settings()
 local math = math
 local string = string
 local table = table
@@ -272,12 +274,22 @@ function save.sync_history(name, history)
 	print_r("HISTORY", history)	
 end
 
+local backup_dir = soluna.gamedir "deepfuture/backup"
+if settings.autosave == "off" then
+	print("Autosave : off")
+end
+
 function save.save_game(name)
+	if settings.autosave == "off" then
+		return
+	end
 	local data = profile[name] or error ("new_profile first : " .. tostring(name))
 	local filename = data._filename
 	if filename then
 		persist.save(filename, data)
-		print("SAVE", filename)
+		local backup = backup_dir .. data.game.seed .. ".dl"
+		persist.save(backup, data)	-- backup
+		print("SAVE", filename, backup)
 	end
 end
 

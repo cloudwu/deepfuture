@@ -97,7 +97,7 @@ function map.sub_player(sec, n)
 	util.dirty_trigger(map.is_safe)
 	util.dirty_trigger(map.can_move)
 	util.dirty_trigger(map.can_grow)
-	return n
+	return n, s.n
 end
 
 function map.add_neutral(sec, n)

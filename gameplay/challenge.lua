@@ -241,10 +241,11 @@ local function add_rival(lost, sector, n)
 		end
 		vmap.focus(sector)
 	end
-	local lost_sector = true
+	local dec, remain
 	while n > 0 do
-		local dec = map.sub_player(sector, 1)
+		dec, remain = map.sub_player(sector, 1)
 		if dec > 0 then
+			-- exterminate succ
 			vmap.focus(sector)
 			n = n - 1
 			if n == 0 then
@@ -254,11 +255,11 @@ local function add_rival(lost, sector, n)
 			end
 			interval()
 		else
-			lost_sector = false
+			-- no people
 			break
 		end
 	end
-	if lost_sector then
+	if remain and remain == 0 then
 		lost[sector] = true
 	end
 	while n > 0 do
