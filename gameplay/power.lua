@@ -92,4 +92,6 @@ return function(extra)
 		}
 		advs:discard_used_cards()
 	end
+	
+	return "action"
 end

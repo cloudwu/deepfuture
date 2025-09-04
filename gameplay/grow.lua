@@ -143,4 +143,6 @@ return function()
 	end
 	
 	map.reset()
+	
+	return "action"
 end

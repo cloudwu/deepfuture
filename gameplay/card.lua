@@ -167,6 +167,24 @@ function card.seen()
 	return GAME.seen
 end
 
+function card.add_action(action)
+	if not action then
+		-- skip
+		GAME.action1 = nil
+		GAME.action2 = nil
+	else
+		if GAME.action1 then
+			GAME.action2 = action
+		else
+			GAME.action1 = action
+		end
+	end
+end
+
+function card.action()
+	return GAME.action1, GAME.action2
+end
+
 function card.puttop(c)
 	local id = c._id
 	table.insert(GAME.draw, 1, id)

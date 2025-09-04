@@ -268,6 +268,7 @@ schinese:
   card.adv : "${_suit|} ${_name|}"
   card.desc : "${_stage|} ${_desc|}"
   card.circle : "${_circle|}"
+  CHOOSE : 选择行动
   START : 开始
   ADVANCE : 提升
   EXPAND : 扩张

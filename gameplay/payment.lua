@@ -105,7 +105,7 @@ end
 return function ()
 	card.verify()
 	sync()
-	vdesktop.set_text("phase", { text = "$(phase.payment)" })
+	vdesktop.set_text("phase", { text = "$(phase.payment)", extra = false })
 	local n = 1
 	local backs = {}
 	while true do

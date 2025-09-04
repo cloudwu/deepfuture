@@ -452,6 +452,5 @@ return function ()
 		track.focus(false)
 	end
 	discard_hand_limit()
-
 	return "action"
 end

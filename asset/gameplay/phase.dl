@@ -9,7 +9,6 @@ payment :
 	upkeep_limit : 3
 	least : 1
 action :
-	n : 2
 	S : power
 	M : settle
 	K : advance

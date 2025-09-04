@@ -390,8 +390,8 @@ return function()
 	flow.sleep(5)
 	if from == "neutral" then
 		-- free power and advance
-		-- todo : persisit
-		power "$(FREEACTION)"
-		advance "$(FREEACTION)"
+		return "freepower"
 	end
+	
+	return "action"
 end

@@ -18,9 +18,8 @@ local table = table
 
 require "gameplay.effect"
 
-global pairs, print, ipairs, print_r, error, require
+global pairs, print, ipairs, print_r, error, require, assert
 
-local ACTION_N <const> = rules.action.n
 local BUTTONS = {
 	button1 = {
 		action = "plan",
@@ -29,7 +28,6 @@ local BUTTONS = {
 	button2 = {
 		action = "actionskip",
 		text = "button.action.skip",
-		n = ACTION_N,
 	},
 }
 
@@ -48,16 +46,6 @@ local expain_region = {
 	hand = true,
 	colony = true,
 	neutral = true,
-}
-
--- todo : other action
-local ACTION = {
-	power = require "gameplay.power",
-	advance = require "gameplay.advance",
-	grow = require "gameplay.grow",
-	settle = require "gameplay.settle",
-	battle = require "gameplay.battle",
-	expand = require "gameplay.expand",
 }
 
 local SUITS = util.keys(ui.suit)
@@ -271,6 +259,18 @@ local function clear_mask(hands)
 	end
 end
 
+local function disable_action(hands, last_action)
+	for c, enable in pairs(hands) do
+		if enable then
+			local action = rules.action[c.suit]
+			if action == last_action then
+				hands[c] = false
+				vcard.mask(c)
+			end
+		end
+	end
+end
+
 local function choose_action(hands)
 	local desc = {
 		action = nil,
@@ -350,58 +350,51 @@ local function choose_action(hands)
 			end
 		elseif BUTTONS[where] then
 			if BUTTONS[where].action == "plan" then
-				vtips.set()
-				return card.plan_blankcard(), hands
+				return "plan"
 			else
-				-- action skip
-				break
+				assert(BUTTONS[where].action == "actionskip")
+				return "skip"
 			end
 		elseif hands[c] then
-			-- execute action
-			local action_name = rules.action[c.suit]
-			local f = ACTION[action_name]
-			if f then	-- todo: remove it when finish all actions
-				vtips.set()
-				clear_mask(hands)
-				c = card.pickup("hand", c)
-				card.discard(c)
-				vdesktop.transfer("hand", c, "deck")
-				button_enable(nil)
-				flow.sleep(5)
-				f()
-				button_enable(nil, true)
-				hands = check_action(hands)
-				vtips.set()
-				vdesktop.set_text("phase", { extra = false } )
-				last_action = action_name
-				if nomore_action() then
-					break
-				end
-				button_enable("button2", true)
-			end
+			c = card.pickup("hand", c)
+			card.discard(c)
+			vdesktop.transfer("hand", c, "deck")
+			flow.sleep(5)
+			return rules.action[c.suit]
 		end
 		flow.sleep(0)
 	end
-	-- no plan (nil)
-	return nil, hands
 end
 
 return function ()
 	card.verify()
 	sync()
-	BUTTONS.button2.n = ACTION_N
-	local plan_card
+	local action1, action2 = card.action()
+	if action1 and action2 then
+		-- 2 actions done
+		card.add_action(false)	-- clear actions
+		return "payment"
+	end
 	local hands = check_action()
+	if action1 then
+		disable_action(hands, action1)
+		BUTTONS.button2.n = 1
+	else
+		BUTTONS.button2.n = 2
+	end
 	button_enable(nil, true)
-
-	vdesktop.set_text("phase", { text = "$(phase.action)" } )
-	plan_card, hands = choose_action(hands)
+	vdesktop.set_text("phase", { text = "$(phase.action)", extra = "[blue]$(CHOOSE)[n]" } )
+	local next_action = choose_action(hands)
+	vtips.set()
 	button_enable()
 	clear_mask(hands)
-	
-	if plan_card then
+	if next_action == "plan" then
+		local plan_card = card.plan_blankcard()
 		create_plan_card(plan_card)
+	elseif next_action ~= "skip" then
+		card.add_action(next_action)
+		return next_action
 	end
-	
+	card.add_action(false)	-- clear actions
 	return "payment"
 end

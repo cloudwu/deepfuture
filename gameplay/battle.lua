@@ -299,4 +299,6 @@ return function()
 	
 	local lost = map.battle_confirm()
 	lost_sectors(lost)
+	
+	return "action"
 end

@@ -493,4 +493,6 @@ return function(extra)
 	advs:add(advcard)
 	advs:reset()
 	vcard.mask(advcard)
+	
+	return "action"
 end
