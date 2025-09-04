@@ -12,7 +12,6 @@ local PROFILE
 
 function M.load_game()
 	local ok, data = ltask.call(SERVICE, "load_game", PROFILE)
-	print(ok, data)
 	if ok then
 		persist.init("deck", data.deck)
 		persist.init("history", data.history)

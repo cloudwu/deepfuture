@@ -275,13 +275,18 @@ end
 function save.save_game(name)
 	local data = profile[name] or error ("new_profile first : " .. tostring(name))
 	local filename = data._filename
-	persist.save(filename, data)
-	print("SAVE", filename)
+	if filename then
+		persist.save(filename, data)
+		print("SAVE", filename)
+	end
 end
 
 function save.load_game(name)
 	local predata = profile[name] or error ("new_profile first : " .. tostring(name))
 	local filename = predata._filename
+	if filename then
+		return false
+	end
 	local ok, data = persist.load(filename)
 	if not ok then
 		print("LOADERR", filename, data)

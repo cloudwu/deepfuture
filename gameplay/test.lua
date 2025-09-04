@@ -19,6 +19,7 @@ function test.init()
 	local settings = soluna.settings()
 	if settings.test then
 		test.load(settings.test)
+		return true
 	end
 end
 

@@ -34,7 +34,6 @@ end
 
 local callback = {}
 
-test.init()
 localization.load("localization/schinese.dl", LANG)
 soluna.set_window_title(localization.convert "app.title")
 
@@ -92,6 +91,12 @@ end
 flow.load(game)
 
 local function run_game()
+	if test.init() then
+		-- don't touch savefile when test
+		card.profile "TEST"
+		flow.enter "init"
+		return
+	end
 	local dir = soluna.gamedir "deepfuture"
 	card.profile("GAME", dir .. "save.dl")
 	local ok, phase = loadsave.load_game()

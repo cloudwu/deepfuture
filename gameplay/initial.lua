@@ -2,6 +2,7 @@ local card = require "gameplay.card"
 local name = require "gameplay.name"
 local vcard = require "visual.card"
 local rules = require "core.rules".phase
+local loadsave = require "core.loadsave"
 local math = math
 
 global error
@@ -9,6 +10,8 @@ global error
 local initial = {}
 
 function initial.new()
+	-- reset save
+	loadsave.init_deck()
 	-- init 36 initial cards
 	card.init_deck()
 	-- init draw pile
