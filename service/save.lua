@@ -284,7 +284,7 @@ end
 function save.load_game(name)
 	local predata = profile[name] or error ("new_profile first : " .. tostring(name))
 	local filename = predata._filename
-	if filename then
+	if filename == nil then
 		return false
 	end
 	local ok, data = persist.load(filename)

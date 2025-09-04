@@ -287,19 +287,6 @@ local function draw_hands()
 	return h
 end
 
-local function clear(where)
-	local n = 1
-	while true do
-		local c = card.card(where, n)
-		if c == nil then
-			return
-		end
-		n = n + 1
-		vdesktop.transfer(where, c, "deck")
-		flow.sleep(5)
-	end
-end
-
 return function ()
 	-- new game
 	loadsave.sync_history()
