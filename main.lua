@@ -91,6 +91,7 @@ end
 flow.load(game)
 
 local function run_game()
+	print("Xhacker test run game log");
 	if test.init() then
 		-- don't touch savefile when test
 		card.profile "TEST"

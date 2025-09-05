@@ -119,6 +119,12 @@ function card.load()
 		c._id = id
 		card.gen_desc(c)
 		new_card(c)
+		
+		-- 恢复维护方块视觉显示
+		local upkeep_count = GAME.upkeep[id]
+		if upkeep_count and upkeep_count > 0 then
+			c._upkeep = UPKEEP_LOGO:rep(upkeep_count)
+		end
 	end
 end
 
@@ -673,6 +679,7 @@ local function match_adv_suit(c, key, suits, r)
 	end
 end
 
+--检查母星维护方块 并检查挑战花色
 function card.find_upkeep(suits, r)
 	r = r or {}
 	for i, id in ipairs(GAME.homeworld) do
