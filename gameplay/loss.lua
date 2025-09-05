@@ -5,6 +5,7 @@ local card = require "gameplay.card"
 local sync = require "gameplay.sync"
 local loadsave = require "core.loadsave"
 local track = require "gameplay.track"
+local map = require "gameplay.map"
 
 local function clear(where)
 	local n = 1
