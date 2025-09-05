@@ -16,7 +16,7 @@ local test = require "gameplay.test"
 local sync = require "gameplay.sync"
 local loadsave = require "core.loadsave"
 
-global print, ipairs, pairs, print_r, error, tostring, next, assert
+global print, ipairs, pairs, print_r, error, tostring, next, assert, require
 
 local UPKEEP_LIMIT <const> = rules.payment.upkeep_limit
 
@@ -450,5 +450,16 @@ return function ()
 		track.focus(false)
 	end
 	discard_hand_limit()
+	
+	-- 检查胜利条件
+	local victory = require "gameplay.victory"
+	local victory_result = victory.check()
+	if victory_result then
+		-- 将胜利信息存储到persist中供win阶段使用
+		local persist = require "gameplay.persist"
+		persist.init("victory_info", victory_result)
+		return "win"
+	end
+	
 	return "action"
 end

@@ -83,6 +83,7 @@ game.battle = require "gameplay.battle"
 game.expand = require "gameplay.expand"
 game.freepower = require "gameplay.freepower"
 game.freeadvance = require "gameplay.advance"
+game.win = require "gameplay.win"
 
 function game.idle()
 	return "idle"

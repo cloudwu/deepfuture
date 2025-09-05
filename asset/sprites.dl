@@ -13,3 +13,6 @@ filename : hex.png
 --
 name : core
 filename : core.png
+--
+name : victory
+filename : victory.png
