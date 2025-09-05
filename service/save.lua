@@ -287,7 +287,7 @@ function save.save_game(name)
 	local filename = data._filename
 	if filename then
 		persist.save(filename, data)
-		local backup = backup_dir .. data.game.seed .. ".dl"
+		local backup = backup_dir .. data.game.seed .. ".txt"
 		persist.save(backup, data)	-- backup
 		print("SAVE", filename, backup)
 	end

@@ -98,7 +98,7 @@ local function run_game()
 		return
 	end
 	local dir = soluna.gamedir "deepfuture"
-	card.profile("GAME", dir .. "save.dl")
+	card.profile("GAME", dir .. "save.txt")
 	local ok, phase = loadsave.load_game()
 	if ok then
 		flow.enter "load"
