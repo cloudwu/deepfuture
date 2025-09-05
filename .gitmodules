@@ -1,0 +1,3 @@
+[submodule "soluna"]
+	path = soluna
+	url = https://github.com/cloudwu/soluna.git
