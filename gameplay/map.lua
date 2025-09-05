@@ -5,7 +5,7 @@ local util = require "core.util"
 local rules = require "core.rules".map
 local card = require "gameplay.card"
 
-global pairs, assert, print, print_r, error, type
+global pairs, assert, print, print_r, error, type, next
 
 local map = {}
 
@@ -734,9 +734,33 @@ function map.army(def)
 	set_extra(battlefield.neutral)
 	util.dirty_trigger(map.is_safe)
 	util.dirty_trigger(map.update)
+	util.dirty_trigger(map.battle_lostall)
 	map.update()
 	return player.extra
 end
+
+map.battle_lostall = util.dirty_update(function()
+	local territory = {}
+	local n = 1
+	repeat
+		local c = card.card("colony", n)
+		if c then
+			territory[c.sector] = true
+			n = n + 1
+		end
+	until c == nil
+	territory[card.card("homeworld", 1).sector] = true
+
+	for sec, obj in pairs(galaxy) do
+		if obj.extra then
+			if obj.n - obj.extra == 0  then
+				territory[sec] = nil
+			end
+		end
+	end
+
+	return next(territory) == nil
+end)
 
 function map.battle_confirm()
 	local lost = {}

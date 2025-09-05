@@ -19,19 +19,18 @@ setup :
 		defense
 		military
 	---
-	type : galaxy
+	type : world
 	sector : 22
-	n : 5
-	camp : player
+	adv : military
 	---
 	type : galaxy
 	sector : 25
-	n : 3
+	n : 2
 	camp : player
 	---
 	type : galaxy
 	sector : 23
-	n : 1
+	n : 2
 	camp : neutral
 	---
 	type : galaxy

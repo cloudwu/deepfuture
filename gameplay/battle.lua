@@ -9,6 +9,7 @@ local map = require "gameplay.map"
 local vmap = require "visual.map"
 local rules = require "core.rules".phase
 local vtips = require "visual.tips".layer "hud"
+local vbutton = require "visual.button"
 local map_rules = require "core.rules".map
 local focus = require "core.focus"
 local lost_sectors = require "gameplay.lostsectors"
@@ -202,14 +203,26 @@ return function()
 		n = 0,
 		lost = nil,
 	}
-
+	
+	local button = {
+		text = "button.battle.confirm",
+	}
+	
+	local function check_lostall()
+		local lostall = map.battle_lostall()
+		if lostall ~= button.disable then
+			button.disable = lostall
+			vbutton.update "button1"
+		end
+	end
+	
 	function map_message.focus(sec)
 		local player_sec = map.in_battle(sec)
 		if player_sec then
 			if map.battle_lostctrl(1) then
 				if card.has_player_world(player_sec) then
 					-- would lost
-					if card.check_only_sector(player_sec) then
+					if button.disable then
 						vtips.set ("tips.battle.prepare.invalid", desc)
 					elseif map.battle_lostctrl(0) then
 						vtips.set ("tips.battle.prepare.lost", desc)
@@ -238,16 +251,14 @@ return function()
 		map_message.focus(sec)
 	end
 
-	local button = {
-		text = "button.battle.confirm",
-	}
-
 	local advs = class.effect "BATTLE"
 	advs:add_pile "hand"
 	advs:add_pile "homeworld"
 	advs:add_pile "colony"
 	
 	local function update_advs()
+		-- next frame after click
+		flow.sleep(1)
 		local n = advs:update()
 		if n > 0 then
 			vdesktop.button_enable("button1", nil)
@@ -278,15 +289,22 @@ return function()
 			if focus_state.active == "map" then
 				map_message.focus(focus_state.object)
 			elseif focus_state.active == "button1" then
-				vtips.set "tips.battle.confirm"
+				if button.disable then
+					vtips.set "tips.battle.lostall"
+				else
+					vtips.set "tips.battle.confirm"
+				end
 			else
 				vtips.set()
 			end
 		end
 		local c, btn = focus.click "left"
 		if c then
+			button.disable = map.battle_lostall()
 			if btn == "button1" then
-				break
+				if not button.disable then
+					break
+				end
 			elseif btn == "map" then
 				map_message.click(c, "left")
 				update_advs()
@@ -295,6 +313,7 @@ return function()
 		local c, btn = focus.click "right"
 		if btn == "map" then
 			map_message.click(c, "right")
+			button.disable = map.battle_lostall()
 			update_advs()
 		end
 		flow.sleep(0)

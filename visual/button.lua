@@ -46,7 +46,7 @@ function button.enable(name, text)
 		focus.trigger(name)
 		return
 	end
-	focus.trigger(name, true)
+-- todo: disable would lost focus, but enable again can't get focus immediately
 	states[name] = update_all { _env = text }
 end
 

@@ -86,6 +86,7 @@ schinese:
   tips.battle.retreat : "[rbutton]从战场撤回一支部队[blue][people][n]"
   tips.battle.battlefield : "[blue]选择战场[n]"
   tips.battle.confirm : "[lbutton]结算所有战场上的伤亡"
+  tips.battle.lostall : "[800000]不能失去所有殖民地[n]\n - 从战场撤回部队保留殖民地"
   tips.battle.safe.valid :"[lbutton]将 ${type} 进度条推进一格\n - 推进进度条是游戏的目标"
   tips.battle.safe.invalid : "${type} 进度条已经无法推进"
   tips.battle.safe.out : "请选择一个进度条推进一格"
