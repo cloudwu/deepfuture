@@ -1,6 +1,8 @@
 lang :
 	schinese :
 		font : 微软雅黑
+	english:
+		font : Arial
 track :
 	color1 : 0x40ffffff
 	color2 : 0x40000000
