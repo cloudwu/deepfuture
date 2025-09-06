@@ -376,6 +376,24 @@ end
 return function ()
 	loadsave.sync_game "action"
 	sync()
+	
+	-- 调试胜利画面状态
+	vdesktop.debug_victory_state()
+	
+	-- 检查胜利条件（在action阶段开始时）
+	local victory = require "gameplay.victory"
+	local victory_result = victory.check()
+	if victory_result then
+		-- 将胜利信息存储到persist中供win阶段使用
+		print("=== ACTION START: VICTORY TRIGGERED ===")
+		local persist = require "gameplay.persist"
+		persist.init("victory_info", victory_result)
+		return "win"
+	else
+		-- 如果没有胜利，确保胜利画面被清理
+		vdesktop.show_victory(false)
+	end
+	
 	local action1, action2 = card.action()
 	if action1 and action2 then
 		-- 2 actions done
@@ -407,5 +425,17 @@ return function ()
 		return next_action
 	end
 	card.add_action(false)	-- clear actions
+	
+	-- 检查胜利条件
+	local victory = require "gameplay.victory"
+	local victory_result = victory.check()
+	if victory_result then
+		-- 将胜利信息存储到persist中供win阶段使用
+		print("=== ACTION END: VICTORY TRIGGERED ===")
+		local persist = require "gameplay.persist"
+		persist.init("victory_info", victory_result)
+		return "win"
+	end
+	
 	return "payment"
 end

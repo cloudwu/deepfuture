@@ -6,7 +6,7 @@ local card = require "gameplay.card"
 local rules = require "core.rules".phase
 local challenge_rules = require "core.rules".challenge
 local ui = require "core.rules".ui
-local focus = require "core.focus"
+local mouse = require "core.mouse"
 local vdesktop = require "visual.desktop"
 local track = require "gameplay.track"
 local vmap = require "visual.map"
@@ -55,7 +55,7 @@ local function challenge(challenge_card)
 	local accept
 	
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if focus_state.object == challenge_card then
 				vtips.set ("tips.challenge.accept", desc)
 			elseif cards[focus_state.object] then
@@ -65,18 +65,18 @@ local function challenge(challenge_card)
 				else
 					vtips.set ("tips.challenge.card", desc)
 				end
-			else
+			elseif focus_state.active == "discard" then
+				desc.seen = card.seen()
+				if desc.seen > 0 then
+					vtips.set("tips.look.pile", desc)
+				end
+			elseif focus_state.object then
 				vtips.set ("tips.challenge.invalid", desc)
+			else
+				vtips.set()
 			end
-		elseif focus_state.active == "discard" then
-			desc.seen = card.seen()
-			if desc.seen > 0 then
-				vtips.set("tips.look.pile", desc)
-			end
-		elseif focus_state.lost then
-			vtips.set()
 		end
-		local c, where = focus.click "left"
+		local c, where = mouse.click(focus_state, "left")
 		if c == challenge_card then
 			accept = true
 			break
@@ -168,7 +168,7 @@ local function accept_challenge(card_suit)
 	}
 	local focus_state = {}
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if focus_state.object == card_suit then
 				desc.card = card.suit_info(card_suit)
 				gen_effect(desc, challenge_type)
@@ -177,13 +177,13 @@ local function accept_challenge(card_suit)
 				desc.card = card_value.value
 				gen_effect(desc, challenge_type)
 				vtips.set("tips.challenge.effect", desc)
+			elseif focus_state.object then
+				vtips.set()
 			else
 				vtips.set()
 			end
-		elseif focus_state.lost then
-			vtips.set()
 		end
-		local c = focus.click "left"
+		local c = mouse.click(focus_state, "left")
 		if c == card_suit or c == card_value then
 			card.discard(card_suit)
 			vcard.mask(card_suit)

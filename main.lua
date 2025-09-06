@@ -85,6 +85,7 @@ game.battle = require "gameplay.battle"
 game.expand = require "gameplay.expand"
 game.freepower = require "gameplay.freepower"
 game.freeadvance = require "gameplay.advance"
+game.win = require "gameplay.win"
 
 function game.idle()
 	return "idle"
@@ -93,6 +94,7 @@ end
 flow.load(game)
 
 local function run_game()
+	print("Xhacker test run game log");
 	if test.init() then
 		-- don't touch savefile when test
 		card.profile "TEST"
@@ -103,7 +105,7 @@ local function run_game()
 	card.profile("GAME", dir .. "save.txt")
 	local ok, phase = loadsave.load_game()
 	if ok then
-		flow.enter "load"
+		flow.enter(phase or "start")
 	else
 		flow.enter "init"
 	end
