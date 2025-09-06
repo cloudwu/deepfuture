@@ -5,7 +5,8 @@ height : 280
 padding : 10
 content :
 	position : absolute
-	width : 100%
+	left : 10
+	right : 10
 	height : 80%
 	bottom : 0
 	upkeep :
@@ -45,6 +46,7 @@ content :
 					size : 28
 			desc :
 				left : 20
+				width : 95%
 				text : card.desc
 				env : adv1
 				height : 50%
@@ -67,6 +69,7 @@ content :
 					size : 28
 			desc :
 				left : 20
+				width : 95%
 				text : card.desc
 				env : adv2
 				height : 50%
@@ -89,6 +92,7 @@ content :
 					size : 28
 			desc :
 				left : 20
+				width : 95%
 				text : card.desc
 				env : adv3
 				height : 50%
