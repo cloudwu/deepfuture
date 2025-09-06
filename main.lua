@@ -103,7 +103,7 @@ local function run_game()
 	card.profile("GAME", dir .. "save.txt")
 	local ok, phase = loadsave.load_game()
 	if ok then
-		flow.enter "load"
+		flow.enter(phase or "start")
 	else
 		flow.enter "init"
 	end

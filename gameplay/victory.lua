@@ -4,6 +4,8 @@ local map = require "gameplay.map"
 local rules = require "core.rules".track
 local persist = require "gameplay.persist"
 
+global string, tostring, print, pairs, type
+
 local victory = {}
 
 -- 胜利条件常量
@@ -23,6 +25,8 @@ end
 local function count_complete_techs()
     local count = 0
     local n = 1
+    
+    -- 检查母星区域中的技术
     while true do
         local c = card.card("homeworld", n)
         if not c then
@@ -50,17 +54,6 @@ local function count_complete_techs()
     return count
 end
 
--- 调试函数：手动触发胜利检查
-function victory.debug_check()
-    print("=== MANUAL VICTORY DEBUG CHECK ===")
-    local result = victory.check()
-    if result then
-        print("Victory detected:", result.type, result.name)
-    else
-        print("No victory detected")
-    end
-    return result
-end
 
 -- 检查轨道胜利
 local function check_track_victory()

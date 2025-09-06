@@ -10,7 +10,7 @@ local ui = require "core.rules".ui
 local util = require "core.util"
 local loadsave = require "core.loadsave"
 
-global tostring, setmetatable, ipairs, pairs, print, print_r, assert, tonumber, type
+global tostring, setmetatable, ipairs, pairs, print, print_r, assert, tonumber, type, string
 
 local UPKEEP_LIMIT <const> = rules.payment.upkeep_limit
 local UPKEEP_LOGO <const> = ui.payment.upkeep
@@ -115,6 +115,7 @@ function card.load()
 	GAME = persist.get "game"
 	HISTORY = persist.get "history"
 	DECK = persist.get "deck"
+	
 	for id, c in ipairs(DECK) do
 		c._id = id
 		card.gen_desc(c)
@@ -125,6 +126,9 @@ function card.load()
 		if upkeep_count and upkeep_count > 0 then
 			c._upkeep = UPKEEP_LOGO:rep(upkeep_count)
 		end
+		
+		-- 刷新卡片视觉显示
+		vcard.flush(c)
 	end
 end
 
@@ -278,6 +282,11 @@ local function sync_adv(adv)
 end
 
 function card.sync(c)
+	-- 验证卡片数据完整性
+	if not c.type or not c.suit or not c.value or not c.era then
+		return -- 不保存无效数据
+	end
+	
 	local data = {
 		type = c.type,
 		suit = c.suit,
@@ -289,6 +298,8 @@ function card.sync(c)
 		adv2 = sync_adv(c.adv2),
 		adv3 = sync_adv(c.adv3),
 	}
+	
+	
 	loadsave.sync_card(c._id, data)
 end
 

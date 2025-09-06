@@ -5,7 +5,7 @@ local math = math
 -- see service/save.lua
 local SERVICE = ltask.uniqueservice "service.save"
 
-global ipairs, print, print_r
+global ipairs, print, print_r, require
 
 local M = {}
 local PROFILE
@@ -18,7 +18,15 @@ function M.load_game()
 		persist.init("game", data.game)
 		persist.init("track", data.track)
 		persist.init("galaxy", data.galaxy)
-		return true
+		-- 加载卡片并重新生成描述信息
+		local card = require "gameplay.card"
+		card.load()
+		local track = require "gameplay.track"
+		track.load()
+		local map = require "gameplay.map"
+		map.load()
+		-- 返回保存的游戏阶段
+		return true, data.game.phase
 	else
 		return false
 	end

@@ -5,7 +5,6 @@ schinese:
   button.action.plan : "计划"
   button.action.skip : "跳过(${n})"
   button.restart : "再来一盘"
-  button.newgame : "新游戏"
   button.battle.confirm : "战斗结算"
   button.expand.confirm : "扩张(${n|0})"
   button.setting : "[gear]"
@@ -236,13 +235,6 @@ schinese:
   phase.payment : 支付
   phase.challenge : 挑战
   phase.end : 结束
-  phase.victory : 胜利
-  tips.victory.territory : "领土胜利！你控制了足够的星区。"
-  tips.victory.population : "人口胜利！你拥有足够的人口方块。"
-  tips.victory.track.C : "文化胜利！你的文化轨道达到了★位置。"
-  tips.victory.track.M : "力量胜利！你的力量轨道达到了★位置。"
-  tips.victory.track.S : "稳定性胜利！你的稳定性轨道达到了★位置。"
-  tips.victory.track.X : "异族胜利！你的异族关系轨道达到了★位置。"
   card.type.world : "[worldcard]星球卡"
   card.type.blank : "[blankcard]空白卡"
   card.type.tech : "[techcard]科技卡"
