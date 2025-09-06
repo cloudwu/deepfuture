@@ -21,7 +21,7 @@ global require, assert, print
 
 local args = ...
 
-local LANG <const> = "english"
+local LANG <const> = "schinese"
 
 local function font_init()
 	local font = require "soluna.font"
@@ -34,7 +34,7 @@ end
 
 local callback = {}
 
-localization.load("localization/english.dl", LANG)
+localization.load("localization/schinese.dl", LANG)
 soluna.set_window_title(localization.convert "app.title")
 
 vdesktop.init {
