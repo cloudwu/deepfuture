@@ -18,6 +18,8 @@ local update_desc_list
 local BATCH
 local DESC
 local VTIPS = {}
+local FONT_ID
+local SPRITES
 
 local M = {}
 
@@ -188,6 +190,13 @@ end
 local layouts = { "hud", "describe" }
 layouts.hud = hud
 layouts.describe = describe
+-- victory布局不放在常规layouts中，避免被自动重新创建
+local victory_layout = {}
+
+-- 胜利画面需要显示按钮，所以添加tips布局
+function victory_layout:tips()
+	VTIPS.hud.draw(self)
+end
 
 local function set_hud(w, h)
 	for i = 1, #layouts do
@@ -274,7 +283,8 @@ function M.describe(text)
 		update_desc_list()
 	else
 		describe.text = nil
-		widget.test(mouse_x, mouse_y, BATCH, TESTLIST.hud)
+		local test_list = DRAWLIST.victory and TESTLIST.victory or TESTLIST.hud
+		widget.test(mouse_x, mouse_y, BATCH, test_list)
 	end
 end
 
@@ -283,7 +293,15 @@ local focus_state = {}
 function M.mouse_move(x, y)
 	mouse_x = x
 	mouse_y = y
-	widget.test(mouse_x, mouse_y, BATCH, DESC and TESTLIST.desc or TESTLIST.hud)
+	local test_list
+	if DRAWLIST.victory then
+		test_list = TESTLIST.victory
+	elseif DESC then
+		test_list = TESTLIST.desc
+	else
+		test_list = TESTLIST.hud
+	end
+	widget.test(mouse_x, mouse_y, BATCH, test_list)
 end
 
 function M.draw(count)
@@ -293,9 +311,15 @@ function M.draw(count)
 		map_focus(focus_state.active, focus_state.object)
 	end
 	map_focus(focus_state.lost)
-	widget.draw(BATCH, DRAWLIST.hud, focus.region())
-	if DESC then
-		widget.draw(BATCH, DRAWLIST.describe)
+	
+	-- 如果有victory屏幕，优先显示它，覆盖其他UI
+	if DRAWLIST.victory then
+		widget.draw(BATCH, DRAWLIST.victory)
+	else
+		widget.draw(BATCH, DRAWLIST.hud, focus.region())
+		if DESC then
+			widget.draw(BATCH, DRAWLIST.describe)
+		end
 	end
 	focus.frame()
 end
@@ -359,8 +383,53 @@ function M.button_enable(name, obj)
 		vbutton.register {
 			draw = describe,
 		}
+		-- 如果胜利界面已开启，也在胜利布局上注册按钮并刷新绘制/测试列表
+		if DRAWLIST.victory then
+			vbutton.register {
+				draw = victory_layout,
+				test = test,
+			}
+			DRAWLIST.victory = widget.draw_list("victory", victory_layout, FONT_ID, SPRITES)
+			TESTLIST.victory = widget.test_list("victory", test)
+		end
 		update_draw_list()
 		update_test_list()
+	end
+end
+
+function M.show_victory(enable)
+	if enable then
+		-- 显示胜利屏幕
+		widget.set("victory", {
+			screen = {
+				width = 1024,
+				height = 768,
+			}
+		})
+		-- 确保按钮在胜利画面上注册（在生成绘制列表之前）
+		vbutton.register {
+			draw = victory_layout,
+			test = test,
+		}
+		DRAWLIST.victory = widget.draw_list("victory", victory_layout, FONT_ID, SPRITES)
+		-- 为胜利画面创建测试列表，包含按钮测试
+		TESTLIST.victory = widget.test_list("victory", test)
+		print("=== VICTORY SCREEN ENABLED ===")
+	else
+		-- 隐藏胜利屏幕
+		DRAWLIST.victory = nil
+		TESTLIST.victory = nil
+		print("=== VICTORY SCREEN DISABLED ===")
+	end
+end
+
+function M.debug_victory_state()
+	print("=== VICTORY STATE DEBUG ===")
+	print("DRAWLIST.victory exists:", DRAWLIST.victory ~= nil)
+	if DRAWLIST.victory then
+		print("Victory screen is currently active!")
+	else
+		print("Victory screen is not active")
 	end
 end
 
@@ -411,6 +480,8 @@ function M.init(args)
 	VTIPS.desc = vtips.layer "desc"
 	VTIPS.hud.push()
 	BATCH = args.batch
+	FONT_ID = args.font_id
+	SPRITES = args.sprites
 	local font_id = args.font_id
 	local sprites = args.sprites
 	local width = args.width

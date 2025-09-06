@@ -16,7 +16,7 @@ local lost_sectors = require "gameplay.lostsectors"
 local loadsave = require "core.loadsave"
 local sync = require "gameplay.sync"
 
-global pairs, setmetatable, print, next
+global pairs, setmetatable, print, next, require
 
 local adv_focus = {}
 
@@ -323,6 +323,16 @@ return function()
 	
 	local lost = map.battle_confirm()
 	lost_sectors(lost)
+	
+	-- 检查胜利条件
+	local victory = require "gameplay.victory"
+	local victory_result = victory.check()
+	if victory_result then
+		-- 将胜利信息存储到persist中供win阶段使用
+		local persist = require "gameplay.persist"
+		persist.init("victory_info", victory_result)
+		return "win"
+	end
 	
 	return "action"
 end

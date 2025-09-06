@@ -1,11 +1,12 @@
 local card = require "gameplay.card"
 local vdesktop = require "visual.desktop"
+local vcard = require "visual.card"
 local flow = require "core.flow"
 local track = require "gameplay.track"
 local map = require "gameplay.map"
 local table = table
 
-global ipairs, pairs, print
+global ipairs, pairs, print, string, type
 
 local function add_challenges(cp)
 	for i = 1, #cp do
@@ -26,6 +27,12 @@ local function sync(where)
 	local p = card.pile(where)
 	local diff = vdesktop.sync(where, p)
 	if not diff then
+		for _, c in ipairs(p) do
+			if c.type == "tech" or c.type == "world" then
+				card.gen_desc(c)
+				vcard.flush(c)
+			end
+		end
 		if where == "colony" then
 			-- load file
 			add_challenges(card.pile "challenge")
@@ -68,6 +75,10 @@ local function sync(where)
 		flow.sleep(5)
 	end
 	for _, c in ipairs(diff.draw) do
+		if c.type == "tech" or c.type == "world" then
+			card.gen_desc(c)
+			vcard.flush(c)
+		end
 		vdesktop.add("deck", c)
 		vdesktop.transfer("deck", c, where)
 		flow.sleep(5)
@@ -83,11 +94,14 @@ return function()
 	
 	for i = 1, card.count "colony" do
 		local c = card.card("colony", i)
-		map.settle(c.sector)
+		-- 只对世界卡片调用 map.settle，技术卡没有 sector 字段
+		if c.type == "world" and c.sector then
+			map.settle(c.sector)
+		end
 	end
 	local homeworld = card.card ("homeworld", 1)
 	if homeworld then	-- no homeworld in setup phase 
-		map.settle(homeworld)
+		map.settle(homeworld.sector)
 	end
 	
 	track.sync()

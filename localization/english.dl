@@ -5,6 +5,7 @@ english:
   button.action.plan : "Plan"
   button.action.skip : "Skip(${n})"
   button.restart : "Play Again"
+  button.create_civilization : "Create Civilization"
   tips.setup.homeworld : "[lbutton]Select [blue]${world}[n] as homeworld"
   tips.setup.invalid : "Please select $(card.type.world), this is ${type}"
   tips.setup.newworld : "[lbutton]Create a new [blue]$(card.type.world)[n] as homeworld\n - Because there's no $(card.type.world) in hand"
