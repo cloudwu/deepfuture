@@ -58,9 +58,9 @@ return function()
 		extra = victory_text
 	})
 	
-	-- 显示重新开始按钮
+	-- 创建奇观
 	local button = {
-		text = "button.restart",
+		text = "button.create_civilization",
 	}
 	vdesktop.button_enable("button1", button)
 	
@@ -73,6 +73,15 @@ return function()
 		flow.sleep(0)
 	end
 	
+
+    --todo 创建奇观，现在用再来一盘代替了
+    -- 正确的流程应该是：
+    -- 玩家获胜 → 触发胜利条件
+    -- 创建文明牌 → 记录这个时代的文明
+    -- 创建奇观（如果满足条件）→ 在地图上留下文明遗迹
+    -- 时代递增 → Era += 1（比如从Era 1 进入Era 2）
+    -- 开始新游戏 → 但保留所有之前时代创建的卡牌、文明牌和奇观
+
 	vdesktop.button_enable("button1", nil)
 	card.next_turn()
 	vdesktop.set_text("phase", { extra = false })
