@@ -21,7 +21,24 @@ global require, assert, print
 
 local args = ...
 
-local LANG <const> = "schinese"
+-- 解析启动参数中的语言设置，默认使用schinese
+local function parse_language()
+	local settings = soluna.settings()
+	local lang = settings.lang or "schinese"  -- 默认语言
+	
+	-- 检查语言文件是否存在
+	local file = io.open("localization/" .. lang .. ".dl", "r")
+	if file then
+		file:close()
+		print("Using language: " .. lang)
+		return lang
+	else
+		print("Language file not found: " .. lang .. ".dl, falling back to schinese")
+		return "schinese"
+	end
+end
+
+local LANG <const> = parse_language()
 
 local function font_init()
 	local font = require "soluna.font"
@@ -34,7 +51,7 @@ end
 
 local callback = {}
 
-localization.load("localization/schinese.dl", LANG)
+localization.load("localization/" .. LANG .. ".dl", LANG)
 soluna.set_window_title(localization.convert "app.title")
 
 vdesktop.init {
