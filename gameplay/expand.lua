@@ -6,7 +6,7 @@ local track = require "gameplay.track"
 local map = require "gameplay.map"
 local vmap = require "visual.map"
 local vtips = require "visual.tips".layer "hud"
-local focus = require "core.focus"
+local mouse = require "core.mouse"
 local vbutton = require "visual.button"
 local loadsave = require "core.loadsave"
 local sync = require "gameplay.sync"
@@ -178,7 +178,7 @@ return function()
 	local focus_state = {}
 	
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if focus_state.active == "map" then
 				map_message.focus(focus_state.object)
 			elseif focus_state.active == "button1" then
@@ -191,7 +191,7 @@ return function()
 				vtips.set()
 			end
 		end
-		local c, btn = focus.click "left"
+		local c, btn = mouse.click(focus_state, "left")
 		if c then
 			if btn == "button1" then
 				break
@@ -200,7 +200,7 @@ return function()
 				expand_check()
 			end
 		end
-		local c, btn = focus.click "right"
+		local c, btn = mouse.click(focus_state, "right")
 		if btn == "map" then
 			map_message.click(c, "right")
 			expand_check()

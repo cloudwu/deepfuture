@@ -3,7 +3,7 @@ local card = require "gameplay.card"
 local flow = require "core.flow"
 local vdesktop = require "visual.desktop"
 local vcard = require "visual.card"
-local focus = require "core.focus"
+local mouse = require "core.mouse"
 local vtips = require "visual.tips".layer "hud"
 local track = require "gameplay.track"
 local map = require "gameplay.map"
@@ -45,16 +45,16 @@ local function discard_hand_limit()
 		local desc = { limit = rules.start.hand_limit }
 		local function wait_click(discard_card)
 			while true do
-				if focus.get(focus_state) then
+				if mouse.get(focus_state) then
 					if focus_state.object == discard_card then
 						vtips.set("tips.discard.focus", desc)
-					else
+					elseif focus_state.object then
 						vtips.set("tips.discard.invalid", desc)
+					else
+						vtips.set()
 					end
-				elseif focus_state.lost then
-					vtips.set()
 				end
-				if focus.click "left" == discard_card then
+				if mouse.click(focus_state, "left") == discard_card then
 					vcard.mask(discard_card)
 					vtips.set()
 					return
@@ -128,7 +128,7 @@ local function dec_tracks()
 	local desc = { effect = "$(adv.economy.name) $(adv.economy.desc)" }
 	track.focus(true)
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if focus_state.active == "track" then
 				local what = focus_state.object	-- C/M/S/X
 				track.focus(false)
@@ -139,16 +139,16 @@ local function dec_tracks()
 					vtips.set("tips.track.valid", desc)
 					track.focus(what, true)
 				end
-			else
+			elseif focus_state.object then
 				vtips.set "tips.track.out"
+			else
+				-- focus all
+				track.focus(true)
+				vtips.set()
 			end
-		elseif focus_state.lost then
-			-- focus all
-			track.focus(true)
-			vtips.set()
 		end
 		
-		local t, where = focus.click "left"
+		local t, where = mouse.click(focus_state, "left")
 		if where == "track" then
 			if not track.check(t, -1) then
 				track.use(t, 1)
@@ -202,7 +202,7 @@ function start_adv.infrastructure(advs)
 	end
 	local focus_state = {}
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if focus_state.active == "homeworld" then
 				local c = focus_state.object
 				if r[c] then
@@ -210,13 +210,13 @@ function start_adv.infrastructure(advs)
 				else
 					vtips.set "tips.upkeep.full"
 				end
-			else
+			elseif focus_state.object then
 				vtips.set "tips.upkeep.invalid"
+			else
+				vtips.set()
 			end
-		elseif focus_state.lost then
-			vtips.set()
 		end
-		local c = focus.click "left"
+		local c = mouse.click(focus_state, "left")
 		if c and r[c] then
 			card.upkeep_change(c, 1)
 			break
@@ -289,7 +289,7 @@ local function exploration(advs, sectors)
 	local from_sector
 	local to_sector
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			local sec = focus_state.object
 			local where = focus_state.active
 			if where == "map" then
@@ -305,14 +305,14 @@ local function exploration(advs, sectors)
 					vtips.set ("tips.exploration.danger", desc)
 					set_danger(danger_pile)
 				end
-			else
+			elseif focus_state.object then
 				vtips.set ("tips.exploration.invalid", desc)
 				set_danger()
+			else
+				vtips.set()
 			end
-		elseif focus_state.lost then
-			vtips.set()
 		end
-		local sec, region = focus.click "left"
+		local sec, region = mouse.click(focus_state, "left")
 		if sec and region == "map" then
 			from_sector = sec
 			break
@@ -335,7 +335,7 @@ local function exploration(advs, sectors)
 	end
 	
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			local sec = focus_state.object
 			local where = focus_state.active
 			if where == "map" then
@@ -347,13 +347,13 @@ local function exploration(advs, sectors)
 				end
 			elseif danger_cards[sec] then
 				vtips.set ("tips.exploration.cancel", desc)
-			else
+			elseif focus_state.object then
 				vtips.set ("tips.exploration.dest", desc)
+			else
+				vtips.set()
 			end
-		elseif focus_state.lost then
-			vtips.set()
 		end
-		local sec, region = focus.click "left"
+		local sec, region = mouse.click(focus_state, "left")
 		if sec then
 			if danger_cards[sec] then
 				-- cancel
@@ -367,7 +367,7 @@ local function exploration(advs, sectors)
 				break
 			end
 		end
-		local sec, region = focus.click "right"
+		local sec, region = mouse.click(focus_state, "right")
 		if sec and danger_cards[sec] then
 			-- cancel
 			set_danger()

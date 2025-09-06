@@ -1,10 +1,11 @@
 local card = require "gameplay.card"
 local vdesktop = require "visual.desktop"
+local mouse = require "core.mouse"
 local flow = require "core.flow"
 local vtips = require "visual.tips".layer "hud"
 local track = require "gameplay.track"
 local vcard = require "visual.card"
-local focus = require "core.focus"
+local map = require "core.mouse"
 
 global assert, ipairs, pairs
 
@@ -20,16 +21,16 @@ local function relocate()
 	local focus_state = {}
 	local new_homeworld
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if focus_state.active == "colony" then
 				vtips.set "tips.homeworld.set"
-			else
+			elseif focus_state.object then
 				vtips.set "tips.homeworld.invalid"
+			else
+				vtips.set()
 			end
-		elseif focus_state.lost then
-			vtips.set()
 		end
-		local sec, region = focus.click "left"
+		local sec, region = mouse.click(focus_state, "left")
 		if sec and region == "colony" then
 			new_homeworld = card.pickup("colony", sec)
 			break

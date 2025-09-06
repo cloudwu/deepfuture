@@ -6,7 +6,6 @@ local vtrack = require "visual.track"
 local vbutton = require "visual.button"
 local widget = require "core.widget"
 local util = require "core.util"
-local focus = require "core.focus"
 local mouse = require "core.mouse"
 local table = table
 
@@ -224,11 +223,8 @@ local function focus_map_test(region_name, flag, mx, my)
 	local c = r:test(mx, my)
 	if c then
 		mouse.set_focus(region_name, c)
-		focus.trigger(region_name, c)
 		return c
 	end
-	-- lost focus
-	focus.trigger(region_name)
 end
 
 local function map_focus(region_name, card)
@@ -279,7 +275,6 @@ end
 
 function M.describe(text)
 	DESC = not not text
-	focus.clear()
 	if text then
 		describe.text = text
 		update_desc_list()
@@ -289,8 +284,6 @@ function M.describe(text)
 		widget.test(mouse_x, mouse_y, BATCH, test_list)
 	end
 end
-
-local focus_state = {}
 
 function M.mouse_move(x, y)
 	mouse_x = x
@@ -306,24 +299,24 @@ function M.mouse_move(x, y)
 	widget.test(mouse_x, mouse_y, BATCH, test_list)
 end
 
+local focus_state = {}
 function M.draw(count)
 	-- todo : find a better place to check unfocus :
 	--		code trigger unfocus, rather than mouse move
-	if focus.get(focus_state) then
+	if mouse.get(focus_state) then
 		map_focus(focus_state.active, focus_state.object)
+		map_focus(focus_state.lost)
 	end
-	map_focus(focus_state.lost)
-	
+	-- todo : support multiple hud layer
 	-- 如果有victory屏幕，优先显示它，覆盖其他UI
 	if DRAWLIST.victory then
 		widget.draw(BATCH, DRAWLIST.victory)
 	else
-		widget.draw(BATCH, DRAWLIST.hud, focus.region())
+		widget.draw(BATCH, DRAWLIST.hud, mouse.focus_region())
 		if DESC then
 			widget.draw(BATCH, DRAWLIST.describe)
 		end
 	end
-	focus.frame()
 end
 
 function M.draw_pile_focus(enable)

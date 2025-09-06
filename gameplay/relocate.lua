@@ -2,7 +2,7 @@ local vtips = require "visual.tips".layer "hud"
 local card = require "gameplay.card"
 local flow = require "core.flow"
 local vcard = require "visual.card"
-local focus = require "core.focus"
+local mouse = require "core.mouse"
 local vdesktop = require "visual.desktop"
 
 return function()
@@ -17,16 +17,16 @@ return function()
 	local focus_state = {}
 	local new_homeworld
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if focus_state.active == "colony" then
 				vtips.set "tips.homeworld.set"
 			else
 				vtips.set "tips.homeworld.invalid"
 			end
-		elseif focus_state.lost then
+		elseif not focus_state.object then
 			vtips.set()
 		end
-		local sec, region = focus.click "left"
+		local sec, region = mouse.click(focus_state, "left")
 		if sec and region == "colony" then
 			new_homeworld = card.pickup("colony", sec)
 			break

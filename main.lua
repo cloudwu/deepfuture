@@ -2,7 +2,6 @@ local soluna = require "soluna"
 local widget = require "core.widget"
 widget.scripts(require "visual.ui")
 local flow = require "core.flow"
-local focus = require "core.focus"
 local vdesktop = require "visual.desktop"
 local initial = require "gameplay.initial"
 local card = require "gameplay.card"
@@ -129,7 +128,6 @@ function callback.mouse_button(btn, state)
 	btn = mouse_btn[btn]
 	state = state == 1
 	mouse.mouse_button(btn, state)
-	focus.mouse_button(btn, state)
 end
 
 function callback.frame(count)

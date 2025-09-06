@@ -62,8 +62,6 @@ function mouse.frame()
 	for i = 1, #mouse_release do
 		if mouse_release[i] then
 			-- is click
---			mouse_click[i] = mouse_press[i] or mouse_click[i] -- click start frame (from press)
---			print("CLICK", i, mouse_click[i])
 			mouse_release[i] = false
 		end
 	end
@@ -77,18 +75,20 @@ function mouse.frame()
 end
 
 function mouse.get(focus_state)
-	if focus.region ~= focus_state.active or focus.object ~= focus_state.object then
-		focus_state.frame = focus.frame
+	local change_region
+	if focus.region ~= focus_state.active then
+		change_region = true
+		focus_state.lost = focus_state.active
 		focus_state.active = focus.region
+	end
+	if change_region or focus.object ~= focus_state.object then
+		focus_state.frame = focus.frame
 		focus_state.object = focus.object
 		return true
 	end
 	for i = 1, #mouse_release do
---		if focus_state[i] == nil then
 		focus_state[i] = mouse_click[i]
---		end
 	end
---	mouse_click[i] = mouse_press[i]	-- click start frame (from press)
 end
 
 function mouse.focus_time(focus_state)
@@ -130,6 +130,10 @@ function mouse.press(btn, region)
 			return t
 		end
 	end
+end
+
+function mouse.focus_region()
+	return focus.region
 end
 
 return mouse

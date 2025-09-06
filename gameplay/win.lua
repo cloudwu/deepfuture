@@ -1,6 +1,6 @@
 local flow = require "core.flow"
 local vdesktop = require "visual.desktop"
-local focus = require "core.focus"
+local mouse = require "core.mouse"
 local card = require "gameplay.card"
 local sync = require "gameplay.sync"
 local loadsave = require "core.loadsave"
@@ -65,8 +65,10 @@ return function()
 	vdesktop.button_enable("button1", button)
 	
 	-- 等待玩家选择
+	local focus_state = {}
 	while true do
-		local c, btn = focus.click "left"
+		mouse.get(focus_state)	
+		local c, btn = mouse.click(focus_state, "left")
 		if btn == "button1" then
 			break
 		end

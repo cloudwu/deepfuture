@@ -8,7 +8,7 @@ local map = require "gameplay.map"
 local vmap = require "visual.map"
 local vcard = require "visual.card"
 local vtips = require "visual.tips".layer "hud"
-local focus = require "core.focus"
+local mouse = require "core.mouse"
 local util = require "core.util"
 local name = require "gameplay.name"
 local addadv = require "gameplay.addadv"
@@ -163,7 +163,7 @@ local function settling(advs)
 	local from
 	
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			local c = focus_state.object
 			if cards[c] then
 				-- choose card
@@ -181,13 +181,13 @@ local function settling(advs)
 				vtips.set "tips.settle.newworld"
 			elseif advs:can_use(c) then
 				vtips.set "tips.settle.society"
-			else
+			elseif focus_state.object then
 				vtips.set "tips.settle.advice"
+			else
+				vtips.set()
 			end
-		elseif focus_state.lost then
-			vtips.set()
 		end
-		local c, where = focus.click "left"
+		local c, where = mouse.click(focus_state, "left")
 		if c then
 			if cards[c] then
 				-- settle a world
@@ -230,16 +230,16 @@ local function choose_sector(c)
 	local focus_state = {}
 	
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if c == focus_state.object then
 				vtips.set "tips.settle.confirm"
 			else
 				vtips.set "tips.settle.confirm.advice"
 			end
-		elseif focus_state.lost then
+		elseif not focus_state.object then
 			vtips.set()
 		end
-		if focus.click "left" then
+		if mouse.click(focus_state, "left") then
 			vdesktop.transfer("float", c, "deck")
 			break
 		end
@@ -255,7 +255,7 @@ local function choose_sector(c)
 	
 	local desc = {}
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if focus_state.active == "map" then
 				local sec = focus_state.object
 				desc.sec = sec
@@ -265,13 +265,13 @@ local function choose_sector(c)
 					map.info(sec, desc)
 					vtips.set ("tips.settle.map.desc", desc)
 				end
-			else
+			elseif focus_state.object then
 				vtips.set( "tips.settle.map.advice", desc)
+			else
+				vtips.set()
 			end
-		elseif focus_state.lost then
-			vtips.set()
 		end
-		local sec, where = focus.click "left"
+		local sec, where = mouse.click(focus_state, "left")
 		if sec and where == "map" and t[sec] then
 			c.sector = sec
 			break

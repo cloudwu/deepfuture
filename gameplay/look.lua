@@ -3,7 +3,7 @@ local card = require "gameplay.card"
 local vtips = require "visual.tips".layer "hud"
 local vdesktop = require "visual.desktop"
 local vcard = require "visual.card"
-local focus = require "core.focus"
+local mouse = require "core.mouse"
 
 global pairs, print
 
@@ -34,17 +34,17 @@ local function wait_click(p)
 	local focus_state = {}
 	local desc = { n = nil }
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if focus_state.active == "float" and p[focus_state.object] then
 				desc.n = p[focus_state.object]
 				vtips.set ("tips.look.focus", desc)
+			elseif focus_state.object then
+				vtips.set()
 			else
 				vtips.set()
 			end
-		elseif focus_state.lost then
-			vtips.set()
 		end
-		if focus.click "left" or focus.click "right" then
+		if mouse.click(focus_state, "left") or mouse.click(focus_state, "right") then
 			return
 		end
 		flow.sleep(0)

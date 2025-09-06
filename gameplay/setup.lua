@@ -1,6 +1,6 @@
 local card = require "gameplay.card"
 local name = require "gameplay.name"
-local focus = require "core.focus"
+local mouse = require "core.mouse"
 local flow = require "core.flow"
 local vdesktop = require "visual.desktop"
 local vtips = require "visual.tips".layer "hud"
@@ -101,19 +101,19 @@ local function choose_world(hands)
 	local focus_state = {}
 	
 	repeat
-		if focus.get(focus_state) and focus_state.active == "hand" then
+		if mouse.get(focus_state) and focus_state.active == "hand" then
 			local c = focus_state.object
 			if c.type == "world" then
 				desc.world = c.sector .. " " .. c.name
 				vtips.set("tips.setup.homeworld", desc)
-			else
+			elseif c then
 				desc.type = string.format("$(card.type.%s)", c.type)
 				vtips.set("tips.setup.invalid", desc)
+			else
+				vtips.set()
 			end
-		elseif focus_state.lost == "hand" then
-			vtips.set()
 		end
-		local c, from = focus.click ("left", "hand")
+		local c, from = mouse.click(focus_state, "left")
 		if from == "hand" and c.type == "world" then
 			homeworld = c
 			clear_mask(hands)
@@ -135,19 +135,23 @@ local function new_world(hands)
 	}
 	vdesktop.button_enable("button1", button)
 
-	repeat
-		if focus.get(focus_state) then
+	while true do
+		if mouse.get(focus_state) then
 			if focus_state.active == "button1" then
 				vtips.set("tips.setup.newworld")
 			elseif focus_state.active == "hand" then
 				desc.type = string.format("$(card.type.%s)", focus_state.object.type)
 				vtips.set("tips.setup.newworld.invalid", desc)
+			elseif not focus_state.object then
+				vtips.set()
 			end
-		elseif focus_state.lost then
-			vtips.set()
+		end
+		local c, btn = mouse.click(focus_state, "left")
+		if c and btn == "button1" then
+			break
 		end
 		flow.sleep(0)
-	until focus.click ("left", "button1")
+	end
 	
 	vdesktop.button_enable("button1", nil)
 	vtips.set()

@@ -10,7 +10,7 @@ local vmap = require "visual.map"
 local rules = require "core.rules".phase
 local vtips = require "visual.tips".layer "hud"
 local map_rules = require "core.rules".map
-local focus = require "core.focus"
+local mouse = require "core.mouse"
 local loadsave = require "core.loadsave"
 local sync = require "gameplay.sync"
 
@@ -69,7 +69,7 @@ local function grow_sectors(t, action)
 	local desc = { limit = LIMIT }
 	
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if focus_state.active == "map" then
 				local sec = focus_state.object
 				desc.sec = sec
@@ -79,13 +79,13 @@ local function grow_sectors(t, action)
 					map.info(sec, desc)
 					vtips.set ("tips.grow.desc", desc)
 				end
-			else
+			elseif focus_state.object then
 				vtips.set( "tips.grow.advice", desc)
+			else
+				vtips.set()
 			end
-		elseif focus_state.lost then
-			vtips.set()
 		end
-		local sec, where = focus.click "left"
+		local sec, where = mouse.click(focus_state, "left")
 		if sec and where == "map" and t[sec] then
 			action(sec)
 			break

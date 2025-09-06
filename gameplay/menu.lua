@@ -1,5 +1,5 @@
 local flow = require "core.flow"
-local focus = require "core.focus"
+local mouse = require "core.mouse"
 local vdesktop = require "visual.desktop"
 local card = require "gameplay.card"
 
@@ -38,8 +38,10 @@ local function wait_for_return(desc)
 	button_enable(true)
 	vdesktop.describe(desc)
 	local r
+	local focus_state = {}
 	while true do
-		local c, btn = focus.click "left"
+		mouse.get(focus_state)
+		local c, btn = mouse.click(focus_state, "left")
 		if c and buttons[btn] then
 			r = action[buttons[btn]]()
 			break

@@ -1,4 +1,4 @@
-local focus = require "core.focus"
+local mouse = require "core.mouse"
 local util = require "core.util"
 local config = require "core.rules".ui.button
 local matquad = require "soluna.material.quad"
@@ -44,10 +44,8 @@ end
 function button.enable(name, text)
 	if text == nil then
 		states[name] = false
-		focus.trigger(name)
 		return
 	end
--- todo: disable would lost focus, but enable again can't get focus immediately
 	states[name] = update_all { _env = text }
 end
 
@@ -143,7 +141,6 @@ function button.test(name, flag, mx, my, w, h)
 	end
 	local obj = states[name]
 	if not obj then
-		focus.trigger(name)
 		return false
 	end
 	local x, y = BATCH:point(mx, my)
@@ -152,11 +149,9 @@ function button.test(name, flag, mx, my, w, h)
 			obj.color = FOCUS_COLOR
 		end
 		mouse.set_focus(name, true)
-		focus.trigger(name, true)
 		return true
 	end
 	obj.color = NORMAL_COLOR
-	focus.trigger(name)
 	return false
 end
 

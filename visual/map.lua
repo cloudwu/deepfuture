@@ -1,7 +1,6 @@
 local widget = require "core.widget"
 local mask = require "soluna.material.mask"
 local config = require "core.rules".ui
-local focus = require "core.focus"
 local mouse = require "core.mouse"
 local map = {}
 local table = table
@@ -212,7 +211,6 @@ function map.test(name, flag, mx, my, w, h)
 	end
 	local x, y = BATCH:point(mx, my)
 	if x < 0 or x >= w or y < 0 or y >= h then
-		focus.trigger(name, false)
 		return false
 	end
 	
@@ -227,10 +225,8 @@ function map.test(name, flag, mx, my, w, h)
 	local sec = AXIAL_TO_SECTOR[c]
 	if sec then
 		mouse.set_focus(name, sec)
-		focus.trigger(name, sec)
 		return true
 	else
-		focus.trigger(name, false)
 		return false
 	end
 end

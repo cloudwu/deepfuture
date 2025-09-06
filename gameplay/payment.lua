@@ -4,7 +4,7 @@ local vtips = require "visual.tips".layer "hud"
 local vcard = require "visual.card"
 local card = require "gameplay.card"
 local rules = require "core.rules".phase
-local focus = require "core.focus"
+local mouse = require "core.mouse"
 local vdesktop = require "visual.desktop"
 local look = require "gameplay.look"
 local sync = require "gameplay.sync"
@@ -45,7 +45,7 @@ local function payment(homeworld_card)
 		desc.upkeep = "$(tips.payment.upkeep)"
 	end
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if focus_state.object == homeworld_card then
 				vtips.set ("tips.payment.skip", desc)
 			elseif cards[focus_state.object] then
@@ -62,10 +62,10 @@ local function payment(homeworld_card)
 			if desc.seen > 0 then
 				vtips.set("tips.look.pile", desc)
 			end
-		elseif focus_state.lost then
+		elseif not focus_state.object then
 			vtips.set()
 		end
-		local c, where = focus.click "left"
+		local c, where = mouse.click(focus_state, "left")
 		if c == homeworld_card then
 			-- add challenge card
 			challenge_card = card.draw_card()

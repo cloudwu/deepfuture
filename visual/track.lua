@@ -1,5 +1,5 @@
 local widget = require "core.widget"
-local focus = require "core.focus"
+local mouse = require "core.mouse"
 local util = require "core.util"
 local mattext = require "soluna.material.text"
 local font = require "soluna.font"
@@ -209,13 +209,11 @@ function track.test(name, flag, mx, my, w, h)
 	end
 	local x, y = BATCH:point(mx, my)
 	if x < 0 or x >= w or y < 0 or y >= h then
-		focus.trigger(name)
 		return false
 	end
 	for key, rect in pairs(FOCUS) do
 		if x >= rect.x1 and x < rect.x2 and y >= rect.y1 and y < rect.y2 then
 			mouse.set_focus(name, key)
-			focus.trigger(name, key)
 			break
 		end
 	end

@@ -6,7 +6,7 @@ local vdesktop = require "visual.desktop"
 local flow = require "core.flow"
 local look = require "gameplay.look"
 local vtips = require "visual.tips".layer "hud"
-local focus = require "core.focus"
+local mouse = require "core.mouse"
 local track = require "gameplay.track"
 local show_desc = require "gameplay.desc"
 local vbutton = require "visual.button"
@@ -348,7 +348,7 @@ function effect:choose_cards(args)
 	end
 	
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			local where = focus_state.active
 			if where == "button1" then
 				vtips.set("tips.advancement.skip", button)
@@ -359,7 +359,7 @@ function effect:choose_cards(args)
 				end
 			elseif where == "map" and map_message then
 				map_message.focus(focus_state.object)
-			else
+			elseif focus_state.object then
 				local focus = self:focus(focus_state.object)
 				if focus then
 					advancement_focus(adv_focus[focus])
@@ -375,12 +375,12 @@ function effect:choose_cards(args)
 				else
 					vtips.set()
 				end
+			else
+				vtips.set()
+				advancement_unfocus()
 			end
-		elseif focus_state.lost then
-			vtips.set()
-			advancement_unfocus()
 		end
-		local switch_card, region = focus.click "right"
+		local switch_card, region = mouse.click(focus_state, "right")
 		if switch_card then
 			if self:can_use(switch_card) then
 				local focus = self:nextadv(switch_card, true)
@@ -403,7 +403,7 @@ function effect:choose_cards(args)
 				end
 			end
 		end
-		local c, btn = focus.click "left"
+		local c, btn = mouse.click(focus_state, "left")
 		if c then
 			if btn == "button1" then
 				self:reset()
@@ -435,7 +435,7 @@ function effect:choose_cards(args)
 			end
 		end
 		if map_message then
-			local c, where = focus.click "right"
+			local c, where = mouse.click(focus_state, "right")
 			if where == "map" then
 				map_message.click(c, "right")
 				if update_adv() then
@@ -473,7 +473,7 @@ function effect:discard_one_card(phase, advname, action)
 	end
 	local focus_state = {}
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if focus_state.active == "hand" then
 				if self:is_used(focus_state.object) then
 					vtips.set "tips.discard.advancement.invalid"
@@ -486,7 +486,7 @@ function effect:discard_one_card(phase, advname, action)
 		elseif focus_state.lost then
 			vtips.set()
 		end
-		local c = focus.click "left"
+		local c = mouse.click(focus_state, "left")
 		if c and not self:is_used(c) then
 			local discard_card = card.pickup("hand", c)
 			if discard_card then
