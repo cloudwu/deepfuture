@@ -27,6 +27,7 @@ return function()
             name = "unknown"
         }
     end
+    
     if victory_info.type == "track" then
         print("Victory track:", victory_info.track)
     end

@@ -10,7 +10,7 @@ local victory = {}
 local VICTORY_REQUIREMENTS = {
     TERRITORY_SECTORS = 12,  -- 领土胜利需要控制的星区数
     POPULATION_CUBES = 25,   -- 人口胜利需要的方块数
-    REQUIRED_TECHS = 0,      -- 需要的完整技术数量
+    REQUIRED_TECHS = 3,      -- 需要的完整技术数量
 }
 
 -- 检查是否有母星世界
@@ -125,12 +125,12 @@ function victory.check()
         return nil
     end
     
-    -- local tech_count = count_complete_techs()
-    -- print("Tech count:", tech_count, "Required:", VICTORY_REQUIREMENTS.REQUIRED_TECHS)
-    -- if tech_count < VICTORY_REQUIREMENTS.REQUIRED_TECHS then
-    --     print("=== VICTORY CHECK END: Not enough techs ===")
-    --     return nil
-    -- end
+    local tech_count = count_complete_techs()
+    print("Tech count:", tech_count, "Required:", VICTORY_REQUIREMENTS.REQUIRED_TECHS)
+    if tech_count < VICTORY_REQUIREMENTS.REQUIRED_TECHS then
+        print("=== VICTORY CHECK END: Not enough techs ===")
+        return nil
+    end
     
     -- 检查各种胜利条件
     local track_win = check_track_victory()
@@ -177,8 +177,8 @@ end
 function victory.progress()
     return {
         homeworld = has_homeworld(),
-        -- tech_count = count_complete_techs(),
-        -- required_techs = VICTORY_REQUIREMENTS.REQUIRED_TECHS,
+        tech_count = count_complete_techs(),
+        required_techs = VICTORY_REQUIREMENTS.REQUIRED_TECHS,
         territory_count = map.territory() and (function()
             local count = 0
             for _ in pairs(map.territory()) do count = count + 1 end

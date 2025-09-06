@@ -83,11 +83,14 @@ return function()
 	
 	for i = 1, card.count "colony" do
 		local c = card.card("colony", i)
-		map.settle(c.sector)
+		-- 只对世界卡片调用 map.settle，技术卡没有 sector 字段
+		if c.type == "world" and c.sector then
+			map.settle(c.sector)
+		end
 	end
 	local homeworld = card.card ("homeworld", 1)
 	if homeworld then	-- no homeworld in setup phase 
-		map.settle(homeworld)
+		map.settle(homeworld.sector)
 	end
 	
 	track.sync()

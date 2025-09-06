@@ -125,6 +125,11 @@ function map.neighbor(sector, idx)
 end
 
 function map.settle(sec)
+	-- 防御性检查：如果 sec 为 nil（例如技术卡），直接返回
+	if sec == nil then
+		return
+	end
+	
 	local s = galaxy[sec]
 	if s and s.camp == "player" then
 		colony[sec] = true
