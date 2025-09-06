@@ -2,7 +2,7 @@ id : screen
 victory_bg :
 	position : absolute
 	left : 0
-	top : 0
-	width : 100%
-	height : 100%
+	top : 25
+	width : 1024
+	height : 768
 	image : victory
