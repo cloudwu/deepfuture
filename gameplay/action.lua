@@ -1,7 +1,6 @@
 local card = require "gameplay.card"
 local vcard = require "visual.card"
 local flow = require "core.flow"
-local focus = require "core.focus"
 local vdesktop = require "visual.desktop"
 local vtips = require "visual.tips".layer "hud"
 local map = require "gameplay.map"
@@ -16,6 +15,7 @@ local sync = require "gameplay.sync"
 local effect = require "gameplay.effect"
 local loadsave = require "core.loadsave"
 local menu = require "gameplay.menu"
+local mouse = require "core.mouse"
 local table = table
 
 require "gameplay.effect"
@@ -70,17 +70,17 @@ local function create_plan_card(newcard)
 	local desc = {}
 	local choose
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if focus_state.active == "float" then
 				desc.suit = focus_state.object._marker
 				vtips.set("tips.plan.choose_suit", desc)
 			else
 				vtips.set "tips.plan.invalid"
 			end
-		elseif focus_state.lost then
+		elseif not focus_state.object then
 			vtips.set()
 		end
-		local c, where = focus.click "left"
+		local c, where = mouse.click(focus_state, "left")
 		if c and where == "float" then
 			choose = c
 			vtips.set()
@@ -100,17 +100,17 @@ local function create_plan_card(newcard)
 	vdesktop.add("deck", value_card)
 	vdesktop.transfer("deck", value_card, "float")
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if focus_state.active == "float" and focus_state.object == value_card then
 				desc.value = value_card.value
 				vtips.set("tips.plan.choose_value", desc)
 			else
 				vtips.set()
 			end
-		elseif focus_state.lost then
+		elseif not focus_state.object then
 			vtips.set()
 		end
-		if focus.click "left" == value_card then
+		if mouse.click(focus_state, "left") == value_card then
 			vcard.mask(value_card)
 			newcard.suit = choose.suit
 			newcard.value = value_card.value
@@ -302,7 +302,7 @@ local function choose_action(hands)
 	end
 	local focus_state = {}
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			local where = focus_state.active
 			local c = focus_state.object
 			if where == "hand" then
@@ -332,11 +332,11 @@ local function choose_action(hands)
 				vtips.set("tips.button." .. BUTTONS[where].action,BUTTONS[where])
 			elseif focus_state.object then
 				vtips.set("tips.action." .. where)
+			else
+				vtips.set()
 			end
-		elseif focus_state.lost then
-			vtips.set()
 		end
-		local c, where = focus.click "right"
+		local c, where = mouse.click(focus_state, "right")
 		if c and expain_region[where] then
 			vtips.set()
 			show_desc.action {
@@ -344,7 +344,7 @@ local function choose_action(hands)
 				card = c,
 			}
 		end
-		local c, where = focus.click "left"
+		local c, where = mouse.click(focus_state, "left")
 		if where == "discard" then
 			local n = card.seen()
 			if n > 0 then

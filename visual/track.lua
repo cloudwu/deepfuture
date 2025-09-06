@@ -7,6 +7,7 @@ local config = require "core.rules".ui
 local grid = require "core.rules".track
 local textconv = require "soluna.text"
 local color = require "visual.color"
+local mouse = require "core.mouse"
 local math = math
 local sin = math.sin
 
@@ -213,6 +214,7 @@ function track.test(name, flag, mx, my, w, h)
 	end
 	for key, rect in pairs(FOCUS) do
 		if x >= rect.x1 and x < rect.x2 and y >= rect.y1 and y < rect.y2 then
+			mouse.set_focus(name, key)
 			focus.trigger(name, key)
 			break
 		end

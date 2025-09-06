@@ -6,6 +6,7 @@ local mattext = require "soluna.material.text"
 local font = require "soluna.font"
 local textconv = require "soluna.text"
 local localization = require "core.localization"
+local mouse = require "core.mouse"
 local math = math
 local sin = math.sin
 
@@ -98,7 +99,8 @@ function button.draw(name, self)
 		label = func(obj.text, w, h)
 		obj._text = label
 	end
-	local press = focus.press("left", name)
+	-- todo: use press/(ticks) instead of obj.scale
+	local press = mouse.press("left", name)
 	local scale = obj.scale
 	if scale then
 		-- already scaled
@@ -149,6 +151,7 @@ function button.test(name, flag, mx, my, w, h)
 		if not obj._env.disable then
 			obj.color = FOCUS_COLOR
 		end
+		mouse.set_focus(name, true)
 		focus.trigger(name, true)
 		return true
 	end

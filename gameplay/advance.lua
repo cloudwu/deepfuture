@@ -8,7 +8,7 @@ local advancement = require "gameplay.advancement"
 local track = require "gameplay.track"
 local vcard = require "visual.card"
 local vtips = require "visual.tips".layer "hud"
-local focus = require "core.focus"
+local mouse = require "core.mouse"
 local util = require "core.util"
 local addadv = require "gameplay.addadv"
 local loadsave = require "core.loadsave"
@@ -117,18 +117,18 @@ local function add_suit(advs, c)
 	}
 	local focus_state = {}
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if focus_state.object == c then
 				vtips.set("tips.advance.randsuit", desc)
 			elseif advs:focus(focus_state.object) then
 				vtips.set("tips.advance.chemistry", desc)
-			else
+			elseif focus_state.object then
 				vtips.set("tips.advance.redraw", desc)
+			else
+				vtips.set()
 			end
-		elseif focus_state.lost then
-			vtips.set()
 		end
-		local click_card, where = focus.click "left"
+		local click_card, where = mouse.click(focus_state, "left")
 		if click_card == c then
 			vtips.set()
 			c[adv_index]._name = nil
@@ -199,18 +199,18 @@ local function choose_or_random(random_value_choice, advs, need_physics)
 	local desc = { n = need_physics }
 	local random_value_choice_float = true
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if random_value_choice_float and focus_state.object == random_value_choice then
 				vtips.set("tips.advance.physics.nouse")
 			elseif advs:focus(focus_state.object) then
 				vtips.set("tips.advance.physics.use", desc)
-			else
+			elseif focus_state.object then
 				vtips.set("tips.advance.physics.need", desc)
+			else
+				vtips.set()
 			end
-		elseif focus_state.lost then
-			vtips.set()
 		end
-		local click_card, where = focus.click "left"
+		local click_card, where = mouse.click(focus_state, "left")
 		if random_value_choice_float and click_card == random_value_choice then
 			-- choose random
 			vtips.set()
@@ -312,18 +312,18 @@ local function draw_value(advs, c, adv_index)
 	}
 	local focus_state = {}
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if focus_state.object == c then
 				vtips.set("tips.advance.randvalue", desc)
 			elseif advs:focus(focus_state.object) then
 				vtips.set("tips.advance.chemistry.value", desc)
-			else
+			elseif focus_state.object then
 				vtips.set("tips.advance.redraw.value", desc)
+			else
+				vtips.set()
 			end
-		elseif focus_state.lost then
-			vtips.set()
 		end
-		local click_card, where = focus.click "left"
+		local click_card, where = mouse.click(focus_state, "left")
 		if click_card == c then
 			vtips.set()
 			adv._name = nil
@@ -435,18 +435,18 @@ return function(extra, action_name)
 	local advcard
 
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if focus_state.active == "discard" then
 				vtips.set "tips.advance.newcard"
 			elseif cards[focus_state.object] then
 				vtips.set "tips.advance.card"
-			else
+			elseif focus_state.object then
 				vtips.set "tips.advance.invalid"
+			else
+				vtips.set()
 			end
-		elseif focus_state.lost then
-			vtips.set()
 		end
-		local c, where = focus.click "left"
+		local c, where = mouse.click(focus_state, "left")
 		if c then
 			if where == "discard" then
 				unmask(cards)

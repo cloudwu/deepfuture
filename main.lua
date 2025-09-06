@@ -14,6 +14,8 @@ local test = require "gameplay.test"
 local loadsave = require "core.loadsave"
 local track = require "gameplay.track"
 local vbutton = require "visual.button"
+local mouse = require "core.mouse"
+
 local utf8 = utf8
 local math = math
 local io = io
@@ -110,7 +112,10 @@ end
 run_game()
 
 callback.window_resize = vdesktop.flush
-callback.mouse_move = vdesktop.mouse_move
+function callback.mouse_move(x, y)
+	mouse.mouse_move(x, y)
+--	vdesktop.mouse_move(x, y)
+end
 
 local mouse_btn = {
 	[0] = "left",
@@ -119,14 +124,20 @@ local mouse_btn = {
 }
 
 function callback.mouse_button(btn, state)
-	focus.mouse_button(mouse_btn[btn], state == 1)
+	btn = mouse_btn[btn]
+	state = state == 1
+	mouse.mouse_button(btn, state)
+	focus.mouse_button(btn, state)
 end
 
 function callback.frame(count)
+	local x, y = mouse.sync(count)
+	vdesktop.mouse_move(x, y)
 	flow.update()
 	vdesktop.card_count(card.count "draw", card.count "discard", card.seen())
 	map.update()
 	vdesktop.draw(count)
+	mouse.frame()
 end
 
 function callback.char(c)

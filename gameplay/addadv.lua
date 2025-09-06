@@ -2,10 +2,10 @@ local util = require "core.util"
 local card = require "gameplay.card"
 local vdesktop = require "visual.desktop"
 local flow = require "core.flow"
-local focus = require "core.focus"
 local vcard = require "visual.card"
 local vtips = require "visual.tips".layer "hud"
 local advancement = require "gameplay.advancement"
+local mouse = require "core.mouse"
 
 global ipairs, pairs
 
@@ -65,7 +65,7 @@ function addadv.choose_or_random(choose, c, advs)
 	local desc = {}
 	
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if focus_state.active == "float" then
 				local copy = focus_state.object
 				local adv_index = copy._random
@@ -82,13 +82,13 @@ function addadv.choose_or_random(choose, c, advs)
 						vtips.set ("tips.advance.choose", desc)
 					end
 				end
-			else
+			elseif focus_state.object then
 				vtips.set ("tips.advance.choose.invalid", desc)
+			else
+				vtips.set ()
 			end
-		elseif focus_state.lost then
-			vtips.set ()
 		end
-		local click_card, where = focus.click "left"
+		local click_card, where = mouse.click(focus_state, "left")
 		if click_card then
 			if where == "discard" and card.seen() > 0 then
 				vtips.set()
@@ -150,20 +150,20 @@ function addadv.choose_value(c, adv_index)
 	local focus_state = {}
 	local desc = { suit = card.suit_info(c[adv_index]) }
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if cards[focus_state.object] then
 				local adv = focus_state.object[adv_index]
 				local adv_name = advancement.name(adv.suit, adv.value)
 				desc.name = advancement.info(adv_name, "name")
 				desc.desc = advancement.info(adv_name, "desc")
 				vtips.set("tips.advance.physics.confirm", desc)
-			else
+			elseif focus_state.object then
 				vtips.set("tips.advance.physics.invalid", desc)
+			else
+				vtips.set()
 			end
-		elseif focus_state.lost then
-			vtips.set()
 		end
-		local clone = focus.click "left"
+		local clone = mouse.click(focus_state, "left")
 		if cards[clone] then
 			vtips.set()
 			for tmp in pairs(cards) do

@@ -11,7 +11,7 @@ local rules = require "core.rules".phase
 local vtips = require "visual.tips".layer "hud"
 local vbutton = require "visual.button"
 local map_rules = require "core.rules".map
-local focus = require "core.focus"
+local mouse = require "core.mouse"
 local lost_sectors = require "gameplay.lostsectors"
 local loadsave = require "core.loadsave"
 local sync = require "gameplay.sync"
@@ -96,7 +96,7 @@ local function choose_battlefield_()
 	
 	for i = 1, 2 do
 		while true do
-			if focus.get(focus_state) then
+			if mouse.get(focus_state) then
 				if focus_state.active == "map" then
 					local sec = focus_state.object
 					map.info(sec, desc)
@@ -105,13 +105,13 @@ local function choose_battlefield_()
 					else
 						vtips.set ("tips.battle.set.invalid", desc)
 					end
-				else
+				elseif focus_state.object then
 					vtips.set( "tips.battle.set.advice", desc)
+				else
+					vtips.set()
 				end
-			elseif focus_state.lost then
-				vtips.set()
 			end
-			local sec = focus.click "left"
+			local sec = mouse.click(focus_state, "left")
 			if t[sec] then
 				vtips.set()
 				sec1, sec2 = sec, sec1
@@ -153,7 +153,7 @@ local function inc_track()
 	track.focus(true)
 	local desc = {}
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if focus_state.active == "track" then
 				local what = focus_state.object	-- C/M/S/X
 				track.focus(false)
@@ -164,16 +164,16 @@ local function inc_track()
 					vtips.set("tips.battle.safe.valid", desc)
 					track.focus(what, true)
 				end
-			else
+			elseif focus_state.object then
 				vtips.set "tips.battle.safe.out"
+			else
+				-- focus all
+				track.focus(true)
+				vtips.set()
 			end
-		elseif focus_state.lost then
-			-- focus all
-			track.focus(true)
-			vtips.set()
 		end
 		
-		local t, where = focus.click "left"
+		local t, where = mouse.click(focus_state, "left")
 		if where == "track" then
 			if track.check(t, 1) then
 				track.advance(t, 1)
@@ -285,7 +285,7 @@ return function()
 	local focus_state = {}
 
 	while true do
-		if focus.get(focus_state) then
+		if mouse.get(focus_state) then
 			if focus_state.active == "map" then
 				map_message.focus(focus_state.object)
 			elseif focus_state.active == "button1" then
@@ -298,7 +298,7 @@ return function()
 				vtips.set()
 			end
 		end
-		local c, btn = focus.click "left"
+		local c, btn = mouse.click(focus_state, "left")
 		if c then
 			button.disable = map.battle_lostall()
 			if btn == "button1" then
@@ -310,7 +310,7 @@ return function()
 				update_advs()
 			end
 		end
-		local c, btn = focus.click "right"
+		local c, btn = mouse.click(focus_state, "right")
 		if btn == "map" then
 			map_message.click(c, "right")
 			button.disable = map.battle_lostall()

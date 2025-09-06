@@ -7,6 +7,7 @@ local vbutton = require "visual.button"
 local widget = require "core.widget"
 local util = require "core.util"
 local focus = require "core.focus"
+local mouse = require "core.mouse"
 local table = table
 
 global ipairs, error, pairs, print, tostring
@@ -213,6 +214,7 @@ local function focus_map_test(region_name, flag, mx, my)
 	local r = region[region_name] or error ("No region " .. region_name)
 	local c = r:test(mx, my)
 	if c then
+		mouse.set_focus(region_name, c)
 		focus.trigger(region_name, c)
 		return c
 	end

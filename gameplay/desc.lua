@@ -1,5 +1,5 @@
 local flow = require "core.flow"
-local focus = require "core.focus"
+local mouse = require "core.mouse"
 local vdesktop = require "visual.desktop"
 local vtips = require "visual.tips" .layer "desc"
 local card = require "gameplay.card"
@@ -50,8 +50,10 @@ local function wait_for_return(desc)
 	-- todo
 	vtips.push()
 	vtips.set "tips.desc.return"
+	local focus_state = {}
 	while true do
-		if focus.click "right" or focus.click "left" then
+		mouse.get(focus_state)
+		if mouse.click(focus_state, "right") or mouse.click(focus_state, "left") then
 			break
 		end
 		flow.sleep(0)
