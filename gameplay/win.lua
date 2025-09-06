@@ -19,7 +19,14 @@ return function()
     local persist = require "gameplay.persist"
     local victory_info = persist.get "victory_info"
     
-    print("Victory type:", victory_info.type)
+    if not victory_info then
+        print("ERROR: No victory_info found in persist!")
+        -- 创建默认胜利信息
+        victory_info = {
+            type = "unknown",
+            name = "unknown"
+        }
+    end
     if victory_info.type == "track" then
         print("Victory track:", victory_info.track)
     end
