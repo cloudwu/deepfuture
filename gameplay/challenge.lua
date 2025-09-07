@@ -15,12 +15,31 @@ local look = require "gameplay.look"
 local sync = require "gameplay.sync"
 local lost_sectors = require "gameplay.lostsectors"
 local loadsave = require "core.loadsave"
+local ui = require "core.rules".ui
+
+local WARNING_MASK <const> = ui.card.mask_warning
 
 global pairs, print, ipairs, print_r, error, next, print_r, next, assert
 
 local RIVAL_TOKEN <const> = ui.map.token
 
 local function challenge(challenge_card)
+	local focus_state = {}
+
+	vcard.mask(challenge_card._back, true)
+	repeat
+		local c = mouse.get(focus_state)
+		if c then
+			if focus_state.object == challenge_card._back then
+				vtips.set "tips.challenge.reveal"
+			else
+				vtips.set "tips.challenge.reveal.advice"
+			end
+		end
+		flow.sleep(0)
+	until mouse.click(focus_state, "left") == challenge_card._back
+	vtips.set()
+
 	card.pickup("challenge", challenge_card)
 	local back = challenge_card._back
 	challenge_card._back = nil
@@ -35,14 +54,17 @@ local function challenge(challenge_card)
 	card.find_suit("hand", suits, cards)
 
 	local function set_mask(flag)
-		vcard.mask(challenge_card, flag)
-		for c in pairs(cards) do
-			vcard.mask(c, flag)
+		if next(cards) then
+			vcard.mask(challenge_card, flag == true and WARNING_MASK or flag)
+			for c in pairs(cards) do
+				vcard.mask(c, flag)
+			end
+		else
+			vcard.mask(challenge_card, flag)
 		end
 	end
 	set_mask(true)
 
-	local focus_state = {}
 	local desc = {
 		challenge_suit = card.suit_info(challenge_card),
 	}
@@ -359,9 +381,19 @@ end
 return function ()
 	loadsave.sync_game "challenge"
 	sync()
-	vdesktop.set_text("phase", { text = "$(phase.challenge)" })
+	local desc = {
+		text = "$(phase.challenge)",
+		total =  card.count "challenge",
+	}
+	vdesktop.set_text("phase", desc)
 	local lost = {}
+	local n = 1
 	while true do
+		desc.extra = "$(tips.challenge.title)"
+		desc.n = n
+		n = n + 1
+		vdesktop.set_text("phase", desc)
+		
 		local c = card.card("challenge", 1)
 		if c == nil then
 			-- todo : next round/year"

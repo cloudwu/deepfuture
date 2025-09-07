@@ -18,7 +18,7 @@ local card_type = {
 	back = "cardback",
 }
 
-local mask_color <const> = config.card.mask
+local mask_color <const> = config.card.mask_normal
 
 local _, _, card_w, card_h = widget.get("blankcard", "card")
 
@@ -54,7 +54,10 @@ function card.draw(c, x, y, scale)
 end
 
 function card.mask(c, color)
-	c._active = color and mask_color
+	if color == true then
+		color = mask_color
+	end
+	c._active = color
 end
 
 function card.test(mx, my, x, y, scale)

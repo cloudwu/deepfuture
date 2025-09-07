@@ -9,8 +9,10 @@ local vdesktop = require "visual.desktop"
 local look = require "gameplay.look"
 local sync = require "gameplay.sync"
 local loadsave = require "core.loadsave"
+local ui = require "core.rules".ui
 
 local UPKEEP_LIMIT <const> = rules.payment.upkeep_limit
+local WARNING_MASK <const> = ui.card.mask_warning
 
 global pairs, print, ipairs, print_r, error, next, print_r
 
@@ -20,10 +22,15 @@ local function payment(homeworld_card)
 	local need_suits = card.payment_text(homeworld_card)
 	local cards = card.find_suit("colony", suits, {})
 	card.find_suit("hand", suits, cards)
+	local nochoice = next(cards) == nil
 	local function set_mask(flag)
-		vcard.mask(homeworld_card, flag)
-		for c in pairs(cards) do
-			vcard.mask(c, flag)
+		if nochoice then
+			vcard.mask(homeworld_card, flag)
+		else
+			vcard.mask(homeworld_card, flag == true and WARNING_MASK or flag)
+			for c in pairs(cards) do
+				vcard.mask(c, flag)
+			end
 		end
 	end
 	set_mask(true)
@@ -34,7 +41,6 @@ local function payment(homeworld_card)
 		need_suits = need_suits,
 		cardtype = "$(card.type." .. homeworld_card.type .. ")",
 	}
-	local nochoice = next(cards) == nil
 	if nochoice then
 		desc.nochoice = "$(tips.payment.nochoice)"
 	else
