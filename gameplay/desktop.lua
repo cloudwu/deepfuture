@@ -71,6 +71,9 @@ function desktop.relocate_homeworld(homeworld)
 end
 
 function desktop.check_lost(lost)
+	if not lost then
+		return track.loss()
+	end
 	local colony_sector = {}
 	local n = 1
 	while true do
@@ -105,10 +108,7 @@ function desktop.check_lost(lost)
 			return true
 		end
 	end
-	local loss = track.loss()
-	if loss then
-		return true
-	end
+	return track.loss()
 end
 
 return desktop

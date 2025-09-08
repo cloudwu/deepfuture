@@ -400,7 +400,7 @@ return function ()
 			if lost then
 				print_r(lost)
 			end
-			if lost and desktop.check_lost(lost) then
+			if desktop.check_lost(lost) then
 				return "loss"
 			end
 		else

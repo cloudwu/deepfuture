@@ -322,7 +322,7 @@ return function()
 	advs:discard_used_cards()
 	
 	local lost = map.battle_confirm()
-	if lost and desktop.check_lost(lost) then
+	if desktop.check_lost(lost) then
 		return "loss"
 	end
 	

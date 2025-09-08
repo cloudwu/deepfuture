@@ -372,6 +372,7 @@ return function()
 	local newworld, from = settling(advs)
 	if newworld.type == "blank" then
 		choose_sector(newworld)
+		card.sync(newworld)
 	end
 	card.settling(newworld)
 
@@ -385,7 +386,6 @@ return function()
 		}
 		-- choose adv if government
 		choose_adv(newworld, advs)
-		card.sync(newworld)
 		advs:discard_used_cards()
 		advs:reset()
 	end
