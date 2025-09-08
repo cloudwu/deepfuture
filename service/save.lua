@@ -287,9 +287,13 @@ function save.save_game(name)
 	local filename = data._filename
 	if filename then
 		persist.save(filename, data)
-		local backup = backup_dir .. data.game.seed .. ".txt"
-		persist.save(backup, data)	-- backup
-		print("SAVE", filename, backup)
+		print("SAVE", filename)
+		local game = data.game
+		if game then
+			local backup = string.format("%s%d_%s.%d.txt", backup_dir, data.history.year, game.phase, game.seed)
+			persist.save(backup, data)	-- backup
+			print("BACKUP", backup)
+		end
 	end
 end
 

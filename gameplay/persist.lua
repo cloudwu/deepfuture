@@ -3,6 +3,7 @@ local file = require "soluna.file"
 local version = require "gameplay.version"
 local table = table
 local io = io
+local os = os
 
 global assert, pcall, pairs, ipairs, type, tostring, next, print, error, print_r
 
@@ -153,6 +154,7 @@ do
 			return false
 		end
 		data.version = version.full()
+		data.timestamp = os.time()
 		local keys = sort_keys(data)
 		for _, key in ipairs(keys) do
 			local v = data[key]
