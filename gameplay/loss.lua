@@ -29,7 +29,7 @@ return function()
 	if not homeworld or homeworld.type ~= "world" then
 		reason = "homeworld"
 	else
-		reason = track.loss()
+		reason = track.loss_type()
 	end
 	
 	reason = reason or "unknown"

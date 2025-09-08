@@ -103,4 +103,12 @@ function track.loss()
 	end
 end
 
+function track.loss_type()
+  for t, value in pairs(TRACK) do
+    if value == rules[t].loss then
+      return t
+    end
+  end
+end
+
 return track
