@@ -10,7 +10,7 @@ local map = require "gameplay.map"
 local vmap = require "visual.map"
 local rules = require "core.rules".phase
 local class = require "core.class"
-local relocate = require "gameplay.relocate"
+local desktop = require "gameplay.desktop"
 require "gameplay.effect"
 local test = require "gameplay.test"
 local sync = require "gameplay.sync"
@@ -241,22 +241,12 @@ local function discard_planets(advs, cards)
 			card.discard(p)
 			vdesktop.transfer("colony", p, "deck")
 		elseif card.pickup("homeworld", c) then
-			card.upkeep_change(c)	-- clear upkeep
 			drop_homeworld = c
 		end
 		flow.sleep(5)
 	end
 	if drop_homeworld then
-		local value = drop_homeworld.value
-		local n = card.find_value("neutral", value)
-		if n then
-			n = card.pickup("neutral", n)
-			card.discard(n)
-			vdesktop.transfer("neutral", n, "deck")
-			flow.sleep(5)
-		end
-		vdesktop.transfer("homeworld", drop_homeworld, "neutral")
-		local succ = relocate()
+		local succ = desktop.relocate_homeworld(drop_homeworld)
 		assert(succ, "Lost all colony")
 	end
 end

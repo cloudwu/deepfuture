@@ -9,8 +9,30 @@ local map = require "core.mouse"
 
 global assert, ipairs, pairs
 
-local function relocate()
+local desktop = {}
+
+local function wait_moving(where, c)
+	repeat
+		flow.sleep(1)
+	until not vdesktop.moving(where, c)
+end
+
+function desktop.move_to_neutral(c, from)
+	card.upkeep_change(c)	-- clear upkeep
+	vdesktop.transfer(from, c, "neutral")
+	local last = card.find_value("neutral", c.value)
+	if last then
+		last = card.pickup("neutral", last)
+		card.discard(last)
+		vdesktop.transfer("neutral", last, "deck")
+	end
+	card.putdown("neutral", c)
+	wait_moving("neutral", c)
+end
+
+function desktop.relocate_homeworld(homeworld)
 	vtips.set()
+	desktop.move_to_neutral(homeworld, "homeworld")
 	local colony = card.pile "colony"
 	if #colony == 0 then
 		return
@@ -18,6 +40,7 @@ local function relocate()
 	for _, c in ipairs(colony) do
 		vcard.mask(c, true)
 	end
+	vdesktop.set_text("phase", { extra = "$(tips.challenge.relocate)" })
 	local focus_state = {}
 	local new_homeworld
 	while true do
@@ -47,7 +70,7 @@ local function relocate()
 	return true
 end
 
-return function(lost)
+function desktop.check_lost(lost)
 	local colony_sector = {}
 	local n = 1
 	while true do
@@ -77,10 +100,7 @@ return function(lost)
 	if lost[homeworld.sector] then
 		-- lost homeworld
 		local c = card.pickup("homeworld", homeworld)
-		card.discard(c)
-		vdesktop.transfer("homeworld", c , "deck")
-		flow.sleep(5)
-		if not relocate() then
+		if not desktop.relocate_homeworld(c) then
 			vtips.set()
 			return true
 		end
@@ -90,3 +110,5 @@ return function(lost)
 		return true
 	end
 end
+
+return desktop

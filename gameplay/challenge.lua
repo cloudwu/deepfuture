@@ -13,7 +13,7 @@ local vmap = require "visual.map"
 local map = require "gameplay.map"
 local look = require "gameplay.look"
 local sync = require "gameplay.sync"
-local lost_sectors = require "gameplay.lostsectors"
+local desktop = require "gameplay.desktop"
 local loadsave = require "core.loadsave"
 local ui = require "core.rules".ui
 
@@ -344,16 +344,7 @@ local function add_neutral(lost, rival)
 	end
 	wait_moving("float", c)
 	set_title_rival(rival)
-	-- move this world to neutral
-	vdesktop.transfer("float", c, "neutral")
-	local last = card.find_value("neutral", c.value)
-	if last then
-		last = card.pickup("neutral", last)
-		card.discard(last)
-		vdesktop.transfer("neutral", last, "deck")
-	end
-	card.putdown("neutral", c)
-	wait_moving("neutral", c)
+	desktop.move_to_neutral(c, "float")
 	vmap.focus(c.sector)
 	add_rival(lost, c.sector, rival)
 	interval()
@@ -409,7 +400,7 @@ return function ()
 			if lost then
 				print_r(lost)
 			end
-			if lost and lost_sectors(lost) then
+			if lost and desktop.check_lost(lost) then
 				return "loss"
 			end
 		else

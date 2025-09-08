@@ -12,7 +12,7 @@ local vtips = require "visual.tips".layer "hud"
 local vbutton = require "visual.button"
 local map_rules = require "core.rules".map
 local mouse = require "core.mouse"
-local lost_sectors = require "gameplay.lostsectors"
+local desktop = require "gameplay.desktop"
 local loadsave = require "core.loadsave"
 local sync = require "gameplay.sync"
 
@@ -322,7 +322,7 @@ return function()
 	advs:discard_used_cards()
 	
 	local lost = map.battle_confirm()
-	if lost and lost_sectors(lost) then
+	if lost and desktop.check_lost(lost) then
 		return "loss"
 	end
 	
