@@ -322,13 +322,14 @@ return function()
 	advs:discard_used_cards()
 	
 	local lost = map.battle_confirm()
-	lost_sectors(lost)
+	if lost and lost_sectors(lost) then
+		return "loss"
+	end
 	
-	-- 检查胜利条件
+	-- check victory
 	local victory = require "gameplay.victory"
 	local victory_result = victory.check()
 	if victory_result then
-		-- 将胜利信息存储到persist中供win阶段使用
 		local persist = require "gameplay.persist"
 		persist.init("victory_info", victory_result)
 		return "win"

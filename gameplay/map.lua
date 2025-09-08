@@ -786,7 +786,9 @@ function map.battle_confirm()
 	battlefield = {}
 	util.dirty_trigger(map.update)
 	map.update()
-	return lost
+	if next(lost) then
+		return lost
+	end
 end
 
 function map.hostile(def)

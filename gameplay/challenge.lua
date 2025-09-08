@@ -281,7 +281,7 @@ local function add_rival(lost, sector, n)
 			break
 		end
 	end
-	if remain and remain == 0 then
+	if not remain or remain == 0 then
 		lost[sector] = true
 	end
 	while n > 0 do
@@ -359,7 +359,8 @@ local function add_neutral(lost, rival)
 	interval()
 end
 
-local function execute_challenge(lost, name)
+local function execute_challenge(name)
+	local lost = {}
 	local rule = challenge_rules[name]
 	for _, t in ipairs(order) do
 		if rule[t] then
@@ -376,6 +377,9 @@ local function execute_challenge(lost, name)
 	if rival then
 		add_neutral(lost, rival)
 	end
+	if next(lost) then
+		return lost
+	end
 end
 
 return function ()
@@ -386,7 +390,6 @@ return function ()
 		total =  card.count "challenge",
 	}
 	vdesktop.set_text("phase", desc)
-	local lost = {}
 	local n = 1
 	while true do
 		desc.extra = "$(tips.challenge.title)"
@@ -402,7 +405,13 @@ return function ()
 		end
 		if challenge(c) then
 			local ctype = accept_challenge(c)
-			execute_challenge(lost, challenge_rules[ctype])
+			local lost = execute_challenge(challenge_rules[ctype])
+			if lost then
+				print_r(lost)
+			end
+			if lost and lost_sectors(lost) then
+				return "loss"
+			end
 		else
 			card.discard(c)
 			vdesktop.transfer("float", c, "deck")
@@ -411,5 +420,5 @@ return function ()
 	end
 	map.set_galaxy(0, 0)
 	card.next_turn()
-	return lost_sectors(lost)
+	return "start"
 end
