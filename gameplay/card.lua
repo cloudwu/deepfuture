@@ -387,7 +387,7 @@ function card.putdown(where, card)
 	if where == "homeworld" and card.type == "world" then
 		table.insert(area,1,id)
 	else
-		if card._id == GAME.settling then
+		if id == GAME.settling then
 			assert(where == "colony")
 			GAME.settling = nil
 		end
@@ -769,6 +769,7 @@ function card.settling(c)
 		return DECK[GAME.settling]
 	else
 		local id = c._id
+		assert(c.type == "world")
 		GAME.settling = id
 		return c
 	end

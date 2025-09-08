@@ -39,6 +39,7 @@ local function sync(where)
 		end
 		return
 	end
+	local cp
 	if where == "colony" then
 		-- challenge cards are in colony pile
 		local challenge = {}
@@ -55,7 +56,7 @@ local function sync(where)
 				n = n + 1
 			end
 		end
-		local cp = card.pile "challenge"
+		cp = card.pile "challenge"
 		for i = 1, #cp do
 			local c = cp[i]
 			if challenge[c] then
@@ -68,7 +69,6 @@ local function sync(where)
 			vdesktop.transfer("colony", back, "deck")
 			flow.sleep(5)
 		end
-		add_challenges(cp)
 	end
 	for _, c in ipairs(diff.discard) do
 		vdesktop.transfer(where, c, "deck")
@@ -82,6 +82,9 @@ local function sync(where)
 		vdesktop.add("deck", c)
 		vdesktop.transfer("deck", c, where)
 		flow.sleep(5)
+	end
+	if cp then
+		add_challenges(cp)
 	end
 end
 

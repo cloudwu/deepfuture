@@ -496,7 +496,7 @@ return function(extra, action_name)
 		advs:discard_used_cards()
 	end
 	
-	advs:add(advcard)
+--	advs:add(advcard)
 	advs:reset()
 	vcard.mask(advcard)
 	
