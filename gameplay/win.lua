@@ -7,6 +7,17 @@ local loadsave = require "core.loadsave"
 local victory = require "gameplay.victory"
 local track = require "gameplay.track"
 local map = require "gameplay.map"
+local vmap = require "visual.map"
+local color = require "visual.color"
+local vcard = require "visual.card"
+local rules_vic = require "core.rules".victory
+local ui = require "core.rules".ui
+local table = table
+
+global print, pairs, next, ipairs
+
+local COLOR <const> = color.blend(0x01000000, ui.card.mask_focus)
+local DURATION <const> = ui.focus.duration
 
 local function clear(where)
 	local n = 1
@@ -21,84 +32,155 @@ local function clear(where)
 	end
 end
 
+local function check_tech()
+	local mask = {}
+	local function focus_card(c)
+		mask[c] = 0
+	end
+	local function focus_update()
+		for c, duration in pairs(mask) do
+			local f = duration + 1
+			if f >= DURATION * 2 then
+				f = 0
+				mask[c] = nil
+			else
+				mask[c] = f
+			end
+			if f >= DURATION then
+				f = DURATION * 2 - 1 - f 
+			end
+			if f == 0 then
+				vcard.mask(c)
+			else
+				f = f + 1
+				vcard.mask(c, COLOR(f))
+			end
+		end
+	end
+	
+	local n = 1
+	while true do
+		local c = card.card("homeworld", n)
+		if c == nil then
+			break
+		end
+		n = n + 1
+		if card.complete(c) then
+			focus_card(c)
+			for i = 1, 5 do
+				focus_update()
+				flow.sleep(0)
+			end
+		end
+	end
+	while next(mask) do
+		focus_update()
+		flow.sleep(0)
+	end
+end
+
+local function gen_extra(vics)
+	local tmp = {}
+	for _, vic in ipairs(vics) do
+		tmp[#tmp+1] = "${vic." .. vic .. "|}"
+	end
+	return table.concat(tmp, " ")
+end
+
+local victory_ani = {}
+local PLAYER <const> = ui.map.player
+
+function victory_ani.population(checker, extra)
+	local pop = extra.vic
+	local count = 0
+	for sec, n in pairs(checker) do
+		for i = 1, n do
+			count = count + 1
+			pop.people = count	
+			vmap.set(sec, PLAYER, n, i)
+			vmap.update()
+			vdesktop.set_text("phase", extra)
+			flow.sleep(1)
+		end
+	end
+end
+
+function victory_ani.territory(checker, extra)
+	local t = extra.vic
+	local count = 0
+	for sec in pairs(checker) do
+		count = count + 1
+		t.sec = count
+		vmap.focus(sec)
+		vdesktop.set_text("phase", extra)
+		flow.sleep(5)
+	end
+end
+
+function victory_ani.culture(checker, extra)
+	track.focus("C", true)
+	flow.sleep(30)
+	track.focus(nil)
+end
+
+function victory_ani.might(checker, extra)
+	track.focus("M", true)
+	flow.sleep(30)
+	track.focus(nil)
+end
+
+function victory_ani.stability(checker, extra)
+	track.focus("S", true)
+	flow.sleep(30)
+	track.focus(nil)
+end
+
+function victory_ani.xeno(checker, extra)
+	track.focus("X", true)
+	flow.sleep(30)
+	track.focus(nil)
+end
+
 return function()
-	loadsave.sync_game "win"
-	sync()
-	
-	print("=== VICTORY! ===")
-	
-	-- 显示胜利屏幕
-	vdesktop.show_victory(true)
-	
-	-- 从persist中获取胜利信息
-	local persist = require "gameplay.persist"
-	local victory_info = persist.get "victory_info"
-	
-	if not victory_info then
-		print("ERROR: No victory_info found in persist!")
-		-- 创建默认胜利信息
-		victory_info = {
-			type = "unknown",
-			name = "unknown"
-		}
-	end
-	
-	if victory_info.type == "track" then
-		print("Victory track:", victory_info.track)
-	end
-	
-	-- 设置胜利信息显示
-	local victory_text = "$(tips.victory." .. victory_info.name .. ")"
-	if victory_info.type == "track" then
-		victory_text = "$(tips.victory.track." .. victory_info.track .. ")"
-	end
-	
 	vdesktop.set_text("phase", {
 		text = "$(phase.victory)",
-		extra = victory_text
 	})
+	check_tech()
 	
-	-- 创建奇观
-	local button = {
-		text = "button.create_civilization",
+	local vics = {}
+	local checker = victory.checker()
+	for _, vic in ipairs(rules_vic.name) do
+		if checker[vic](checker) then
+			vics[#vics+1] = vic
+		end
+	end
+	
+	local extra = {
+		extra = gen_extra(vics),
+		vic = {},
 	}
-	vdesktop.button_enable("button1", button)
-	
-	-- 等待玩家选择
+
+	for _, vic in ipairs(vics) do
+		local f = victory_ani[vic]
+		if f then
+			extra.vic[vic] = "$(victory." .. vic .. ".title)"
+			f(checker, extra)
+			flow.sleep(5)
+--			extra.vic[vic] = "$(victory." .. vic .. ")"
+			vdesktop.set_text("phase", extra)
+		end
+	end
+
 	local focus_state = {}
 	while true do
 		mouse.get(focus_state)	
-		local c, btn = mouse.click(focus_state, "left")
-		if btn == "button1" then
+		if mouse.click(focus_state, "left") then
 			break
 		end
 		flow.sleep(0)
 	end
-	
 
-    --todo 创建奇观，现在用再来一盘代替了
-    -- 正确的流程应该是：
-    -- 玩家获胜 → 触发胜利条件
-    -- 创建文明牌 → 记录这个时代的文明
-    -- 创建奇观（如果满足条件）→ 在地图上留下文明遗迹
-    -- 时代递增 → Era += 1（比如从Era 1 进入Era 2）
-    -- 开始新游戏 → 但保留所有之前时代创建的卡牌、文明牌和奇观
+	card.next_era()
 
-	vdesktop.button_enable("button1", nil)
-	card.next_turn()
-	vdesktop.set_text("phase", { extra = false })
-	
-	-- 清理牌区并重新设置
-	clear "hand"
-	clear "homeworld"
-	clear "colony"
-	clear "neutral"
-	card.setup()
-	track.setup()
-	map.setup()
-	
-	-- 隐藏胜利屏幕
-	vdesktop.show_victory(false)
-	
-	return "setup"
+	return "nextgame"
 end

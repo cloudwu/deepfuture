@@ -240,6 +240,19 @@ schinese:
   phase.payment : 支付
   phase.challenge : 挑战
   phase.end : 结束
+  phase.victory : 胜利
+  victory.territory : 领土
+  victory.territory.title : "[sector]x${vic.sec}"
+  victory.population : 人口
+  victory.population.title : "[blue][people][n]x${vic.people}"
+  victory.culture : 文化
+  victory.culture.title : "$(hud.C.logo)"
+  victory.might : 威权
+  victory.might.title : "$(hud.M.logo)"
+  victory.stability : 稳定
+  victory.stability.title : "$(hud.S.logo)"
+  victory.xeno : 异星
+  victory.xeno.title : "$(hud.X.logo)"
   card.type.world : "[worldcard]星球卡"
   card.type.blank : "[blankcard]空白卡"
   card.type.tech : "[techcard]科技卡"
@@ -291,11 +304,11 @@ schinese:
   FREEACTION : "殖民奖励："
   adv.track.use : "退后[token]；"
   adv.track.use.detail : "选择任意[token]后退一格（不可移动到[cross]位置）"
-  adv.track.C1 : "推进 C 条上的[token]一格，[token]抵达[star]位置是[culture]文化胜利的先决条件"
-  adv.track.C2 : "推进 C 条上的[token]两格，[token]抵达[star]位置是[culture]文化胜利的先决条件"
-  adv.track.M1 : "推进 M 条上的[token]一格，[token]抵达[star]位置是[might]力量胜利的先决条件"
-  adv.track.X1 : "推进 X 条上的[token]一格，[token]抵达[star]位置是[xeno]外星胜利的先决条件"
-  adv.track.S1 : "推进 S 条上的[token]一格，[token]抵达[star]位置是[stable]稳定胜利的先决条件"
+  adv.track.C1 : "推进 C 条上的[token]一格，[token]抵达[star]位置是[culture]$(victory.culture)胜利的先决条件"
+  adv.track.C2 : "推进 C 条上的[token]两格，[token]抵达[star]位置是[culture]$(victory.culture)胜利的先决条件"
+  adv.track.M1 : "推进 M 条上的[token]一格，[token]抵达[star]位置是[might]$(victory.might)胜利的先决条件"
+  adv.track.X1 : "推进 X 条上的[token]一格，[token]抵达[star]位置是[xeno]$(victory.xeno)胜利的先决条件"
+  adv.track.S1 : "推进 S 条上的[token]一格，[token]抵达[star]位置是[stable]$(victory.stability)胜利的先决条件"
   adv.computation.name : 计算
   adv.computation.desc : "抽[card]+1;弃1[discard]"
   adv.computation.detail : "抽 1 张卡加入手牌，然后弃掉 1 张手牌。"

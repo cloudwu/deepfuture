@@ -103,4 +103,8 @@ function track.loss()
 	end
 end
 
+function track.win(t)
+	return TRACK[t] == rules[t].win
+end
+
 return track

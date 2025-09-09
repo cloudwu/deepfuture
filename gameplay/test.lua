@@ -3,6 +3,7 @@ local file = require "soluna.file"
 local card = require "gameplay.card"
 local soluna = require "soluna"
 local map = require "gameplay.map"
+local track = require "gameplay.track"
 local table = table
 
 global ipairs, print, tostring
@@ -26,7 +27,13 @@ end
 local patch = {}
 
 local function add_hand(action)
-	if action.type == "drop" then
+	if action.type == "track" then
+		if action.n > 0 then
+			track.advance(action.what, action.n)
+		else
+			track.use(action.what, -action.n)
+		end
+	elseif action.type == "drop" then
 		card.drophand()
 	elseif action.type == "galaxy" then
 		map.set_galaxy(action.sector, action.n, action.camp)

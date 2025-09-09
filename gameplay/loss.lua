@@ -7,19 +7,6 @@ local loadsave = require "core.loadsave"
 local track = require "gameplay.track"
 local map = require "gameplay.map"
 
-local function clear(where)
-	local n = 1
-	while true do
-		local c = card.card(where, n)
-		if c == nil then
-			return
-		end
-		n = n + 1
-		vdesktop.transfer(where, c, "deck")
-		flow.sleep(5)
-	end
-end
-
 return function()
 	loadsave.sync_game "loss"
 	sync()
@@ -55,13 +42,5 @@ return function()
 	card.next_turn()
 	vdesktop.set_text("phase", { extra = false })
 	
-	clear "hand"
-	clear "homeworld"
-	clear "colony"
-	clear "neutral"
-	card.setup()
-	track.setup()
-	map.setup()
-	
-	return "setup"
+	return "newgame"
 end

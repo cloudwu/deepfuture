@@ -94,3 +94,6 @@ image : icons/blackpeople.png
 --
 name : gear
 image : icons/gear.png
+--
+name : sector
+image : icons/hex.png

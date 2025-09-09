@@ -1,0 +1,105 @@
+setup :
+	---
+	type : galaxy
+	sector : 11
+	n : 5
+	camp : player
+	---
+	type : galaxy
+	sector : 22
+	n : 5
+	camp : player
+	---
+	type : galaxy
+	sector : 33
+	n : 5
+	camp : player
+	---
+	type : galaxy
+	sector : 44
+	n : 5
+	camp : player
+	---
+	type : galaxy
+	sector : 55
+	n : 5
+	camp : player
+	---
+	type : galaxy
+	sector : 12
+	n : 1
+	camp : player
+	---
+	type : galaxy
+	sector : 23
+	n : 1
+	camp : player
+	---
+	type : galaxy
+	sector : 34
+	n : 1
+	camp : player
+	---
+	type : galaxy
+	sector : 45
+	n : 1
+	camp : player
+	---
+	type : galaxy
+	sector : 56
+	n : 1
+	camp : player
+	---
+	type : galaxy
+	sector : 61
+	n : 1
+	camp : player
+	---
+	type : world
+	name : TEST
+	sector : 66
+	adv :
+		engineering
+		leisure
+		labor
+	---
+	type : track
+	what : S
+	n : 10
+	---
+	type : track
+	what : M
+	n : 10
+	---
+	type : track
+	what : C
+	n : 12
+	---
+	type : track
+	what : X
+	n : 10
+start :
+	---
+	to : homeworld
+	type : tech
+	name : TEST1
+	adv :
+		art
+		computation
+		infrastructure
+	---
+	to : homeworld
+	type : tech
+	name : TEST2
+	adv :
+		history
+		economy
+		exploration
+	---
+	to : homeworld
+	type : tech
+	name : TEST3
+	adv :
+		ecology
+		diplomacy
+		empire

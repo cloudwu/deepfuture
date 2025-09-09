@@ -1,0 +1,11 @@
+condition :
+	sectors : 12
+	people : 25
+	tech : 3
+name :
+	territory
+	population
+	culture
+	might
+	stability
+	xeno

@@ -14,9 +14,6 @@ filename : hex.png
 name : core
 filename : core.png
 --
-name : victory
-filename : victory.png
---
 name : arcb
 filename : arcb.alpha.png	#alpha channel only
 x : -0.5

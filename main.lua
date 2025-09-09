@@ -102,6 +102,7 @@ game.expand = require "gameplay.expand"
 game.freepower = require "gameplay.freepower"
 game.freeadvance = require "gameplay.advance"
 game.win = require "gameplay.win"
+game.nextgame = require "gameplay.nextgame"
 
 function game.idle()
 	return "idle"
@@ -110,7 +111,6 @@ end
 flow.load(game)
 
 local function run_game()
-	print("Xhacker test run game log");
 	if test.init() then
 		-- don't touch savefile when test
 		card.profile "TEST"
@@ -132,7 +132,6 @@ run_game()
 callback.window_resize = vdesktop.flush
 function callback.mouse_move(x, y)
 	mouse.mouse_move(x, y)
---	vdesktop.mouse_move(x, y)
 end
 
 local mouse_btn = {
@@ -158,7 +157,8 @@ function callback.frame(count)
 end
 
 function callback.char(c)
-	print("Char", c, utf8.char(c))
+-- todo : name card
+--	print("Char", c, utf8.char(c))
 end
 
 return callback
