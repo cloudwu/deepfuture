@@ -10,9 +10,9 @@ local look = require "gameplay.look"
 local sync = require "gameplay.sync"
 local loadsave = require "core.loadsave"
 local ui = require "core.rules".ui
+local desktop = require "gameplay.desktop"
 
 local UPKEEP_LIMIT <const> = rules.payment.upkeep_limit
-local WARNING_MASK <const> = ui.card.mask_warning
 
 global pairs, print, ipairs, print_r, error, next, print_r
 
@@ -22,18 +22,9 @@ local function payment(homeworld_card)
 	local need_suits = card.payment_text(homeworld_card)
 	local cards = card.find_suit("colony", suits, {})
 	card.find_suit("hand", suits, cards)
-	local nochoice = next(cards) == nil
-	local function set_mask(flag)
-		if nochoice then
-			vcard.mask(homeworld_card, flag)
-		else
-			vcard.mask(homeworld_card, flag == true and WARNING_MASK or flag)
-			for c in pairs(cards) do
-				vcard.mask(c, flag)
-			end
-		end
-	end
-	set_mask(true)
+	
+	local confirm = desktop.confirm(homeworld_card, cards)
+	confirm:set_mask(true)
 	
 	local upkeep_n = card.upkeep(homeworld_card)
 	local focus_state = {}
@@ -41,10 +32,10 @@ local function payment(homeworld_card)
 		need_suits = need_suits,
 		cardtype = "$(card.type." .. homeworld_card.type .. ")",
 	}
-	if nochoice then
-		desc.nochoice = "$(tips.payment.nochoice)"
-	else
+	if confirm.warning then
 		desc.choice = "$(tips.payment.choice)"
+	else
+		desc.nochoice = "$(tips.payment.nochoice)"
 	end
 	
 	if upkeep_n < UPKEEP_LIMIT then
@@ -52,16 +43,17 @@ local function payment(homeworld_card)
 	end
 	while true do
 		if mouse.get(focus_state) then
-			if focus_state.object == homeworld_card then
+			confirm.notice = focus_state.object == homeworld_card
+			if confirm.notice then
 				vtips.set ("tips.payment.skip", desc)
 			elseif cards[focus_state.object] then
 				desc.suit = card.suit_info(focus_state.object)
 				desc.cardfrom = "$(desc.place." .. focus_state.active .. ")"
 				vtips.set ("tips.payment.use", desc)
-			elseif nochoice then
-				vtips.set ()
-			else
+			elseif confirm.warning then
 				vtips.set ("tips.payment.invalid", desc)
+			else
+				vtips.set ()
 			end
 		elseif focus_state.active == "discard" then
 			desc.seen = card.seen()
@@ -72,7 +64,7 @@ local function payment(homeworld_card)
 			vtips.set()
 		end
 		local c, where = mouse.click(focus_state, "left")
-		if c == homeworld_card then
+		if c == homeworld_card and confirm:click() then
 			-- add challenge card
 			challenge_card = card.draw_card()
 			break
@@ -85,17 +77,18 @@ local function payment(homeworld_card)
 			vcard.flush(homeworld_card)
 			break
 		elseif where == "discard" then
-			set_mask()
+			confirm:set_mask()
 			local n = card.seen()
 			if n > 0 then
 				look.start(n)
 			end
-			set_mask(true)
+			confirm:set_mask(true)
 		end
+		confirm:update()
 		flow.sleep(0)
 	end
 
-	set_mask()
+	confirm:set_mask()
 
 	return challenge_card
 end

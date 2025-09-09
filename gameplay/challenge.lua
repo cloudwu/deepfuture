@@ -17,8 +17,6 @@ local desktop = require "gameplay.desktop"
 local loadsave = require "core.loadsave"
 local ui = require "core.rules".ui
 
-local WARNING_MASK <const> = ui.card.mask_warning
-
 global pairs, print, ipairs, print_r, error, next, print_r, next, assert
 
 local RIVAL_TOKEN <const> = ui.map.token
@@ -53,32 +51,23 @@ local function challenge(challenge_card)
 	card.find_suit("colony", suits, cards)
 	card.find_suit("hand", suits, cards)
 
-	local function set_mask(flag)
-		if next(cards) then
-			vcard.mask(challenge_card, flag == true and WARNING_MASK or flag)
-			for c in pairs(cards) do
-				vcard.mask(c, flag)
-			end
-		else
-			vcard.mask(challenge_card, flag)
-		end
-	end
-	set_mask(true)
+	local confirm = desktop.confirm(challenge_card, cards)
+	confirm:set_mask(true)
 
 	local desc = {
 		challenge_suit = card.suit_info(challenge_card),
 	}
-	if next(cards) == nil then
-		desc.nochoice = "$(tips.challenge.nochoice)"
-	else
+	if confirm.warning then
 		desc.choice = "$(tips.challenge.choice)"
+	else
+		desc.nochoice = "$(tips.challenge.nochoice)"
 	end
 	
 	local accept
-	
 	while true do
 		if mouse.get(focus_state) then
-			if focus_state.object == challenge_card then
+			confirm.notice = focus_state.object == challenge_card
+			if confirm.notice then
 				vtips.set ("tips.challenge.accept", desc)
 			elseif cards[focus_state.object] then
 				if card.upkeep(focus_state.object) > 0 then
@@ -99,7 +88,7 @@ local function challenge(challenge_card)
 			end
 		end
 		local c, where = mouse.click(focus_state, "left")
-		if c == challenge_card then
+		if c == challenge_card and confirm:click() then
 			accept = true
 			break
 		elseif cards[c] then
@@ -115,17 +104,18 @@ local function challenge(challenge_card)
 			end
 			break
 		elseif where == "discard" then
-			set_mask()
+			confirm:set_mask()
 			local n = card.seen()
 			if n > 0 then
 				look.start(n)
 			end
-			set_mask(true)
+			confirm:set_mask(true)
 		end
+		confirm:update()
 		flow.sleep(0)
 	end
 
-	set_mask()
+	confirm:set_mask()
 	vtips.set()
 	
 	return accept

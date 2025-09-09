@@ -14,9 +14,11 @@ track :
 	size : 18
 	color : 0
 	focus_color : 0x2020FF
-	focus_duration : 30
+focus:
+	duration : 30
 card :
 	mask_normal : 0x2000ff00
+	mask_focus : 0x8000ff00
 	mask_warning : 0x20ff0000
 map :
 	focus_color : 0x00ff00

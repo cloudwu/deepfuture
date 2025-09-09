@@ -3,11 +3,11 @@ local config = require "core.rules".ui
 
 local sin = math.sin
 
-global none
+global print
 
 local color = {}
 
-local size <const> = config.track.focus_duration
+local size <const> = config.focus.duration
 
 local function argb(c)
 	return (c >> 24) & 0xff,

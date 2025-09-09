@@ -7,6 +7,7 @@ local vbutton = require "visual.button"
 local widget = require "core.widget"
 local util = require "core.util"
 local mouse = require "core.mouse"
+local vprogress = require "visual.progress"
 local table = table
 
 global ipairs, error, pairs, print, tostring
@@ -471,6 +472,7 @@ function M.init(args)
 	vtips.init(args)
 	vtrack.init(args)
 	vbutton.init(args)
+	vprogress.init(args)
 	VTIPS.hud = vtips.layer "hud"
 	VTIPS.desc = vtips.layer "desc"
 	VTIPS.hud.push()

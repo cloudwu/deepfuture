@@ -6,8 +6,10 @@ local vtips = require "visual.tips".layer "hud"
 local track = require "gameplay.track"
 local vcard = require "visual.card"
 local map = require "core.mouse"
+local color = require "visual.color"
+local ui = require "core.rules".ui
 
-global assert, ipairs, pairs
+global assert, ipairs, pairs, setmetatable, next, print
 
 local desktop = {}
 
@@ -109,6 +111,85 @@ function desktop.check_lost(lost)
 		end
 	end
 	return track.loss()
+end
+
+local DURATION <const> = ui.focus.duration
+local WARNING_MASK <const> = ui.card.mask_warning
+local COLOR <const> = color.blend(ui.card.mask_normal, ui.card.mask_focus)
+
+local confirm = {}; confirm.__index = confirm
+
+function confirm:set_mask(flag)
+	if self.warning then
+		if flag then
+			vcard.mask(self.confirm_card, WARNING_MASK)
+		else
+			vcard.mask(self.confirm_card, flag)
+		end
+		for c in pairs(self.cards) do
+			vcard.mask(c, flag)
+		end
+	else
+		vcard.mask(self.confirm_card, flag)
+	end
+end
+
+function confirm:click()
+	return not self.warning or self.confirm_duration >= DURATION
+end
+
+function confirm:update()
+	if mouse.press("left", self.confirm_card) then
+		self.confirm_duration = self.confirm_duration + 1
+		if self.confirm_duration > DURATION then
+			self.confirm_duration = DURATION
+		end
+	else
+		self.confirm_duration = self.confirm_duration - 1
+		if self.confirm_duration <= 0 then
+			self.confirm_duration = 0
+		end
+	end
+	if self.warning then
+		if self.confirm_duration > 0 then
+			if self.confirm_duration >= DURATION then
+				self.confirm_card._progress = nil
+				vcard.mask(self.confirm_card, true)
+			else
+				vcard.mask(self.confirm_card, WARNING_MASK)
+				local duration = self.confirm_duration / DURATION
+				self.confirm_card._progress = duration
+			end
+		else
+			self.confirm_card._progress = nil
+		end
+		if self.notice or self.focus ~= 0 then
+			local f = self.focus
+			f = f + 1
+			if f >= DURATION * 2 then
+				f = 0
+			end
+			self.focus = f
+			if f >= DURATION then
+				f = DURATION * 2 - 1 - f 
+			end
+			f = f + 1
+			for c in pairs(self.cards) do
+				vcard.mask(c, COLOR(f))
+			end
+		end
+	end
+end
+
+function desktop.confirm(confirm_card, cards)
+	local context = {
+		cards = cards,
+		confirm_card = confirm_card,
+		warning = next(cards) ~= nil,
+		confirm_duration = 0,
+		focus = 0,
+	}
+	return setmetatable(context, confirm)
 end
 
 return desktop

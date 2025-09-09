@@ -107,14 +107,14 @@ function mouse.click(focus_state, btn)
 		last_click[btn] = focus_state[btn]
 		if click_from then
 			if focus_state.object and click_from >= focus_state.frame then
-				return focus_state.object, focus_state.active
+				return focus_state.object, focus_state.active, mouse_frame - click_from
 			end
 		end
 	end
 end
 
-function mouse.press(btn, region)
-	if region ~= focus.region then
+function mouse.press(btn, object)
+	if object ~= focus.region and object ~= focus.object then
 		return
 	end
 	btn = BUTTON_ID[btn]

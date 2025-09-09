@@ -23,7 +23,7 @@ local MOVE_SPEED <const> = config.track.speed
 local MOVE_FACTOR <const> = math.pi / (2 * MOVE_SPEED)
 local MOVE_TOKEN <const> = config.track.token
 local COLOR <const> = color.blend(config.track.color, config.track.focus_color)
-local DURATION <const> = config.track.focus_duration
+local DURATION <const> = config.focus.duration
 
 local move = {}
 
@@ -102,17 +102,17 @@ local function update_token(type, obj)
 	local f = obj.focus
 	if f then
 		f = f + 1
-		if f > DURATION * 2 then
-			f = 1
+		if f >= DURATION * 2 then
+			f = 0
 		end
 		obj.focus = f
-		if f > DURATION then
-			f = DURATION * 2 - f
+		if f >= DURATION then
+			f = DURATION * 2 -1 - f
 		end
-		local color = COLOR(f)
+		local color = COLOR(f+1)
 		local func = mattext.block(font.cobj(), FONT_ID, config.size, color, "CV")
 		obj.text = func( textconv.convert[MOVE_TOKEN], obj.w, obj.h)
-		if obj.fade and obj.focus == DURATION * 2 then
+		if obj.fade and obj.focus == 0 then
 			obj.fade = nil
 			obj.focus = nil
 		end

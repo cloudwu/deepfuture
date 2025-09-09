@@ -2,6 +2,7 @@ local widget = require "core.widget"
 local util = require "core.util"
 local mask = require "soluna.material.mask"
 local config = require "core.rules".ui
+local vprogress = require "visual.progress"
 
 global assert, print, print_r
 
@@ -21,6 +22,8 @@ local card_type = {
 local mask_color <const> = config.card.mask_normal
 
 local _, _, card_w, card_h = widget.get("blankcard", "card")
+local center_x = card_w / 2
+local center_y = card_h / 2
 
 local function flush_card(data)
 	local ct = card_type[data.type]
@@ -38,19 +41,16 @@ end
 
 function card.draw(c, x, y, scale)
 	local color = c._active
-	if x then
-		BATCH:layer(scale or 1, x, y)
-		widget.draw(BATCH, card_draw_list[c])
-		if color then
-			BATCH:add(mask.mask(SPRITES.cardblank, color))
-		end
-		BATCH:layer()
-	else
-		widget.draw(BATCH, card_draw_list[c])
-		if color then
-			BATCH:add(mask.mask(SPRITES.cardblank, color))
-		end
+	BATCH:layer(scale or 1, x or 0 , y or 0)
+	widget.draw(BATCH, card_draw_list[c])
+	if color then
+		BATCH:add(mask.mask(SPRITES.cardblank, color))
 	end
+	local p = c._progress
+	if p then
+		vprogress.draw(p, center_x, center_y)
+	end
+	BATCH:layer()
 end
 
 function card.mask(c, color)

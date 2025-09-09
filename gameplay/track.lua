@@ -98,7 +98,7 @@ end
 function track.loss()
 	for t, value in pairs(TRACK) do
 		if value == rules[t].loss then
-			return true
+			return t
 		end
 	end
 end
