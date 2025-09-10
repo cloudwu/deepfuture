@@ -478,8 +478,13 @@ function card.gen_desc(c)
 		gen_adv_desc(c.adv2)
 		gen_adv_desc(c.adv3)
 	elseif c.type == "civ" then
-		c._victory = "$(civ." .. c.victory .. ".desc)"
-		c._advancement = "$(civ." .. c.advancement .. ".desc)"
+		if c.victory then
+			c._victory = "$(civ." .. c.victory .. ".desc)"
+		end
+		if c.advancement then
+			c._advancement = "$(civ." .. c.advancement .. ".desc)"
+		end
+		c._name = "$(card.civ.name.final)"
 	end
 	gen_marker(c)
 end

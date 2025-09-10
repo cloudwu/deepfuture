@@ -2,6 +2,7 @@ condition :
 	sectors : 12
 	people : 25
 	tech : 3
+advancement : 2
 name :
 	territory
 	population

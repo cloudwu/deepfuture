@@ -12,4 +12,9 @@ function name.tech(card)
 	card.name = "NONAME"
 end
 
+function name.civ(card)
+	assert(card.type == "civ")
+	card.name = "CIV"
+end
+
 return name
