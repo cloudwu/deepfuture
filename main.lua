@@ -72,7 +72,7 @@ function game.init()
 	track.setup()
 	map.setup()
 	
-	return "setup"
+	return flow.state.setup
 end
 
 function game.load()
@@ -81,9 +81,9 @@ function game.load()
 	map.load()
 	local game = persist.get "game"
 	if game then
-		return game.phase
+		return flow.state[game.phase]
 	else
-		return "setup"
+		return flow.state.setup
 	end
 end
 
@@ -105,7 +105,7 @@ game.win = require "gameplay.win"
 game.nextgame = require "gameplay.nextgame"
 
 function game.idle()
-	return "idle"
+	return flow.state.idle
 end
 
 flow.load(game)

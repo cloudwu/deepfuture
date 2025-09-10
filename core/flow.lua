@@ -1,7 +1,8 @@
 local coroutine = require "soluna.coroutine"
+local util = require "core.util"
 local debug = debug
 
-global assert, error, tostring, print
+global assert, error, tostring, print, setmetatable
 
 local flow = {}
 
@@ -13,6 +14,10 @@ local CURRENT = {
 
 function flow.load(states)
 	STATE = states
+	local checker = util.map(function(name)
+		return name
+	end) (states)
+	flow.state = setmetatable(checker, { __index = function(_, k) error ("Invalid state name " .. tostring(k)) end })
 end
 
 function flow.enter(state, args)

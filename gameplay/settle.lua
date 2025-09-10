@@ -395,8 +395,8 @@ return function()
 	flow.sleep(5)
 	if from == "neutral" then
 		-- free power and advance
-		return "freepower"
+		return flow.state.freepower
 	end
 	
-	return "action"
+	return flow.state.action
 end

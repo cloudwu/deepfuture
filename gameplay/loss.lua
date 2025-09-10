@@ -42,5 +42,5 @@ return function()
 	card.next_turn()
 	vdesktop.set_text("phase", { extra = false })
 	
-	return "nextgame"
+	return flow.state.nextgame
 end

@@ -138,5 +138,5 @@ return function ()
 		end
 	until not moving
 	
-	return "challenge"
+	return flow.state.challenge
 end

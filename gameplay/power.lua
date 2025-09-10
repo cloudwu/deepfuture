@@ -97,5 +97,5 @@ return function(extra, action_name)
 		advs:discard_used_cards()
 	end
 	
-	return "action"
+	return flow.state.action
 end

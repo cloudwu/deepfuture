@@ -280,7 +280,7 @@ return function()
 	if not map.hostile() then
 		-- no battle
 		vdesktop.button_enable("button1", nil)
-		return "action"
+		return flow.state.action
 	end
 	local focus_state = {}
 
@@ -323,17 +323,8 @@ return function()
 	
 	local lost = map.battle_confirm()
 	if desktop.check_lost(lost) then
-		return "loss"
+		return flow.state.loss
 	end
-	
-	-- check victory
-	local victory = require "gameplay.victory"
-	local victory_result = victory.check()
-	if victory_result then
-		local persist = require "gameplay.persist"
-		persist.init("victory_info", victory_result)
-		return "win"
-	end
-	
-	return "action"
+
+	return flow.state.action
 end

@@ -27,5 +27,5 @@ return function()
 	track.setup()
 	map.setup()
 	
-	return "setup"
+	return flow.state.setup
 end

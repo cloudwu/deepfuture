@@ -310,5 +310,5 @@ return function ()
 	draw_hands()
 	local homeworld = set_homeworld()
 	set_neutral()
-	return "start"
+	return flow.state.start
 end

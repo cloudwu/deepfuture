@@ -214,5 +214,5 @@ return function()
 	-- todo : wonder
 	flow.sleep(1)
 	
-	return "action"
+	return flow.state.action
 end

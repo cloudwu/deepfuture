@@ -500,5 +500,5 @@ return function(extra, action_name)
 	advs:reset()
 	vcard.mask(advcard)
 	
-	return "action"
+	return flow.state.action
 end

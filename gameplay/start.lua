@@ -441,5 +441,5 @@ return function ()
 	end
 	discard_hand_limit()
 
-	return "action"
+	return flow.state.action
 end

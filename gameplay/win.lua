@@ -182,5 +182,5 @@ return function()
 
 	card.next_era()
 
-	return "nextgame"
+	return flow.state.nextgame
 end

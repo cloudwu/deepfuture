@@ -381,13 +381,13 @@ return function ()
 	
 	if victory.check() then
 		card.add_action(false)	-- clear actions
-		return "win"
+		return flow.state.win
 	end
 	local action1, action2 = card.action()
 	if action1 and action2 then
 		-- 2 actions done
 		card.add_action(false)	-- clear actions
-		return "payment"
+		return flow.state.payment
 	end
 	local hands = check_action()
 	if action1 then
@@ -408,11 +408,11 @@ return function ()
 		local plan_card = card.plan_blankcard()
 		create_plan_card(plan_card)
 	elseif next_action == "RESTART" then
-		return "init"
+		return flow.state.init
 	elseif next_action ~= "skip" then
 		card.add_action(next_action)
-		return next_action
+		return flow.state[next_action]
 	end
 	card.add_action(false)	-- clear actions
-	return "payment"
+	return flow.state.payment
 end

@@ -391,7 +391,7 @@ return function ()
 				print_r(lost)
 			end
 			if desktop.check_lost(lost) then
-				return "loss"
+				return flow.state.loss
 			end
 		else
 			card.discard(c)
@@ -401,5 +401,5 @@ return function ()
 	end
 	map.set_galaxy(0, 0)
 	card.next_turn()
-	return "start"
+	return flow.state.start
 end

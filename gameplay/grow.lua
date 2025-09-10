@@ -148,5 +148,5 @@ return function()
 	
 	map.reset()
 	
-	return "action"
+	return flow.state.action
 end
