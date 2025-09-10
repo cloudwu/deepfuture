@@ -84,7 +84,13 @@ function mouse.get(focus_state)
 		focus_state[i] = mouse_click[i]
 	end
 	if change_region or focus_state.frame ~= focus.frame or focus.object ~= focus_state.object then
-		focus_state.frame = focus.frame
+		local last_frame = focus_state.frame
+		if  last_frame == nil then
+			-- use current frame
+			focus_state.frame = mouse_frame
+		elseif last_frame < focus.frame then
+			focus_state.frame = focus.frame
+		end
 		focus_state.object = focus.object
 		return true
 	end

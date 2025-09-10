@@ -350,7 +350,7 @@ local function choose_action(hands)
 		if where == "discard" then
 			local n = card.seen()
 			if n > 0 then
-				look.start(n)
+				look.start(n, focus_state)
 			end
 		elseif BUTTONS[where] then
 			if BUTTONS[where].action == "plan" then

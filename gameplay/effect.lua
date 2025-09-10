@@ -288,7 +288,7 @@ function effect:discard_used_cards()
 	self:reset()
 end
 
-function effect:look_drawpile(button)
+function effect:look_drawpile(focus_state, button)
 	local n = card.seen()
 	if n == 0 then
 		return
@@ -297,7 +297,7 @@ function effect:look_drawpile(button)
 		vdesktop.button_enable("button1", nil)
 	end
 	self:reset()
-	look.start(n)
+	look.start(n, focus_state)
 	self:reset(true)
 	if button then
 		vdesktop.button_enable("button1", button)
@@ -421,7 +421,7 @@ function effect:choose_cards(args)
 				vdesktop.button_enable("button1", nil)
 				local f = adv_func[adv_name] or ("Unknown adv : " .. adv_name)
 				-- do adv
-				f(self)
+				f(self, focus_state)
 				vdesktop.button_enable("button1", button)
 				if update_adv() then
 					break
@@ -429,7 +429,7 @@ function effect:choose_cards(args)
 				advancement_unfocus()
 				vtips.set(nil)
 			elseif btn == "discard" then
-				self:look_drawpile(button)
+				self:look_drawpile(focus_state, button)
 			else
 				vtips.set(nil)
 			end

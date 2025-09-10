@@ -96,7 +96,7 @@ function addadv.choose_or_random(choose, c, advs)
 					flow.sleep(1)
 					vdesktop.transfer("float", c, "deck")
 				end
-				advs:look_drawpile()
+				advs:look_drawpile(focus_state)
 				for _, c in ipairs(choose) do
 					flow.sleep(1)
 					vdesktop.add("deck", c)

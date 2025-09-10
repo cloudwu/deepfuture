@@ -145,7 +145,7 @@ local function add_suit(advs, c)
 			return add_suit(advs, c)
 		elseif where == "discard" then
 			vcard.mask(c)
-			advs:look_drawpile()
+			advs:look_drawpile(focus_state)
 			vcard.mask(c, true)
 		end
 		flow.sleep(0)
@@ -240,7 +240,7 @@ local function choose_or_random(random_value_choice, advs, need_physics)
 			end
 		elseif where == "discard" then
 			vcard.mask(random_value_choice)
-			advs:look_drawpile()
+			advs:look_drawpile(focus_state)
 			vcard.mask(random_value_choice, true)
 		end
 		flow.sleep(0)
@@ -339,7 +339,7 @@ local function draw_value(advs, c, adv_index)
 			return draw_value(advs, c, adv_index)
 		elseif where == "discard" then
 			vcard.mask(c)
-			advs:look_drawpile()
+			advs:look_drawpile(focus_state)
 			vcard.mask(c, true)
 		end
 		flow.sleep(0)

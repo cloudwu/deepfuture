@@ -5,7 +5,7 @@ local vdesktop = require "visual.desktop"
 local vcard = require "visual.card"
 local mouse = require "core.mouse"
 
-global pairs, print
+global pairs, print, print_r
 
 local M = {}
 
@@ -30,8 +30,7 @@ local function return_deck(p)
 	end
 end
 
-local function wait_click(p)
-	local focus_state = {}
+local function wait_click(p, focus_state)
 	local desc = { n = nil }
 	while true do
 		if mouse.get(focus_state) then
@@ -51,9 +50,9 @@ local function wait_click(p)
 	end
 end
 
-function M.start(seen)
+function M.start(seen, focus_state)
 	local pile = look(seen)
-	wait_click(pile)
+	wait_click(pile, focus_state)
 	vtips.set()
 	return_deck(pile)
 end

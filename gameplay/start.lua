@@ -118,9 +118,9 @@ function start_adv.computation(advs)
 	advs:discard_one_card ("start", "computation", false)
 end
 
-function start_adv.history(advs)
+function start_adv.history(advs, focus_state)
 	card.add_seen()
-	advs:look_drawpile(advs)
+	advs:look_drawpile(focus_state)
 end
 
 local function dec_tracks()

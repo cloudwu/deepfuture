@@ -80,7 +80,7 @@ local function payment(homeworld_card)
 			confirm:set_mask()
 			local n = card.seen()
 			if n > 0 then
-				look.start(n)
+				look.start(n, focus_state)
 			end
 			confirm:set_mask(true)
 		end
