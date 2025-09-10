@@ -1,6 +1,6 @@
 local datalist = require "soluna.datalist"
 local file = require "soluna.file"
-
+local tointeger = math.tointeger
 global pairs, type, ipairs, print
 
 local localization = {}
@@ -55,11 +55,13 @@ function localization.convert(str, args)
 	local function subargs(tag)
 		tag = tag:sub(2,-2)
 		local tbl = args
-		for key in tag:gmatch "[^.]+" do
+		for k in tag:gmatch "[^.]+" do
+			local key = tointeger(k) or k
 			local subtbl = tbl[key]
 			if subtbl == nil then
 				local key, def = key:match "(.-)|(.*)"
 				if key then
+					key = tointeger(key) or key
 					local v = tbl[key]
 					if v and type(v) ~= "table" then
 						return v

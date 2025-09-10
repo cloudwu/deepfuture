@@ -17,6 +17,7 @@ local card_type = {
 	blank = "blankcard",
 	tech = "techcard",
 	back = "cardback",
+	civ = "civcard",
 }
 
 local mask_color <const> = config.card.mask_normal

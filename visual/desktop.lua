@@ -274,11 +274,10 @@ function M.describe(text)
 		update_desc_list()
 	else
 		describe.text = nil
-		widget.test(mouse_x, mouse_y, BATCH, TESTLIST.hud)
 	end
 end
 
-function M.mouse_move(x, y)
+function M.set_mouse(x, y)
 	mouse_x = x
 	mouse_y = y
 	local test_list

@@ -97,3 +97,6 @@ image : icons/gear.png
 --
 name : sector
 image : icons/hex.png
+--
+name : civ
+image : icons/museum.png

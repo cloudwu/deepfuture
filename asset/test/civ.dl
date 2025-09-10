@@ -1,0 +1,25 @@
+setup :
+	---
+	type : civ
+	name : TEST
+	sector : 11
+	era : 1
+	world : NOWORLD
+	victory : territory
+	advancement : K
+	tech :
+		NONAME1
+		NONAME2
+		NONAME3
+	---
+	type : civ
+	name : TEST
+	sector : 22
+	era : 1
+	world : NOWORLD
+	victory : population
+	advancement : H
+	tech :
+		NONAME1
+		NONAME2
+		NONAME3

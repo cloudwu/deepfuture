@@ -40,7 +40,11 @@ local card_allow_keys = optional {
 	era = "number",
 	adv1 = "table|",
 	adv2 = "table|",
-	adv3 = "table|"
+	adv3 = "table|",
+	world = "string|",
+	tech = "table|",
+	victory = "string|",
+	advancement = "string|",
 }
 
 local adv_allow_keys = optional {
@@ -147,6 +151,7 @@ local card_format = {
 	blank = "$ID : [$VALUE$SUIT]",
 	world = ADV_FMT,
 	tech = ADV_FMT,
+	civ = "$ID : [$VALUE$SUIT <$TYPE> $NAME.$ERA $VICTORY:$ADVANCEMENT]"
 }
 
 
@@ -162,6 +167,8 @@ local function format_card(card_id, card)
 		ADVA = adv(card.adv1),
 		ADVB = adv(card.adv2),
 		ADVC = adv(card.adv3),
+		VICTORY = card.victory,
+		ADVANCEMENT = card.advancement,
 	}))
 end
 

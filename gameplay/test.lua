@@ -6,7 +6,7 @@ local map = require "gameplay.map"
 local track = require "gameplay.track"
 local table = table
 
-global ipairs, print, tostring
+global ipairs, print, tostring, print_r
 
 local test = {}
 local TESTCASE

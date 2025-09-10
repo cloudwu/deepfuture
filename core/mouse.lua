@@ -66,7 +66,6 @@ function mouse.frame()
 		end
 	end
 	if not focus.set then
-		focus.frame = mouse_frame
 		focus.region = false
 		focus.object = false
 	else
@@ -81,13 +80,13 @@ function mouse.get(focus_state)
 		focus_state.lost = focus_state.active
 		focus_state.active = focus.region
 	end
-	if change_region or focus.object ~= focus_state.object then
+	for i = 1, #mouse_release do
+		focus_state[i] = mouse_click[i]
+	end
+	if change_region or focus_state.frame ~= focus.frame or focus.object ~= focus_state.object then
 		focus_state.frame = focus.frame
 		focus_state.object = focus.object
 		return true
-	end
-	for i = 1, #mouse_release do
-		focus_state[i] = mouse_click[i]
 	end
 end
 

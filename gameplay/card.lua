@@ -298,8 +298,6 @@ function card.sync(c)
 		adv2 = sync_adv(c.adv2),
 		adv3 = sync_adv(c.adv3),
 	}
-	
-	
 	loadsave.sync_card(c._id, data)
 end
 
@@ -479,6 +477,9 @@ function card.gen_desc(c)
 		gen_adv_desc(c.adv1)
 		gen_adv_desc(c.adv2)
 		gen_adv_desc(c.adv3)
+	elseif c.type == "civ" then
+		c._victory = "$(civ." .. c.victory .. ".desc)"
+		c._advancement = "$(civ." .. c.advancement .. ".desc)"
 	end
 	gen_marker(c)
 end
@@ -494,7 +495,7 @@ end
 
 function card.test_newcard(args)
 	local newcard = #DECK + 1
-	local card = new_card {
+	local c = new_card {
 		_id = nil,
 		type = args.type or "blank",
 		era = args.era or HISTORY.era,
@@ -502,41 +503,44 @@ function card.test_newcard(args)
 		suit = args.suit or actions[1],
 		sector = args.sector or 11,
 	}
+	if c.type == "civ" then
+		c.tech = args.tech
+		c.world = args.world
+		c.victory = args.victory
+		c.advancement = args.advancement
+	end
 	if args.marker then
-		card.value = tonumber(args.marker:sub(1,1))
-		card.suit = args.marker:sub(2,2)
+		c.value = tonumber(args.marker:sub(1,1))
+		c.suit = args.marker:sub(2,2)
 	end
-	loadsave.sync_card(newcard, card)
-	card._id = newcard
+	loadsave.sync_card(newcard, c)
+	c._id = newcard
 	local def
-	if card.type == "tech" then
+	if c.type == "tech" then
 		def = "S"
-		card.sector = nil
+		c.sector = nil
 	end
-	gen_marker(card)
 	if args.adv then
 		if type(args.adv) == "string" then
-			card.adv1 = convert_adv(args.adv)
+			c.adv1 = convert_adv(args.adv)
 		else
-			card.adv1 = convert_adv(args.adv[1] or def)
-			card.adv2 = convert_adv(args.adv[2] or def)
-			card.adv3 = convert_adv(args.adv[3] or def)
+			c.adv1 = convert_adv(args.adv[1] or def)
+			c.adv2 = convert_adv(args.adv[2] or def)
+			c.adv3 = convert_adv(args.adv[3] or def)
 		end
-		gen_adv_desc(card.adv1)
-		gen_adv_desc(card.adv2)
-		gen_adv_desc(card.adv3)
 	end
 	
 	if args.name then
-		card.name = args.name
+		c.name = args.name
 	else
-		local f = genname[card.type]
+		local f = genname[c.type]
 		if f then
-			f(card)
+			f(c)
 		end
 	end
-	DECK[newcard] = card
-	return card
+	card.gen_desc(c)
+	DECK[newcard] = c
+	return c
 end
 
 function card.card(where, index)

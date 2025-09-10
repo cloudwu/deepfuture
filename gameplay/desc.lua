@@ -8,7 +8,7 @@ local ui = require "core.rules".ui
 local phase = require "core.rules".phase
 local table = table
 
-global none
+global print_r
 
 local function gen_adv_(c, stage, desc)
 	local stage = "adv"..stage
@@ -50,6 +50,7 @@ local function wait_for_return(desc)
 	-- todo
 	vtips.push()
 	vtips.set "tips.desc.return"
+	flow.sleep(0)	-- flush focus
 	local focus_state = {}
 	while true do
 		mouse.get(focus_state)

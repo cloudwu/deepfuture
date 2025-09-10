@@ -148,7 +148,7 @@ end
 
 function callback.frame(count)
 	local x, y = mouse.sync(count)
-	vdesktop.mouse_move(x, y)
+	vdesktop.set_mouse(x, y)
 	flow.update()
 	vdesktop.card_count(card.count "draw", card.count "discard", card.seen())
 	map.update()
