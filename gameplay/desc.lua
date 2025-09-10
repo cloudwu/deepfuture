@@ -8,7 +8,7 @@ local ui = require "core.rules".ui
 local phase = require "core.rules".phase
 local table = table
 
-global print_r
+global print_r, print
 
 local function gen_adv_(c, stage, desc)
 	local stage = "adv"..stage
@@ -63,10 +63,18 @@ local function wait_for_return(desc)
 	vtips.pop()
 end
 
+local function gen_desc(c, desc)
+	if c.type == "civ" then
+		desc.world = c.world
+		desc.victory = c._victory
+		desc.advancement = c._advancement
+	end
+end
+
 function M.action(args)
 	local c = show_card(args)
 	local card_type = c.type
-	if card_type == "tech" and card.complete(c) then
+	if (card_type == "tech" or card_type == "world") and card.complete(c) then
 		card_type = card_type .. ".complete"
 	end
 	local desc = {
@@ -85,6 +93,7 @@ function M.action(args)
 		desc.action_desc = "$(action." .. phase.action[c.suit] .. ".detail)"
 	end
 	gen_adv(c, desc)
+	gen_desc(c, desc)
 	wait_for_return(desc)
 end
 
@@ -98,6 +107,7 @@ function M.start(args)
 		adv_name = prefix .. "name)",
 		adv_desc = prefix .. "detail)",
 	}
+	gen_desc(c, desc)
 	wait_for_return(desc)
 end
 
