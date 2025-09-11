@@ -45,7 +45,8 @@ local function font_init()
 	local font = require "soluna.font"
 	local text = require "soluna.text"
 	local sysfont = require "soluna.font.system"
-	font.import(assert(sysfont.ttfdata (config.lang[LANG].font)))
+	local gamefont = config.lang[LANG].font or config.lang[LANG][soluna.platform].font
+	font.import(assert(sysfont.ttfdata (gamefont)))
 	text.init "asset/icons.dl"
 	return font.name ""
 end
