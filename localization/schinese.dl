@@ -90,8 +90,13 @@ schinese:
   tips.evoke.F.from : "星区[sector] ${sector} 是这次扩张的出发地\n - 计划移出 ${people} 个[blue][blackman][n]"
   tips.evoke.H.rival : "[lbutton]从星区[sector] ${sector} 移除一个敌人[people]"
   tips.evoke.M.new : "[lbutton]创建一张新的$(card.type.world)\n - 殖民到你的领地"
-  tips.evoke.M.blank : "[lbutton]将这张$(card.type.blank)转换为$(card.type.world)\n - 抽一张[card]\n - 殖民到你的领地"
+  tips.evoke.M.exist : "[lbutton]将这张$(card.type.blank)转换为$(card.type.world)\n - 抽一张[card]\n - 殖民到你的领地"
   tips.evoke.M.advice : "在手牌中选择一张$(card.type.blank)\n或点击牌堆创建一张新的$(card.type.world)"
+  tips.evoke.K.new : "[lbutton]抽一张[card]\n - 抽到未完成的$(card.type.tech)\n   挑选一个提升项目\n - 创建一张新$(card.type.tech)\n   挑选一个提升类型"
+  tips.evoke.K.exist : "[lbutton]提升这张$(card.type.tech)\n - 挑选一个提升项目"
+  tips.evoke.K.advice : " - 抽取一张$(card.type.tech)\n - 提升$(desc.place.homeworld)的$(card.type.tech)"
+  tips.evoke.K.picksuit : "[lbutton]为这张$(card.type.tech)挑选${suit}"
+  tips.evoke.K.picksuit.advice : "为这张$(card.type.tech)挑选提升类型"
   tips.settle.capture : "[lbutton]占领位于 ${world.sector} 星区[sector]的${world.name}\n - 移动到$(desc.place.colony)\n - [blue]$(action.power)[n]行动\n - [blue]$(action.advance)[n]行动"
   tips.settle.hand : "[lbutton]殖民这张$(card.type.world)\n - 放置到$(desc.place.colony)\n - 抽 1 [card]"
   tips.settle.blank : "[lbutton]在领地[sector]内殖民\n - 这张$(card.type.blank)变为$(card.type.world)\n - 星区[sector]在领地中选择\n - 放置到$(desc.place.colony)\n - 抽 1 [card]"
@@ -365,6 +370,7 @@ schinese:
   card.adv : "${_suit|} ${_name|}"
   card.desc : "${_stage|} ${_desc|}"
   card.circle : "${_circle|}"
+  card.pick.suit : "[blue]挑选提升类型[n]"
   CHOOSE : 选择行动
   START : 开始
   ADVANCE : 提升

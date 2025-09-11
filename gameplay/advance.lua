@@ -13,6 +13,7 @@ local util = require "core.util"
 local addadv = require "gameplay.addadv"
 local loadsave = require "core.loadsave"
 local sync = require "gameplay.sync"
+local desktop = require "gameplay.desktop"
 
 local table = table
 
@@ -60,37 +61,6 @@ end
 
 local function interval()
 	flow.sleep(20)
-end
-
-local function create_new()
-	local newcard, card1, card2 = card.generate_newcard()
-	local clone = { type = "blank" }
-	
-	vdesktop.add("deck", clone)
-	vdesktop.transfer("deck", clone, "float")
-	
-	local function moving(c, f)
-		vdesktop.add("deck", c)
-		vdesktop.transfer("deck", c, "float")
-		f()
-		vcard.flush(clone)
-		interval()
-		vdesktop.transfer("float", c, "deck")
-	end
-	
-	interval()
-
-	moving(card1, function ()
-		clone._marker = newcard.value
-	end)
-	
-	moving(card2, function ()
-		clone._marker = newcard._marker
-	end)
-
-	vdesktop.replace("float", clone, newcard)
-
-	return newcard
 end
 
 local function add_suit(advs, c)
@@ -161,27 +131,14 @@ local function add_suits(c, advs)
 end
 
 local function draw_new(advs)
-	local c = card.draw_card() or error "No more card"
-	vdesktop.add("deck", c)
-	vdesktop.transfer("deck", c, "float")
-	flow.sleep(5)
-	if c.type == "tech" and not card.complete(c) then
-		return c
-	else
-		if c.type ~= "blank" then
-			card.discard(c)
-			vdesktop.transfer("float", c, "deck")
-			flow.sleep(5)
-			c = create_new()
-		end
-		if c.type == "blank" then
-			interval()
-			card.blank_tech(c)
-		end
-		vtips.set()
-		add_suits(c, advs)
-		return c
+	local c = desktop.draw_tech_card()
+	if c.type == "blank" then
+		interval()
+		card.blank_tech(c)
 	end
+	vtips.set()
+	add_suits(c, advs)
+	return c
 end
 
 local function choose_physics(c)
@@ -388,20 +345,6 @@ local function advance(c, advs)
 	end
 end
 
-local function find_uncomplete(where, r)
-	local n = 1
-	while true do
-		local c = card.card(where, n)
-		if not c then
-			return r
-		end
-		if not card.complete(c) then
-			r[c] = true
-		end
-		n = n + 1
-	end
-end
-
 local function unmask(cards)
 	for c in pairs(cards) do
 		vcard.mask(c)
@@ -418,8 +361,8 @@ return function(extra, action_name)
 		phase_desc.extra = extra .. phase_desc.extra
 	end
 	vdesktop.set_text("phase", phase_desc)
-	local cards = find_uncomplete("homeworld", {})
-	find_uncomplete("colony", cards)
+	local cards = card.find_uncomplete("homeworld", {})
+	card.find_uncomplete("colony", cards)
 	for c in pairs(cards) do
 		vcard.mask(c, true)
 	end

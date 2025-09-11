@@ -784,4 +784,18 @@ function card.settling(c)
 	end
 end
 
+function card.find_uncomplete(where, r)
+	local n = 1
+	while true do
+		local c = card.card(where, n)
+		if not c then
+			return r
+		end
+		if not card.complete(c) then
+			r[c] = true
+		end
+		n = n + 1
+	end
+end
+
 return card

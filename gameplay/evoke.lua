@@ -13,12 +13,16 @@ local track = require "gameplay.track"
 local card = require "gameplay.card"
 local vmap = require "visual.map"
 local vbutton = require "visual.button"
-
+local addadv = require "gameplay.addadv"
+local class = require "core.class"
+local table = table
 global assert, error, tostring, next, pairs, print
 
 local WARNING_MASK <const> = ui.card.mask_warning
 local LIMIT <const> = map_rules.sector.limit
 local PEOPLE <const> = ui.map.token
+local SUITS = util.keys(ui.suit)
+table.sort(SUITS)
 
 local function evoke_or_action(c, state, last_action)
 	local clone = util.shallow_clone(c, {})
@@ -232,31 +236,31 @@ local function collect_blank_cards(focus_state)
 		n = n + 1
 		if c.type == "blank" then
 			cards[c] = true
-			vcard.mask(c, true)
 		end
 	end
-	vdesktop.draw_pile_focus(true)
 	return cards
 end
 
-function advancement.M(focus_state)
-	vdesktop.set_text("phase", { extra = "$(civ.M.desc)" })
-	local cards = collect_blank_cards(focus_state)
-	local world
-	local function disable_mask()
-		for c in pairs(cards) do
-			vcard.mask(c)
-		end
-		vdesktop.draw_pile_focus()
+local function set_mask(cards, flag)
+	for c in pairs(cards) do
+		vcard.mask(c, flag)
 	end
+	vdesktop.draw_pile_focus(flag)
+end
+
+local function pick_card(focus_state, cards, tips)
+	local tips_new = tips .. ".new"
+	local tips_exist = tips .. ".exist"
+	local tips_advice = tips .. ".advice"
+	set_mask(cards, true)
 	while true do
 		if mouse.get(focus_state) then
 			if focus_state.active == "discard" then
-				vtips.set "tips.evoke.M.new"
+				vtips.set(tips_new)
 			elseif cards[focus_state.object] then
-				vtips.set "tips.evoke.M.blank"
+				vtips.set(tips_exist)
 			elseif focus_state.object then
-				vtips.set "tips.evoke.M.advice"
+				vtips.set(tips_advice)
 			else
 				vtips.set()
 			end
@@ -264,28 +268,135 @@ function advancement.M(focus_state)
 		local c, where = mouse.click(focus_state, "left")
 		if c then
 			if where == "discard" then
-				disable_mask()
-				world = desktop.create_new_card()
-				break
+				set_mask(cards)
+				return nil, where
 			elseif cards[c] then
-				disable_mask()
-				world = card.pickup(where, c)
-				vdesktop.transfer("hand", world, "float")
-				flow.sleep(5)
-				local extra_card = card.draw_hand()
-				vdesktop.add("deck", extra_card)
-				vdesktop.transfer("deck", extra_card, "hand")
-				flow.sleep(5)
-				break
+				set_mask(cards)
+				local pick = card.pickup(where, c)
+				vdesktop.transfer(where, pick, "float")
+				return pick, where
 			end
 		end
 		flow.sleep(0)
+	end
+end
+
+function advancement.M(focus_state)
+	vdesktop.set_text("phase", { extra = "$(civ.M.desc)" })
+	local cards = collect_blank_cards(focus_state)
+	local world, from = pick_card(focus_state, cards, "tips.evoke.M")
+	if from == "hand" then
+		flow.sleep(5)
+		local extra_card = card.draw_hand()
+		vdesktop.add("deck", extra_card)
+		vdesktop.transfer("deck", extra_card, "hand")
+		flow.sleep(5)
+	elseif world == nil then
+		world = desktop.create_new_card()
 	end
 	desktop.choose_sector(world)
 	card.sync(world)
 	flow.sleep(5)
 	card.putdown("colony", world)
 	vdesktop.transfer("float", world, "colony")
+end
+
+local function pick_suit(c, focus_state)
+	vtips.set()
+	vdesktop.transfer("float", c, "deck")
+	flow.sleep(5)
+	c.adv1 = {}
+	local suits = {}
+	for _, suit in pairs(SUITS) do
+		local clone = util.shallow_clone(c, {})
+		clone.name = "$(card.pick.suit)"
+		clone.adv1 = { suit = suit }
+		card.gen_desc(clone)
+		vdesktop.add("deck", clone)
+		vdesktop.transfer("deck", clone, "float")
+		flow.sleep(5)
+		suits[clone] = suit
+		vcard.mask(clone, true)
+	end
+	local desc = {}
+	while true do
+		if mouse.get(focus_state) then
+			local suit = suits[focus_state.object]
+			if suit then
+				desc.suit = "$(civ.advancement."..suit..")"
+				vtips.set("tips.evoke.K.picksuit", desc)
+			elseif focus_state.object then
+				vtips.set "tips.evoke.K.picksuit.advice"
+			else
+				vtips.set()
+			end
+		end
+		local suit = suits[mouse.click(focus_state, "left")]
+		if suit then
+			c.adv1.suit = suit
+			for clone in pairs(suits) do
+				vdesktop.transfer("float", clone, "deck")
+				flow.sleep(5)
+			end
+			card.gen_desc(c)
+			vdesktop.add("deck", c)
+			vdesktop.transfer("deck", c, "float")
+			return c
+		end
+		flow.sleep(0)
+	end
+end
+
+local function add_suit(c, index)
+	local adv = {}
+	c[index] = adv
+	local suit_card = card.draw_discard()
+	vdesktop.add("deck", suit_card)
+	vdesktop.transfer("deck", suit_card, "float")
+	flow.sleep(20)
+	adv.suit = suit_card.suit
+	card.gen_desc(c)
+	vcard.flush(c)
+	vdesktop.transfer("float", suit_card, "deck")
+	flow.sleep(5)
+end
+
+local function draw_tech(focus_state)
+	local c = desktop.draw_tech_card()
+	if c.type == "blank" then
+		-- pick the first suit
+		card.blank_tech(c)
+		pick_suit(c, focus_state)
+		vtips.set()
+		add_suit(c, "adv2")
+		add_suit(c, "adv3")
+	end
+	return c
+end
+
+function advancement.K(focus_state)
+	vdesktop.set_text("phase", { extra = "$(civ.K.desc)" })
+	local cards = card.find_uncomplete("homeworld", {})
+	cards[card.card("homeworld",1)] = nil	-- remove homeworld
+	local tech, from = pick_card(focus_state, cards, "tips.evoke.K")
+	if tech == nil then
+		tech = draw_tech(focus_state)
+	end
+	while vdesktop.moving("float", tech) do
+		flow.sleep(0)
+	end
+	flow.sleep(30)
+	vdesktop.transfer("float", tech, "deck")
+	local choose = addadv.choose_random_adv(tech)
+	local n = #choose
+	addadv.add_choice(choose)
+	choose = table.move(choose, n+1, n*2, 1, {})
+	local advs = class.effect "ADVANCE"
+	local click_card = addadv.choose_or_random(choose, tech, advs)
+	addadv.choose_value(tech, click_card._choose)
+	card.sync(tech)
+	card.putdown("homeworld", tech)
+	vdesktop.transfer("float", tech, "homeworld")
 end
 
 function advancement.R(focus_state)
@@ -299,10 +410,6 @@ function advancement.R(focus_state)
 		end
 		add_people(t, 1, "tips.evoke.R", focus_state)
 	end
-end
-
-function advancement.K()
-	-- todo :  advance a tech
 end
 
 local function find_enemy()

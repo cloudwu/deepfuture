@@ -12,7 +12,7 @@ local vmap = require "visual.map"
 local util = require "core.util"
 local name = require "gameplay.name"
 
-global assert, ipairs, pairs, setmetatable, next, print
+global assert, ipairs, pairs, setmetatable, next, print, error
 
 local desktop = {}
 
@@ -323,6 +323,23 @@ function desktop.choose_sector(c)
 	interval()
 	
 	vdesktop.replace("float", clone, c)
+end
+
+function desktop.draw_tech_card()
+	local c = card.draw_card() or error "No more card"
+	vdesktop.add("deck", c)
+	vdesktop.transfer("deck", c, "float")
+	flow.sleep(5)
+	if c.type == "tech" and not card.complete(c) then
+		return c
+	end
+	if c.type ~= "blank" then
+		card.discard(c)
+		vdesktop.transfer("float", c, "deck")
+		flow.sleep(5)
+		c = desktop.create_new_card()
+	end
+	return c
 end
 
 return desktop

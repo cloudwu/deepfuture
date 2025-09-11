@@ -31,6 +31,14 @@ setup :
 	sector : 26
 	n : 2
 	camp : neutral
+	---
+	to : homeworld
+	type : tech
+	name : TEST
+	adv :
+		art
+		S
+		M
 start:
 	---
 	type : civ
@@ -41,7 +49,7 @@ start:
 	world : NOWORLD
 	victory : territory
 #	victory : culture
-	advancement : M
+	advancement : K
 	tech :
 		NONAME1
 		NONAME2
