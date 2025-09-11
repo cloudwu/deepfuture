@@ -11,7 +11,12 @@ setup :
 		NONAME1
 		NONAME2
 		NONAME3
-start:		
+	---
+	type : galaxy
+	sector : 22
+	n : 1
+	camp : player
+start:
 	---
 	type : civ
 	name : TEST

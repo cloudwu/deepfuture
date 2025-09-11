@@ -172,14 +172,7 @@ local function count_ftl(pile, current_card)
 	end
 end
 
-local function merge_last(hands, last)
-	if last then
-		for c, enable in pairs(last) do
-			if hands[c] == nil and enable then
-				vcard.mask(c)
-			end
-		end
-	end
+local function mask_enable(hands)
 	for c, enable in pairs(hands) do
 		vcard.mask(c, enable)
 	end
@@ -218,7 +211,11 @@ local function ctrl_neutral()
 	end
 end
 
-local function check_action(last)
+local function can_evoke(c)
+	return c.type == "civ" and map.player_ctrl(c.sector)
+end
+
+local function check_action()
 	local can_grow = map.can_grow()
 	local desktop_ftl = count_ftl "homeworld" + count_ftl "colony"
 	local can_expand = map.can_expand(1 + desktop_ftl)
@@ -230,7 +227,9 @@ local function check_action(last)
 			break
 		end
 		n = n + 1
-		if c.suit == "R" then
+		if can_evoke(c) then
+			hands[c] = true
+		elseif c.suit == "R" then
 			hands[c] = can_grow
 		elseif c.suit == "F" then
 			if not can_expand then
@@ -244,7 +243,7 @@ local function check_action(last)
 		end
 	end
 	if ctrl_neutral() or has_society "homeworld" or has_society "colony" then
-		return merge_last(hands, last)
+		return mask_enable(hands)
 	end
 	
 	for c in pairs(hands) do
@@ -253,7 +252,7 @@ local function check_action(last)
 		end
 	end
 
-	return merge_last(hands, last)
+	return mask_enable(hands)
 end
 
 local function clear_mask(hands)
@@ -268,7 +267,7 @@ local function disable_action(hands, last_action)
 	for c, enable in pairs(hands) do
 		if enable then
 			local action = rules.action[c.suit]
-			if action == last_action then
+			if action == last_action and not can_evoke(c) then
 				hands[c] = false
 				vcard.mask(c)
 			end
@@ -315,6 +314,7 @@ local function choose_action(hands)
 					else
 						desc.desc = "$(action." .. rules.action[c.suit] .. ".desc)"
 					end
+					desc.evoke = can_evoke(c) and "$(tips.action.evoke)" or nil
 					vtips.set("tips.action.choose", desc)
 				else
 					local action_name = rules.action[c.suit]
