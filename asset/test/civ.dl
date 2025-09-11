@@ -41,7 +41,7 @@ start:
 	world : NOWORLD
 	victory : territory
 #	victory : culture
-	advancement : H
+	advancement : M
 	tech :
 		NONAME1
 		NONAME2

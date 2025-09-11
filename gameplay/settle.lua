@@ -16,6 +16,7 @@ local power = require "gameplay.power"
 local advance = require "gameplay.advance"
 local loadsave = require "core.loadsave"
 local sync = require "gameplay.sync"
+local desktop = require "gameplay.desktop"
 
 global next, pairs, print, assert
 
@@ -67,30 +68,6 @@ end
 
 function settle_adv.ecology()
 	track.advance("X", 1)
-end
-
-local function create_new_world()
-	local newcard, card1, card2 = card.generate_newcard()
-	local clone = { type = "blank" }
-	
-	vdesktop.add("deck", clone)
-	vdesktop.transfer("deck", clone, "float")
-	
-	interval()
-
-	moving(clone, card1, function (clone)
-		clone._marker = newcard.value
-	end)
-
-	moving(clone, card2, function (clone)
-		clone._marker = newcard._marker
-	end)
-
-	interval()
-	
-	vdesktop.replace("float", clone, newcard)
-	
-	return newcard
 end
 
 local function settling(advs)
@@ -215,7 +192,7 @@ local function settling(advs)
 			elseif where == "discard" then
 				-- create a new world
 				set_mask()
-				settling = create_new_world()
+				settling = desktop.create_new_card()
 				break
 			end
 		end
@@ -223,99 +200,6 @@ local function settling(advs)
 	end
 	vtips.set()
 	return settling, from
-end
-
-local function choose_sector(c)
-	vcard.mask(c, true)
-	local focus_state = {}
-	
-	while true do
-		if mouse.get(focus_state) then
-			if c == focus_state.object then
-				vtips.set "tips.settle.confirm"
-			else
-				vtips.set "tips.settle.confirm.advice"
-			end
-		elseif not focus_state.object then
-			vtips.set()
-		end
-		if mouse.click(focus_state, "left") then
-			vdesktop.transfer("float", c, "deck")
-			break
-		end
-		flow.sleep(0)
-	end
-	vcard.mask(c)
-	
-	-- choose sector
-	local t = map.territory()
-	for sec in pairs(t) do
-		vmap.set_sector_mask(sec, true)
-	end
-	
-	local desc = {}
-	while true do
-		if mouse.get(focus_state) then
-			if focus_state.active == "map" then
-				local sec = focus_state.object
-				desc.sec = sec
-				if t[sec] then
-					vtips.set ("tips.settle.map.confirm", desc)
-				else
-					map.info(sec, desc)
-					vtips.set ("tips.settle.map.desc", desc)
-				end
-			elseif focus_state.object then
-				vtips.set( "tips.settle.map.advice", desc)
-			else
-				vtips.set()
-			end
-		end
-		local sec, where = mouse.click(focus_state, "left")
-		if sec and where == "map" and t[sec] then
-			c.sector = sec
-			break
-		end
-		flow.sleep(0)
-	end
-	for sec in pairs(t) do
-		vmap.set_sector_mask(sec)
-	end
-	vtips.set()
-	
-	-- add init adv
-	
-	c.type = "world"
-
-	local clone = util.shallow_clone(c, { adv1 = {}})
-
-	local advsuit = card.draw_discard()
-	local advtype = card.draw_discard()
-	
-	local index = card.add_adv_suit(c, advsuit.suit)
-	card.add_adv_value(c, index, advtype.value, c.era)
-	card.gen_desc(c)
-	name.world(c)	-- todo: name it
-	vcard.flush(c)
-	
-	vdesktop.add("deck", clone)
-	vdesktop.transfer("deck", clone, "float")
-	
-	interval()
-	
-	moving(clone, advsuit, function (clone)
-		clone.adv1._suit = c.adv1._suit
-	end)
-
-	moving(clone, advtype, function (clone)
-		clone.adv1._stage = c.adv1._stage
-		clone.adv1._name = c.adv1._name
-		clone.adv1._desc = c.adv1._desc
-	end)
-	
-	interval()
-	
-	vdesktop.replace("float", clone, c)
 end
 
 local function draw_value(c, adv_index)
@@ -371,7 +255,7 @@ return function()
 	
 	local newworld, from = settling(advs)
 	if newworld.type == "blank" then
-		choose_sector(newworld)
+		desktop.choose_sector(newworld)
 		card.sync(newworld)
 	end
 	card.settling(newworld)

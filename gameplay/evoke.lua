@@ -21,7 +21,6 @@ local LIMIT <const> = map_rules.sector.limit
 local PEOPLE <const> = ui.map.token
 
 local function evoke_or_action(c, state, last_action)
-	vtips.set()
 	local clone = util.shallow_clone(c, {})
 	clone.name = "$(tips.advancement." .. action[clone.suit] .. ")"
 	clone.type = "blank"	-- for action card
@@ -40,7 +39,6 @@ local function evoke_or_action(c, state, last_action)
 		end
 		confirm = desktop.confirm(clone, cards)
 		confirm:set_mask(true)
-	--	vcard.mask(clone, state.evoke and WARNING_MASK or true)
 	end
 	flow.sleep(5)
 	local focus_state = {}
@@ -100,7 +98,6 @@ local function evoke_or_action(c, state, last_action)
 		end
 		flow.sleep(0)
 	end
-	vtips.set()
 	if confirm then
 		confirm:set_mask()
 	end
@@ -143,7 +140,7 @@ local function add_people(t, n, tips, focus_state)
 		if mouse.get(focus_state) then
 			if focus_state.active == "map" then
 				local sec = focus_state.object
-				desc.sec = sec
+				desc.sector = sec
 				if t[sec] then
 					vtips.set(tips, desc)
 				else
@@ -224,8 +221,71 @@ function advancement.S()
 	end
 end
 
-function advancement.M()
-	-- todo : settle a new world
+local function collect_blank_cards(focus_state)
+	local n = 1
+	local cards = {}
+	while true do
+		local c = card.card("hand", n)
+		if c == nil then
+			break
+		end
+		n = n + 1
+		if c.type == "blank" then
+			cards[c] = true
+			vcard.mask(c, true)
+		end
+	end
+	vdesktop.draw_pile_focus(true)
+	return cards
+end
+
+function advancement.M(focus_state)
+	vdesktop.set_text("phase", { extra = "$(civ.M.desc)" })
+	local cards = collect_blank_cards(focus_state)
+	local world
+	local function disable_mask()
+		for c in pairs(cards) do
+			vcard.mask(c)
+		end
+		vdesktop.draw_pile_focus()
+	end
+	while true do
+		if mouse.get(focus_state) then
+			if focus_state.active == "discard" then
+				vtips.set "tips.evoke.M.new"
+			elseif cards[focus_state.object] then
+				vtips.set "tips.evoke.M.blank"
+			elseif focus_state.object then
+				vtips.set "tips.evoke.M.advice"
+			else
+				vtips.set()
+			end
+		end
+		local c, where = mouse.click(focus_state, "left")
+		if c then
+			if where == "discard" then
+				disable_mask()
+				world = desktop.create_new_card()
+				break
+			elseif cards[c] then
+				disable_mask()
+				world = card.pickup(where, c)
+				vdesktop.transfer("hand", world, "float")
+				flow.sleep(5)
+				local extra_card = card.draw_hand()
+				vdesktop.add("deck", extra_card)
+				vdesktop.transfer("deck", extra_card, "hand")
+				flow.sleep(5)
+				break
+			end
+		end
+		flow.sleep(0)
+	end
+	desktop.choose_sector(world)
+	card.sync(world)
+	flow.sleep(5)
+	card.putdown("colony", world)
+	vdesktop.transfer("float", world, "colony")
 end
 
 function advancement.R(focus_state)
@@ -242,7 +302,7 @@ function advancement.R(focus_state)
 end
 
 function advancement.K()
-	-- todo :  advvance a tech
+	-- todo :  advance a tech
 end
 
 local function find_enemy()
@@ -444,7 +504,6 @@ local function expand_2(from_sec, from_n, t, focus_state)
 	end
 	map:reset()
 	vdesktop.button_enable("button1", nil)
-	vtips.set()
 end
 
 function advancement.F(focus_state)
@@ -473,7 +532,6 @@ function advancement.F(focus_state)
 		return
 	end
 	
-	-- choose departure
 	vdesktop.set_text("phase", { extra = "$(civ.F.desc)" })
 	local sec, sec_n = choose_departure(t, focus_state)
 	local neighbor = map.find_neighbor(sec)
@@ -486,11 +544,12 @@ function advancement.F(focus_state)
 end
 
 local function evoke(c)
-	local focus_state = {}
+	vtips.set()
 	local f = victory[c.victory] or error ("Invalid victory type " .. tostring(c.victory))
-	f(focus_state)
+	f {}
+	vtips.set()
 	local f = advancement[c.advancement] or error ("Invalid advancement type " .. tostring(c.advancement))
-	f(focus_state)
+	f {}
 end
 
 return function (c, state, last_action)

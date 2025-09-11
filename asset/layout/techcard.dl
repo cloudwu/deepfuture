@@ -50,7 +50,7 @@ content :
 				text : card.desc
 				env : adv1
 				height : 50%
-				size : 14
+				size : 12
 		adv :
 			height : 40
 			name :
@@ -72,7 +72,7 @@ content :
 				text : card.desc
 				env : adv2
 				height : 50%
-				size : 14
+				size : 12
 		adv :
 			height : 40
 			name :
@@ -94,7 +94,7 @@ content :
 				text : card.desc
 				env : adv3
 				height : 50%
-				size : 14
+				size : 12
 corner :
 	text : card.corner
 	text_align : T

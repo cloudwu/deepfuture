@@ -28,13 +28,13 @@ adv :
 		left : 10%
 		width : 90%
 		text : card.civ.victory
-		size : 14
+		size : 12
 	adv :
 		flex : 1
 		left : 10%
 		width : 90%
 		text : card.civ.advancement
-		size : 14
+		size : 12
 gap :
 	height : 5
 line :
