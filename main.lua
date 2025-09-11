@@ -100,7 +100,7 @@ game.settle = require "gameplay.settle"
 game.battle = require "gameplay.battle"
 game.expand = require "gameplay.expand"
 game.freepower = require "gameplay.freepower"
-game.freeadvance = require "gameplay.advance"
+game.freeadvance = require "gameplay.freeadvance"
 game.win = require "gameplay.win"
 game.nextgame = require "gameplay.nextgame"
 

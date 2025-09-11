@@ -7,7 +7,7 @@ local track = require "gameplay.track"
 local loadsave = require "core.loadsave"
 local sync = require "gameplay.sync"
 
-global none
+global print
 
 local DEFAULT_DRAW <const> = rules.power.draw
 local ACTION_TEXT <const> = "[blue]$(POWER)[n]"
