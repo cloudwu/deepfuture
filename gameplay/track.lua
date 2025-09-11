@@ -38,6 +38,15 @@ function track.focus(type, enable)
 	end
 end
 
+function track.all_full()
+	for t,v in pairs(TRACK) do
+		if v ~= rules[t].min then
+			return
+		end
+	end
+	return true
+end
+
 function track.check(type, diff)
 	local pos = TRACK[type] or error ("Invalid track type " .. type)
 	if diff > 0 then

@@ -26,6 +26,11 @@ setup :
 	sector : 24
 	n : 4
 	camp : player
+	---
+	type : galaxy
+	sector : 26
+	n : 2
+	camp : neutral
 start:
 	---
 	type : civ
@@ -36,7 +41,7 @@ start:
 	world : NOWORLD
 	victory : territory
 #	victory : culture
-	advancement : F
+	advancement : H
 	tech :
 		NONAME1
 		NONAME2

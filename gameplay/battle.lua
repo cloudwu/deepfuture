@@ -193,7 +193,9 @@ return function()
 	vdesktop.set_text("phase", { text = "$(phase.action)" })
 	
 	if map.is_safe() then
-		inc_track()
+		if not track.all_full() then
+			inc_track()
+		end
 	else
 		choose_battlefield()
 	end

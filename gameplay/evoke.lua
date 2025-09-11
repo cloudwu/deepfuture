@@ -174,24 +174,24 @@ local function add_people(t, n, tips, focus_state)
 	return choose, t[choose]
 end
 
-function victory.territory()
+function victory.territory(focus_state)
 	local t = map.territory(0)
 	t = map.empty_neighbor(t)
 	if next(t) == nil then
 		return
 	end
 	vdesktop.set_text("phase", { extra = "$(civ.territory.desc)" })
-	add_people(t, 1, "tips.evoke.territory")
+	add_people(t, 1, "tips.evoke.territory", focus_state)
 end
 
-function victory.population()
+function victory.population(focus_state)
 	local t = map.territory(1)
 	if next(t) == nil then
 		return
 	end
 	local ADD <const> = 4	-- add 4 people
 	vdesktop.set_text("phase", { extra = "$(civ.population.desc)" })
-	add_people(t, ADD, "tips.evoke.population")
+	add_people(t, ADD, "tips.evoke.population", focus_state)
 end
 
 function victory.culture()
@@ -228,9 +228,8 @@ function advancement.M()
 	-- todo : settle a new world
 end
 
-function advancement.R()
+function advancement.R(focus_state)
 	local extra = {}
-	local focus_state = {}
 	for i = 1, 3 do
 		extra.extra = "$(tips.evoke.R.title) [blue]" .. PEOPLE:rep(4-i) .. "[n]"
 		vdesktop.set_text("phase", extra)
@@ -246,8 +245,81 @@ function advancement.K()
 	-- todo :  advvance a tech
 end
 
-function advancement.H()
-	-- todo : add track
+local function find_enemy()
+	local t = map.territory(0)
+	local enemy = {}
+	local has_enemy
+	for sec in pairs(t) do
+		has_enemy = has_enemy or map.find_enemy(sec, enemy)
+	end
+	if has_enemy then
+		return enemy
+	end
+end
+
+function advancement.H(focus_state)
+	vdesktop.set_text("phase", { extra = "$(civ.H.desc)" })
+	local enemy = find_enemy()
+	if enemy then
+		for sec in pairs(enemy) do
+			vmap.set_sector_mask(sec, true)
+		end
+	end
+	local inc_track = not track.all_full()
+	local desc = {}
+	while true do
+		if mouse.get(focus_state) then
+			if focus_state.active == "map" then
+				local sec = focus_state.object
+				desc.sector = sec
+				if enemy and enemy[sec] then
+					vtips.set("tips.evoke.H.rival", desc)
+				else
+					map.info(sec, desc)
+					vtips.set ("tips.grow.desc", desc)
+				end
+				if inc_track then
+					track.focus(true)
+				end
+			elseif inc_track and focus_state.active == "track" then
+				local what = focus_state.object	-- C/M/S/X
+				track.focus(false)
+				desc.type = "$(hud." .. what .. ")"
+				if not track.check(what, 1) then
+					vtips.set("tips.battle.safe.invalid", desc)
+				else
+					vtips.set("tips.battle.safe.valid", desc)
+					track.focus(what, true)
+				end
+			else
+				if inc_track then
+					track.focus(true)
+				end
+				vtips.set()
+			end
+		end
+		local object, where = mouse.click(focus_state, "left")
+		if object then
+			if enemy and enemy[object] then
+				vtips.set()
+				map.set_galaxy(object, enemy[object] - 1, "neutral")
+				for sec in pairs(enemy) do
+					vmap.set_sector_mask(sec)
+				end
+				enemy = nil
+			end
+			if inc_track and track.check(object, 1) then
+				vtips.set()
+				track.advance(object, 1)
+				track.focus(false)
+				inc_track = nil
+			end
+			if enemy == nil and inc_track == nil then
+				break
+			end
+		end
+		flow.sleep(0)
+	end
 end
 
 local function choose_departure(t, focus_state)
@@ -375,7 +447,7 @@ local function expand_2(from_sec, from_n, t, focus_state)
 	vtips.set()
 end
 
-function advancement.F()
+function advancement.F(focus_state)
 	local t = map.territory(0)
 	for sec, n in pairs(t) do
 		if n < 3 then
@@ -403,7 +475,6 @@ function advancement.F()
 	
 	-- choose departure
 	vdesktop.set_text("phase", { extra = "$(civ.F.desc)" })
-	local focus_state = {}
 	local sec, sec_n = choose_departure(t, focus_state)
 	local neighbor = map.find_neighbor(sec)
 	for sec, n in pairs(neighbor) do
@@ -415,10 +486,11 @@ function advancement.F()
 end
 
 local function evoke(c)
+	local focus_state = {}
 	local f = victory[c.victory] or error ("Invalid victory type " .. tostring(c.victory))
-	f()
+	f(focus_state)
 	local f = advancement[c.advancement] or error ("Invalid advancement type " .. tostring(c.advancement))
-	f()
+	f(focus_state)
 end
 
 return function (c, state, last_action)
