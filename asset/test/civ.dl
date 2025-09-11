@@ -14,7 +14,17 @@ setup :
 	---
 	type : galaxy
 	sector : 22
-	n : 1
+	n : 4
+	camp : player
+	---
+	type : galaxy
+	sector : 23
+	n : 4
+	camp : player
+	---
+	type : galaxy
+	sector : 24
+	n : 4
 	camp : player
 start:
 	---
@@ -22,6 +32,21 @@ start:
 	name : TEST
 	sector : 22
 	era : 1
+	suit : S
+	world : NOWORLD
+	victory : territory
+#	victory : culture
+	advancement : F
+	tech :
+		NONAME1
+		NONAME2
+		NONAME3
+	---
+	type : civ
+	name : TEST
+	sector : 33
+	era : 1
+	suit : S
 	world : NOWORLD
 	victory : population
 	advancement : H

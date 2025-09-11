@@ -233,6 +233,20 @@ function map.find_neighbor(sec)
 	return r
 end
 
+function map.empty_neighbor(t)
+	local r = {}
+	for sec in pairs(t) do
+		local conn = connection[sec]
+		for ns in pairs(conn) do
+			if galaxy[ns] == nil then
+				r[ns] = 0
+			end
+		end
+	end
+	r[0] = nil
+	return r
+end
+
 map.is_safe = util.dirty_update(function()
 	for player, obj in pairs(galaxy) do
 		if obj.camp == "player" and obj.extra ~= obj.n then

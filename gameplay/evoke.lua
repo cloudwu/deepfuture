@@ -1,0 +1,431 @@
+local vdesktop = require "visual.desktop"
+local vcard = require "visual.card"
+local map = require "gameplay.map"
+local flow = require "core.flow"
+local vtips = require "visual.tips".layer "hud"
+local util = require "core.util"
+local ui = require "core.rules".ui
+local action = require "core.rules".phase.action
+local map_rules = require "core.rules".map
+local mouse = require "core.mouse"
+local desktop = require "gameplay.desktop"
+local track = require "gameplay.track"
+local card = require "gameplay.card"
+local vmap = require "visual.map"
+local vbutton = require "visual.button"
+
+global assert, error, tostring, next, pairs, print
+
+local WARNING_MASK <const> = ui.card.mask_warning
+local LIMIT <const> = map_rules.sector.limit
+local PEOPLE <const> = ui.map.token
+
+local function evoke_or_action(c, state, last_action)
+	vtips.set()
+	local clone = util.shallow_clone(c, {})
+	clone.name = "$(tips.advancement." .. action[clone.suit] .. ")"
+	clone.type = "blank"	-- for action card
+	vdesktop.transfer("hand", c, "float")
+	if state.evoke then
+		vcard.mask(c, true)
+	end
+	flow.sleep(5)
+	vdesktop.add("deck", clone)
+	vdesktop.transfer("deck", clone, "float")
+	local confirm
+	if state.action then
+		local cards = {}
+		if state.evoke then
+			cards[c] = true
+		end
+		confirm = desktop.confirm(clone, cards)
+		confirm:set_mask(true)
+	--	vcard.mask(clone, state.evoke and WARNING_MASK or true)
+	end
+	flow.sleep(5)
+	local focus_state = {}
+	local desc = {}
+	local choose
+	while true do
+		if mouse.get(focus_state) then
+			if focus_state.active == "float" then
+				if confirm then
+					confirm.notice = focus_state.object == clone
+				end
+				if focus_state.object == c then
+					desc.sector = c.sector
+					desc.victory = c._victory
+					desc.advancement = c._advancement
+					if state.evoke then
+						vtips.set("tips.evoke.enable", desc)
+					else
+						vtips.set("tips.evoke.disable", desc)
+					end
+				else
+					assert(focus_state.object == clone)
+					local action_name = action[c.suit]
+					desc.action = "$(action." .. action[c.suit] .. ")"
+					if state.action then
+						if c.suit == "H" and map.is_safe() then
+							desc.desc = "$(action." .. action[c.suit] .. ".desc.safe)"
+						else
+							desc.desc = "$(action." .. action[c.suit] .. ".desc)"
+						end
+						vtips.set("tips.evoke.action.choose", desc)
+					else
+						if action_name == last_action then
+							vtips.set("tips.evoke.action.unique", desc)
+						else
+							desc.desc = "$(action." .. action[c.suit] .. ".desc.invalid)"
+							vtips.set("tips.evoke.action.invalid", desc)
+						end
+					end
+				end
+			else
+				vtips.set()
+			end
+		end
+		local click = mouse.click(focus_state, "left")
+		if click == c and state.evoke then
+			choose = "evoke"
+			break
+		elseif click == clone then
+			if confirm and confirm:click() then
+				choose = action[c.suit]
+				break
+			end
+		end
+		if confirm then
+			confirm:update()
+		end
+		flow.sleep(0)
+	end
+	vtips.set()
+	if confirm then
+		confirm:set_mask()
+	end
+	vdesktop.transfer("float", c, "deck")
+	vdesktop.transfer("float", clone, "deck")
+	return choose
+end
+
+local victory = {}
+
+local function add_people(t, n, tips, focus_state)
+	for sec in pairs(t) do
+		vmap.set_sector_mask(sec, true)
+	end
+	
+	focus_state = focus_state or {}
+	local desc = {
+		n = n,
+		limit = LIMIT,
+	}
+	
+	local function add_peoples(sec)
+		local from = t[sec]
+		local to = from + n
+		if to > LIMIT then
+			to = LIMIT
+		end
+		vmap.focus(sec)
+		for i = from+1, to do
+			map.add_player(sec, 1)
+			flow.sleep(5)
+		end
+	end
+	
+	local tips_advice = tips .. ".advice"
+	
+	local choose
+	
+	while true do
+		if mouse.get(focus_state) then
+			if focus_state.active == "map" then
+				local sec = focus_state.object
+				desc.sec = sec
+				if t[sec] then
+					vtips.set(tips, desc)
+				else
+					map.info(sec, desc)
+					vtips.set ("tips.grow.desc", desc)
+				end
+			elseif focus_state.object then
+				vtips.set( tips_advice, desc)
+			else
+				vtips.set()
+			end
+		end
+		local sec, where = mouse.click(focus_state, "left")
+		if sec and where == "map" and t[sec] then
+			if n > 0 then
+				add_peoples(sec)
+			end
+			choose = sec
+			break
+		end
+		flow.sleep(0)
+	end
+	
+	for sec in pairs(t) do
+		vmap.set_sector_mask(sec, false)
+	end
+	
+	return choose, t[choose]
+end
+
+function victory.territory()
+	local t = map.territory(0)
+	t = map.empty_neighbor(t)
+	if next(t) == nil then
+		return
+	end
+	vdesktop.set_text("phase", { extra = "$(civ.territory.desc)" })
+	add_people(t, 1, "tips.evoke.territory")
+end
+
+function victory.population()
+	local t = map.territory(1)
+	if next(t) == nil then
+		return
+	end
+	local ADD <const> = 4	-- add 4 people
+	vdesktop.set_text("phase", { extra = "$(civ.population.desc)" })
+	add_people(t, ADD, "tips.evoke.population")
+end
+
+function victory.culture()
+	track.advance("C", 3)
+end
+
+function victory.might()
+	track.advance("M", 2)
+end
+
+function victory.stability()
+	track.advance("S", 2)
+end
+
+function victory.xeno()
+	track.advance("X", 2)
+end
+
+local advancement = {}
+
+function advancement.S()
+	-- draw 3 cards
+	for i = 1, 3 do
+		local c = card.draw_hand()
+		if c then
+			vdesktop.add("deck", c)
+			vdesktop.transfer("deck", c, "hand")
+			flow.sleep(5)
+		end
+	end
+end
+
+function advancement.M()
+	-- todo : settle a new world
+end
+
+function advancement.R()
+	local extra = {}
+	local focus_state = {}
+	for i = 1, 3 do
+		extra.extra = "$(tips.evoke.R.title) [blue]" .. PEOPLE:rep(4-i) .. "[n]"
+		vdesktop.set_text("phase", extra)
+		local t = map.territory(1)
+		if next(t) == nil then
+			return
+		end
+		add_people(t, 1, "tips.evoke.R", focus_state)
+	end
+end
+
+function advancement.K()
+	-- todo :  advvance a tech
+end
+
+function advancement.H()
+	-- todo : add track
+end
+
+local function choose_departure(t, focus_state)
+	return add_people(t, 0, "tips.evoke.F.departure", focus_state)
+end
+
+local function expand_2(from_sec, from_n, t, focus_state)
+	local start_n = from_n
+	vtips.set()
+	map.expand_choose_start(from_sec)
+	map.expand(1)
+	local button = {
+		text = "button.expand.confirm",
+		disable = true,
+		n = 0,
+	}
+	vdesktop.button_enable("button1", button)
+	for sec in pairs(t) do
+		vmap.set_sector_mask(sec, true)
+	end
+	
+	local desc = {}
+	local expand = {}
+	
+	local function can_expand(sec)
+		if button.n == 2 then
+			-- already 2 dest
+			if expand[sec] == nil then
+				return false, "$(tips.evoke.F.invalid.exceed)"
+			end
+		end
+		if from_n == 1 then
+			return false, "$(tips.evoke.F.invalid.nopeople)"
+		end
+		if button.n == 1 and expand[sec] and from_n == 2 then
+			return false, "$(tips.evoke.F.invalid.reserve)"
+		end
+		local d = (expand[sec] or 0) + t[sec]
+		if d >= LIMIT then
+			return false, "$(tips.evoke.F.invalid.limit)"
+		end
+		return true
+	end
+	
+	local function set_tips(sector)
+		desc.sector = sector
+		if t[sector] then
+			local can, reason = can_expand(sector)
+			if can then
+				vtips.set("tips.evoke.F.expand", desc)
+			else
+				desc.reason = reason
+				vtips.set("tips.evoke.F.expand.invalid", desc)
+			end
+		elseif sector == from_sec then
+			desc.people = start_n - from_n
+			vtips.set ("tips.evoke.F.from", desc)
+		else
+			map.info(sector, desc)
+			vtips.set ("tips.grow.desc", desc)
+		end
+	end
+
+	while true do
+		if mouse.get(focus_state) then
+			if focus_state.active == "map" then
+				set_tips(focus_state.object)
+			elseif focus_state.active == "button1" then
+				if button.n == 2 then
+					vtips.set ("tips.evoke.F.confirm", desc)
+				else
+					desc.n = button.n
+					vtips.set ("tips.evoke.F.confirm.invalid", desc)
+				end
+			elseif focus_state.object then
+				vtips.set "tips.evoke.F.advice"
+			else
+				vtips.set()
+			end
+		end
+		local sec, where = mouse.click(focus_state, "left")
+		if t[sec] then
+			if can_expand(sec) then
+				if expand[sec] == nil then
+					button.n = button.n + 1
+					if button.n == 2 then
+						button.disable = nil
+					end
+					vbutton.update "button1"
+					expand[sec] = 1
+				else
+					expand[sec] = expand[sec] + 1
+				end
+				from_n = from_n - 1
+				map.expand_people(sec)
+				set_tips(sec)
+			end
+		end
+		if where == "button1" and button.n == 2 then
+			break
+		end
+		local sec, where = mouse.click(focus_state, "right")
+		if expand[sec] then
+			if expand[sec] == 1 then
+				if button.n == 2 then
+					button.disable = true
+				end
+				button.n = button.n - 1
+				expand[sec] = nil
+				vbutton.update "button1"
+			else
+				expand[sec] = expand[sec] - 1
+			end
+			from_n = from_n + 1
+			map.expand_back(sec)
+			set_tips(sec)
+		end
+		flow.sleep(0)
+	end
+	for sec in pairs(t) do
+		vmap.set_sector_mask(sec)
+	end
+	map:reset()
+	vdesktop.button_enable("button1", nil)
+	vtips.set()
+end
+
+function advancement.F()
+	local t = map.territory(0)
+	for sec, n in pairs(t) do
+		if n < 3 then
+			-- must at least 3 people, because need expand into 2 adjacent sectors
+			t[sec] = nil
+		end
+		local neighbor = map.find_neighbor(sec)
+		local count = 0
+		for sec, n in pairs(neighbor) do
+			if n < LIMIT then
+				count = count + 1
+				if count >= 2 then
+					break
+				end
+			end
+		end
+		-- at least 2 expand object sectors
+		if count < 2 then
+			t[sec] = nil
+		end
+	end
+	if next(t) == nil then
+		return
+	end
+	
+	-- choose departure
+	vdesktop.set_text("phase", { extra = "$(civ.F.desc)" })
+	local focus_state = {}
+	local sec, sec_n = choose_departure(t, focus_state)
+	local neighbor = map.find_neighbor(sec)
+	for sec, n in pairs(neighbor) do
+		if n >= LIMIT then
+			neighbor[sec] = nil
+		end
+	end
+	expand_2(sec, sec_n, neighbor, focus_state)
+end
+
+local function evoke(c)
+	local f = victory[c.victory] or error ("Invalid victory type " .. tostring(c.victory))
+	f()
+	local f = advancement[c.advancement] or error ("Invalid advancement type " .. tostring(c.advancement))
+	f()
+end
+
+return function (c, state, last_action)
+	local action = evoke_or_action(c, state, last_action)
+	if action == "evoke" then
+		vdesktop.set_text("phase", { extra = "$(action.evoke)" })
+		evoke(c)
+	end
+	return action
+end

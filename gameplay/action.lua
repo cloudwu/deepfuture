@@ -17,6 +17,7 @@ local loadsave = require "core.loadsave"
 local menu = require "gameplay.menu"
 local mouse = require "core.mouse"
 local victory = require "gameplay.victory"
+local evoke = require "gameplay.evoke"
 
 require "gameplay.effect"
 
@@ -211,14 +212,35 @@ local function ctrl_neutral()
 	end
 end
 
-local function can_evoke(c)
-	return c.type == "civ" and map.player_ctrl(c.sector)
+local function check_evoke(hands)
+	local cards = {}
+	local n = 1
+	while true do
+		local c = card.card("hand", n)
+		if not c then
+			break
+		end
+		n = n + 1
+		if c.type == "civ" then
+			local enable = map.player_ctrl(c.sector)
+			cards[c] = {
+				action = hands[c],
+				evoke = enable,
+			}
+			if enable then
+				hands[c] = true
+				vcard.mask(c, true)
+			end
+		end
+	end
+	return cards
 end
 
 local function check_action()
 	local can_grow = map.can_grow()
 	local desktop_ftl = count_ftl "homeworld" + count_ftl "colony"
 	local can_expand = map.can_expand(1 + desktop_ftl)
+	local evoke_card
 	local hands = {}
 	local n = 1
 	while true do
@@ -227,9 +249,10 @@ local function check_action()
 			break
 		end
 		n = n + 1
-		if can_evoke(c) then
-			hands[c] = true
-		elseif c.suit == "R" then
+		if c.type == "civ" then
+			evoke_card = true
+		end
+		if c.suit == "R" then
 			hands[c] = can_grow
 		elseif c.suit == "F" then
 			if not can_expand then
@@ -243,7 +266,7 @@ local function check_action()
 		end
 	end
 	if ctrl_neutral() or has_society "homeworld" or has_society "colony" then
-		return mask_enable(hands)
+		return mask_enable(hands), evoke_card
 	end
 	
 	for c in pairs(hands) do
@@ -252,7 +275,7 @@ local function check_action()
 		end
 	end
 
-	return mask_enable(hands)
+	return mask_enable(hands), evoke_card
 end
 
 local function clear_mask(hands)
@@ -267,7 +290,7 @@ local function disable_action(hands, last_action)
 	for c, enable in pairs(hands) do
 		if enable then
 			local action = rules.action[c.suit]
-			if action == last_action and not can_evoke(c) then
+			if action == last_action then
 				hands[c] = false
 				vcard.mask(c)
 			end
@@ -275,32 +298,13 @@ local function disable_action(hands, last_action)
 	end
 end
 
-local function choose_action(hands)
+local function choose_action(hands, evoke_cards, last_action)
 	local desc = {
 		action = nil,
 		desc = nil,
 		seen = nil
 	}
 	
-	local last_action
-	local function nomore_action()
-		local n = BUTTONS.button2.n - 1
-		if n <= 0 then
-			return true
-		end
-		BUTTONS.button2.n = n
-		
-		for c, enable in pairs(hands) do
-			if enable then
-				local action = rules.action[c.suit]
-				if action == last_action then
-					hands[c] = false
-					vcard.mask(c)
-				end
-			end
-		end
-		return false
-	end
 	local focus_state = {}
 	while true do
 		if mouse.get(focus_state) then
@@ -314,7 +318,10 @@ local function choose_action(hands)
 					else
 						desc.desc = "$(action." .. rules.action[c.suit] .. ".desc)"
 					end
-					desc.evoke = can_evoke(c) and "$(tips.action.evoke)" or nil
+					local evoke_state = evoke_cards and evoke_cards[c]
+					if evoke_state and evoke_state.evoke then
+						desc.evoke = "$(tips.action.evoke)"
+					end
 					vtips.set("tips.action.choose", desc)
 				else
 					local action_name = rules.action[c.suit]
@@ -367,6 +374,9 @@ local function choose_action(hands)
 		elseif hands[c] then
 			c = card.pickup("hand", c)
 			card.discard(c)
+			if c.type == "civ" then
+				return "evoke", c
+			end
 			vdesktop.transfer("hand", c, "deck")
 			flow.sleep(5)
 			return rules.action[c.suit]
@@ -389,17 +399,18 @@ return function ()
 		card.add_action(false)	-- clear actions
 		return flow.state.payment
 	end
-	local hands = check_action()
+	local hands, evoke_cards = check_action()
 	if action1 then
 		disable_action(hands, action1)
 		BUTTONS.button2.n = 1
 	else
 		BUTTONS.button2.n = 2
 	end
+	evoke_cards = evoke_cards and check_evoke(hands)
 	button_enable(nil, true)
 	vdesktop.set_text("phase", { text = "$(phase.action)", extra = "[blue]$(CHOOSE)[n]" } )
 	vdesktop.button_enable("button_setting", { text = "button.setting" })
-	local next_action = choose_action(hands)
+	local next_action, c = choose_action(hands, evoke_cards, action1)
 	vdesktop.button_enable("button_setting", nil)
 	vtips.set()
 	button_enable()
@@ -407,6 +418,14 @@ return function ()
 	if next_action == "plan" then
 		local plan_card = card.plan_blankcard()
 		create_plan_card(plan_card)
+	elseif next_action == "evoke" then
+		local action = evoke(c, evoke_cards[c], action1)
+		card.add_action(action)
+		if action == "evoke" then
+			return flow.state.action
+		else
+			return flow.state[action]
+		end
 	elseif next_action == "RESTART" then
 		return flow.state.init
 	elseif next_action ~= "skip" then

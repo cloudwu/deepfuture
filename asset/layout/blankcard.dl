@@ -10,3 +10,9 @@ corner :
 	position : absolute
 	width : 40
 	height : 40
+title :
+	text : card.blank.name
+	size : 18
+	flex : 0.1
+	text_align : C
+	
