@@ -20,8 +20,7 @@ local function payment(homeworld_card)
 	local challenge_card
 	local suits = card.adv_suits(homeworld_card)
 	local need_suits = card.payment_text(homeworld_card)
-	local cards = card.find_suit("colony", suits, {})
-	card.find_suit("hand", suits, cards)
+	local cards = card.find_suit("hand", suits, {})
 	
 	local confirm = desktop.confirm(homeworld_card, cards)
 	confirm:set_mask(true)
