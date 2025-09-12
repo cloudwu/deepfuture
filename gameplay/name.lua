@@ -1,6 +1,6 @@
 local name = {}
 
-global assert
+global assert, type
 
 function name.world(card)
 	assert(card.type == "world")
@@ -9,12 +9,17 @@ end
 
 function name.tech(card)
 	assert(card.type == "tech")
-	card.name = "NONAME"
+	card.name = "TECH"
 end
 
 function name.civ(card)
 	assert(card.type == "civ")
 	card.name = "CIV"
+end
+
+function name.sector(sec)
+	assert(type(sec) == "number")
+	return "NOWHERE"
 end
 
 return name

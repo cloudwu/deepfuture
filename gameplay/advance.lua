@@ -14,6 +14,7 @@ local addadv = require "gameplay.addadv"
 local loadsave = require "core.loadsave"
 local sync = require "gameplay.sync"
 local desktop = require "gameplay.desktop"
+local name = require "gameplay.name"
 
 local table = table
 
@@ -425,6 +426,9 @@ return function(extra, action_name)
 		end
 		flow.sleep(0)
 	end
+	if card.complete(advcard) then
+		name.tech(advcard)
+	end
 	card.sync(advcard)
 	-- advance done, any advancement ?
 	local n = advs:update(TRACK)
@@ -439,7 +443,6 @@ return function(extra, action_name)
 		advs:discard_used_cards()
 	end
 	
---	advs:add(advcard)
 	advs:reset()
 	vcard.mask(advcard)
 	

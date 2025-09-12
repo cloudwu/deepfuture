@@ -15,6 +15,7 @@ local vmap = require "visual.map"
 local vbutton = require "visual.button"
 local addadv = require "gameplay.addadv"
 local class = require "core.class"
+local name = require "gameplay.name"
 local table = table
 global assert, error, tostring, next, pairs, print
 
@@ -394,6 +395,9 @@ function advancement.K(focus_state)
 	local advs = class.effect "ADVANCE"
 	local click_card = addadv.choose_or_random(choose, tech, advs)
 	addadv.choose_value(tech, click_card._choose)
+	if card.complete(tech) then
+		name.tech(tech)
+	end
 	card.sync(tech)
 	card.putdown("homeworld", tech)
 	vdesktop.transfer("float", tech, "homeworld")
