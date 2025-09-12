@@ -104,6 +104,7 @@ function M.start(args)
 	local c = show_card(args)
 	local prefix = "$(adv.".. args.name .. "."
 	local desc = {
+		content = "$(desc.text.info)",
 		type = "$(card.type." .. c.type .. ")",
 		place = "$(desc.place.".. args.region .. ")",
 		detail = "$(desc.start." .. args.region .. "." .. c.type .. ")",
