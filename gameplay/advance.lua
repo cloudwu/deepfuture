@@ -426,7 +426,7 @@ return function(extra, action_name)
 		end
 		flow.sleep(0)
 	end
-	if card.complete(advcard) then
+	if card.type == "tech" and card.complete(advcard) then
 		name.tech(advcard)
 	end
 	card.sync(advcard)
