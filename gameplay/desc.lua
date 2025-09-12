@@ -6,6 +6,7 @@ local card = require "gameplay.card"
 local advancement = require "gameplay.advancement"
 local ui = require "core.rules".ui
 local phase = require "core.rules".phase
+local vic_rules = require "core.rules".victory
 local table = table
 
 global print_r, print
@@ -86,6 +87,8 @@ function M.action(args)
 		name = c.name,
 		era = c.era,
 		payment = card.payment_text(c),
+		vic_tech = vic_rules.condition.tech,
+		vic_colony = vic_rules.condition.colony,
 	}
 	if c.suit then
 		desc.suit = card.suit_info(c)

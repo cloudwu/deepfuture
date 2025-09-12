@@ -76,12 +76,23 @@ function victory.checker()
 	return setmetatable(obj, checker)
 end
 
+local MAX_NEED_COLONY <const> = rules_vic.condition.colony
+
 function victory.check()
     if not check_homeworld() then
 		return
 	end
 	
 	if count_complete_techs() < rules_vic.condition.tech then
+		return
+	end
+	
+	local colony_count = card.count "colony"
+	local need_colony = map.wonder_number()
+	if need_colony > MAX_NEED_COLONY then
+		need_colony = MAX_NEED_COLONY
+	end
+	if colony_count < need_colony then
 		return
 	end
 	

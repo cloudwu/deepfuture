@@ -63,12 +63,13 @@ end
 
 function map.set_sector_wonder(sec, symbol, suit)
 	local obj = sector_name[sec] or error (sec .. " is not named")
+	assert(obj.wonder == nil)
 	obj.wonder = symbol
 	obj.suit = suit
 	vmap.set_sector_name(sec, obj)
 	util.dirty_trigger(map.update)
+	util.dirty_trigger(map.wonder_number)
 end
-
 
 function map.load()
 	galaxy = persist.get "galaxy"
@@ -78,6 +79,7 @@ function map.load()
 	util.dirty_trigger(map.is_safe)
 	util.dirty_trigger(map.can_move)
 	util.dirty_trigger(map.can_grow)
+	util.dirty_trigger(map.wonder_number)
 end
 
 local function add_people(sec, n, camp)
@@ -893,9 +895,10 @@ function map.setup_named_sector()
 	for sec, obj in pairs(sector_name) do
 		if galaxy[sec] == nil then
 			count = count + 1
-		elseif obj.wonder then
+			if obj.wonder then
 			-- empty wonder sector must add 1
-			map.add_neutral(sec, 1)
+				map.add_neutral(sec, 1)
+			end
 		end
 	end
 	if count > rules.setup.random_sectors then
@@ -920,5 +923,18 @@ function map.wonder_available(wonders)
 		end
 	end
 end
+
+map.wonder_number = util.dirty_update(function()
+	if sector_name == nil then
+		return 0
+	end
+	local count = 0
+	for sec, obj in pairs(sector_name) do
+		if obj.wonder then
+			count = count + 1			
+		end
+	end
+	return count
+end)
 
 return map
