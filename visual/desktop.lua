@@ -70,6 +70,8 @@ do
 				obj.scale = scale
 				if idx > 3 then
 					obj.focus_target.x = obj.x - card_w * (1-scale)
+				else
+					obj.focus_target.x = nil
 				end
 				obj.focus_target.scale = 1
 				x = x + offx
