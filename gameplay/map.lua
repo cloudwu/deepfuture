@@ -744,6 +744,20 @@ function map.info(sec, desc)
 			desc.desc = "$(HOSTILE_SECTOR)"
 		end
 	end
+	if sector_name == nil then
+		return
+	end
+	local name = sector_name[sec]
+	if name == nil then
+		return
+	end
+	desc.name = name.name
+	desc._name = "$(NAMED_SECTOR)"
+	if name.wonder then
+		desc.wonder = name.wonder .. card.suit_info(name)
+		desc.effect = "$(wonder."..name.suit..")"
+		desc._wonder = "$(WONDER_SECTOR)"
+	end
 end
 
 function map.battle(sec1, sec2)

@@ -337,6 +337,9 @@ local function choose_action(hands, evoke_cards, last_action)
 				if desc.seen > 0 then
 					vtips.set("tips.look.pile", desc)
 				end
+			elseif where == "map" then
+				map.info(c, desc)
+				vtips.set("tips.action.map.desc", desc)
 			elseif BUTTONS[where] then
 				vtips.set("tips.button." .. BUTTONS[where].action,BUTTONS[where])
 			elseif focus_state.object then
