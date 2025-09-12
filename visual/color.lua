@@ -7,7 +7,7 @@ global print
 
 local color = {}
 
-local size <const> = config.focus.duration
+local size <const> = config.desktop.focus_duration
 
 local function argb(c)
 	return (c >> 24) & 0xff,

@@ -23,7 +23,7 @@ local MOVE_SPEED <const> = config.track.speed
 local MOVE_FACTOR <const> = math.pi / (2 * MOVE_SPEED)
 local MOVE_TOKEN <const> = config.track.token
 local COLOR <const> = color.blend(config.track.color, config.track.focus_color)
-local DURATION <const> = config.focus.duration
+local DURATION <const> = config.desktop.focus_duration
 
 local move = {}
 

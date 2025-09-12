@@ -6,7 +6,7 @@ local track = require "gameplay.track"
 local map = require "gameplay.map"
 local table = table
 
-global ipairs, pairs, print, string, type
+global ipairs, pairs, print, string, type, assert
 
 local function add_challenges(cp)
 	for i = 1, #cp do
@@ -97,10 +97,8 @@ return function()
 	
 	for i = 1, card.count "colony" do
 		local c = card.card("colony", i)
-		-- 只对世界卡片调用 map.settle，技术卡没有 sector 字段
-		if c.type == "world" and c.sector then
-			map.settle(c.sector)
-		end
+		assert(c.type == "world")
+		map.settle(c.sector)
 	end
 	local homeworld = card.card ("homeworld", 1)
 	if homeworld then	-- no homeworld in setup phase 

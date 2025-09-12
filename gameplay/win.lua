@@ -18,11 +18,11 @@ local mouse = require "core.mouse"
 local name = require "gameplay.name"
 
 local table = table
-
+local string = string
 global print, pairs, next, ipairs, assert
 
 local COLOR <const> = color.blend(0x01000000, ui.card.mask_focus)
-local DURATION <const> = ui.focus.duration
+local DURATION <const> = ui.desktop.focus_duration
 
 local function clear(where)
 	local n = 1
@@ -387,6 +387,23 @@ local function gen_civ_card(vics, advs)
 	vdesktop.transfer("float", c, "deck")
 end
 
+local function name_sector(sector)
+	local n = name.sector(sector)
+	local x, y = vdesktop.screen_sector_coord(sector)	
+	vdesktop.camera_focus(x, y, 5)
+	flow.sleep(30)
+	for i = 1, 255 do
+		local vname = string.format("[%08X]%s[n]", (i << 24) | 0x202040, n)
+		vmap.set_sector_name(sector, vname)
+		vmap.update()
+		flow.sleep(0)
+	end
+	map.set_sector_name(sector, n)
+	map.update()
+	loadsave.sync_map()
+	vdesktop.camera_focus()
+end
+
 return function()
 	vdesktop.set_text("phase", {
 		text = "$(phase.victory)",
@@ -415,6 +432,9 @@ return function()
 			vdesktop.set_text("phase", extra)
 		end
 	end
+	
+	local h = card.card("homeworld", 1)
+	name_sector(h.sector)
 	
 	extra.extra = "$(civ.phase.create)"
 	vdesktop.set_text("phase", extra)

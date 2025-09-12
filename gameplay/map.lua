@@ -2,14 +2,15 @@ local persist = require "gameplay.persist"
 local vmap = require "visual.map"
 local config = require "core.rules".ui
 local util = require "core.util"
-local rules = require "core.rules".map
 local card = require "gameplay.card"
+local rules = require "core.rules".phase
 
 global pairs, assert, print, print_r, error, type, next
 
 local map = {}
 
 local galaxy = {}
+local sector_name
 local colony = {}
 local battlefield = {}
 local expand = {}
@@ -19,7 +20,7 @@ local COLOR = {
 	player = config.map.player, 
 }
 
-local LIMIT <const> = rules.sector.limit
+local LIMIT <const> = rules.grow.limit
 
 local connection = (function ()
 	local connection = {}
@@ -40,8 +41,18 @@ function map.setup()
 	colony = {}
 end
 
+function map.set_sector_name(sec, name)
+	if sector_name == nil then
+		sector_name = persist.init("map", {})
+	end
+	sector_name[sec] = name
+	vmap.set_sector_name(sec, name)
+	util.dirty_trigger(map.update)
+end
+
 function map.load()
 	galaxy = persist.get "galaxy"
+	sector_name = persist.get "map"
 	colony = {}
 	util.dirty_trigger(map.update)
 	util.dirty_trigger(map.is_safe)
@@ -125,11 +136,6 @@ function map.neighbor(sector, idx)
 end
 
 function map.settle(sec)
-	-- 防御性检查：如果 sec 为 nil（例如技术卡），直接返回
-	if sec == nil then
-		return
-	end
-	
 	local s = galaxy[sec]
 	if s and s.camp == "player" then
 		colony[sec] = true
@@ -161,6 +167,11 @@ function map.sync()
 	vmap.clear()
 	for sec, obj in pairs(galaxy) do
 		vmap.set(sec, COLOR[obj.camp], obj.n)
+	end
+	if sector_name then
+		for sec, name in pairs(sector_name) do
+			vmap.set_sector_name(sec, name)
+		end
 	end
 	vmap.update()
 end
@@ -851,6 +862,27 @@ function map.battle_lostctrl(def)
 		return
 	end
 	return obj.extra + (def or 0) >= obj.n
+end
+
+-- todo : wonder
+function map.setup_named_sector()
+	if sector_name == nil then
+		return
+	end
+	local count = 0
+	for sec in pairs(sector_name) do
+		if galaxy[sec] == nil then
+			count = count + 1
+		end
+	end
+	if count > rules.setup.random_sectors then
+		return rules.setup.random_sectors
+	end
+	for sec in pairs(sector_name) do
+		if galaxy[sec] == nil then
+			map.add_neutral(sec, 1)
+		end
+	end
 end
 
 return map

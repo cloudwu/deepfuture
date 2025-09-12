@@ -9,15 +9,13 @@ local map = require "gameplay.map"
 local vmap = require "visual.map"
 local rules = require "core.rules".phase
 local vtips = require "visual.tips".layer "hud"
-local map_rules = require "core.rules".map
 local mouse = require "core.mouse"
 local loadsave = require "core.loadsave"
 local sync = require "gameplay.sync"
 
-local LIMIT <const> = map_rules.sector.limit
-
 global pairs, setmetatable, print
 
+local LIMIT <const> = rules.grow.limit
 local DEFAULT_ADD <const> = rules.grow.add
 
 local adv_focus = {}

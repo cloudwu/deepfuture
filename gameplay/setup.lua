@@ -12,6 +12,8 @@ local test = require "gameplay.test"
 local util = require "core.util"
 local sync = require "gameplay.sync"
 local loadsave = require "core.loadsave"
+local vmap = require "visual.map"
+
 local string = string
 
 global pairs, ipairs, tostring, print, print_r
@@ -291,6 +293,33 @@ local function draw_hands()
 	return h
 end
 
+local function draw_card_value()
+	local c = card.draw_discard()
+	vdesktop.add("deck", c)
+	vdesktop.transfer("deck", c, "float")
+	repeat
+		flow.sleep(1)
+	until not vdesktop.moving("float", c)
+	return c
+end
+
+local function add_random_neutral()
+	local c1 = draw_card_value()
+	local c2 = draw_card_value()
+	local sec = c1.value * 10 + c2.value
+	vdesktop.transfer("float", c1, "deck")
+	flow.sleep(1)
+	vdesktop.transfer("float", c2, "deck")
+	repeat
+		flow.sleep(1)
+	until not vdesktop.moving("deck", c2)
+	vmap.focus(sec)
+	flow.sleep(5)
+	if not map.player_ctrl(sec) then
+		map.add_neutral(sec,1)
+	end
+end
+
 return function ()
 	-- new game
 	loadsave.sync_history()
@@ -310,5 +339,11 @@ return function ()
 	draw_hands()
 	local homeworld = set_homeworld()
 	set_neutral()
+	local random_sector = map.setup_named_sector()
+	if random_sector then
+		for i = 1, random_sector do
+			add_random_neutral()
+		end
+	end
 	return flow.state.start
 end

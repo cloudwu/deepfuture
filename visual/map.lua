@@ -73,6 +73,11 @@ end
 
 local hex_drawlist = {}
 local hex_people = {}
+local hex_name = {}
+
+function map.set_sector_name(sec, name)
+	hex_name[sec] = name
+end
 
 local function people_icons(color, n, extra)
 	local r =  color
@@ -140,13 +145,11 @@ function map.update()
 	for sector in pairs(SECTOR_TO_AXIAL) do
 		if sector ~= 0 then
 			local p = hex_people[sector]
-			if p then
-				hex_text.content = {
-					people = people_icons(table.unpack(p))
-				}
-			else
-				hex_text.content = nil
-			end
+			local name = hex_name[sector]
+			hex_text.content = {
+				people = p and people_icons(table.unpack(p)),
+				name = name,
+			}
 			hex_text.id = sector
 			hex_drawlist[sector] = widget.draw_list("hex", hex_text, FONT_ID, SPRITES)
 		end
@@ -168,15 +171,27 @@ end
 local HEX_HORIZ <const> = HEX_SIZE * 3 / 2
 local HEX_VERT <const> = HEX_SIZE * 3 ^ 0.5 / 2
 
+local function hex_coord(coord)
+	local q = coord >> 3
+	local r = coord & 7
+	
+	local x = HEX_HORIZ * r 
+	local y = HEX_VERT * ((q << 1) + r)
+	
+	return x, y
+end
+
+function map.coord(sector)
+	local coord = SECTOR_TO_AXIAL[sector]
+	local x, y = hex_coord(coord)
+	return x + HEX_SIZE, y - 2 * HEX_VERT
+end
+
 function map.draw(x, y)
 	y = y - 3 * HEX_VERT
 	BATCH:layer(x,y)
 	for sector, coord in pairs(SECTOR_TO_AXIAL) do
-		local q = coord >> 3
-		local r = coord & 7
-		
-		local x = HEX_HORIZ * r 
-		local y = HEX_VERT * ((q << 1) + r)
+		local x, y = hex_coord(coord)
 		
 		if sector == 0 then
 			BATCH:add(SPRITES.hex, x, y)
@@ -245,6 +260,7 @@ function map.clear()
 	focus_sector.time = 0
 	hex_drawlist = {}
 	hex_people = {}
+	hex_name = {}
 	mask_sector = {}
 	map.update()
 end

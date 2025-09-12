@@ -1,5 +1,19 @@
 setup :
 	---
+	type : world
+	name : TEST
+	sector : 66
+	adv :
+		engineering
+		leisure
+		labor
+	---
+	type : world
+	name : TEST
+	sector : 65
+	adv : art
+start :
+	---
 	type : galaxy
 	sector : 11
 	n : 5
@@ -55,14 +69,6 @@ setup :
 	n : 1
 	camp : player
 	---
-	type : world
-	name : TEST
-	sector : 66
-	adv :
-		engineering
-		leisure
-		labor
-	---
 	type : track
 	what : S
 	n : 10
@@ -78,7 +84,6 @@ setup :
 	type : track
 	what : X
 	n : 10
-start :
 	---
 	to : homeworld
 	type : tech

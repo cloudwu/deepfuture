@@ -281,6 +281,13 @@ function save.sync_history(name, history)
 	print_r("HISTORY", history)	
 end
 
+-- todo :  sync wonders
+function save.sync_map(name, sector_name)
+	local data = profile[name] or error ("new_profile first : " .. tostring(name))
+	data.map = sector_name
+	print_r("MAP", sector_name)	
+end
+
 local backup_dir = soluna.gamedir "deepfuture/backup"
 if settings.autosave == "off" then
 	print("Autosave : off")

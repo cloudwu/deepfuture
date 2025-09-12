@@ -116,7 +116,7 @@ function desktop.check_lost(lost)
 	return track.loss()
 end
 
-local DURATION <const> = ui.focus.duration
+local DURATION <const> = ui.desktop.focus_duration
 local WARNING_MASK <const> = ui.card.mask_warning
 local COLOR <const> = color.blend(ui.card.mask_normal, ui.card.mask_focus)
 

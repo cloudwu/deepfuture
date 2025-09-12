@@ -5,8 +5,7 @@ local flow = require "core.flow"
 local vtips = require "visual.tips".layer "hud"
 local util = require "core.util"
 local ui = require "core.rules".ui
-local action = require "core.rules".phase.action
-local map_rules = require "core.rules".map
+local rules = require "core.rules".phase
 local mouse = require "core.mouse"
 local desktop = require "gameplay.desktop"
 local track = require "gameplay.track"
@@ -16,11 +15,12 @@ local vbutton = require "visual.button"
 local addadv = require "gameplay.addadv"
 local class = require "core.class"
 local name = require "gameplay.name"
+local action = rules.action
 local table = table
 global assert, error, tostring, next, pairs, print
 
 local WARNING_MASK <const> = ui.card.mask_warning
-local LIMIT <const> = map_rules.sector.limit
+local LIMIT <const> = rules.grow.limit
 local PEOPLE <const> = ui.map.token
 local SUITS = util.keys(ui.suit)
 table.sort(SUITS)

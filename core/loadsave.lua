@@ -68,6 +68,11 @@ function M.sync_card(...)
 	ltask.send(SERVICE, "sync_card", PROFILE, ...)
 end
 
+function M.sync_map()
+	local map = persist.get "map"
+	ltask.send(SERVICE, "sync_map", PROFILE, map)
+end
+
 function M.init_deck()
 	ltask.send(SERVICE, "init_deck", PROFILE)
 end

@@ -10,7 +10,6 @@ local vmap = require "visual.map"
 local rules = require "core.rules".phase
 local vtips = require "visual.tips".layer "hud"
 local vbutton = require "visual.button"
-local map_rules = require "core.rules".map
 local mouse = require "core.mouse"
 local desktop = require "gameplay.desktop"
 local loadsave = require "core.loadsave"

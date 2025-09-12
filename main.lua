@@ -160,6 +160,7 @@ end
 function callback.char(c)
 -- todo : name card
 --	print("Char", c, utf8.char(c))
+	print(vdesktop.screen_sector_coord(22))
 end
 
 return callback

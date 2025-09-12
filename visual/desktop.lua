@@ -8,8 +8,9 @@ local widget = require "core.widget"
 local util = require "core.util"
 local mouse = require "core.mouse"
 local vprogress = require "visual.progress"
+local ui = require "core.rules".ui
 local table = table
-
+local math = math
 global ipairs, error, pairs, print, tostring
 
 local DRAWLIST = {}
@@ -191,8 +192,12 @@ end
 local layouts = { "hud", "describe" }
 layouts.hud = hud
 layouts.describe = describe
+local SCREEN_CX = 0
+local SCREEN_CY = 0
 
 local function set_hud(w, h)
+	SCREEN_CX = w / 2	-- center of screen
+	SCREEN_CY = h / 2
 	for i = 1, #layouts do
 		local name = layouts[i]
 		widget.set(name, {
@@ -277,6 +282,74 @@ function M.describe(text)
 	end
 end
 
+local CAMERA
+local DURATION <const> = ui.desktop.focus_duration * 2
+local INV_DURATION <const> = 1 / DURATION
+local PI2 <const> = math.pi * 0.5
+local sin = math.sin
+
+local function open_camera()
+	local timeline = CAMERA.timeline + 1
+	if timeline >= 0 then
+		if CAMERA.x == 0 and CAMERA.y == 0 and CAMERA.scale == 1 then
+			CAMERA = nil
+			return
+		end
+		local s = CAMERA.s
+		BATCH:layer(SCREEN_CX, SCREEN_CY)
+		BATCH:layer(s, CAMERA.x * s, CAMERA.y * s)
+		BATCH:layer(-SCREEN_CX, -SCREEN_CY)
+		return
+	end
+	CAMERA.timeline = timeline
+	local x1 = CAMERA.from_x
+	local y1 = CAMERA.from_y
+	local x2 = CAMERA.x
+	local y2 = CAMERA.y
+	local s1 = CAMERA.from_s
+	local s2 = CAMERA.s
+	local scale = sin(timeline * INV_DURATION * PI2)
+	local x = x2 + scale * (x2 - x1)
+	local y = y2 + scale * (y2 - y1)
+	local s = s2 + scale * (s2 - s1)
+	BATCH:layer(SCREEN_CX, SCREEN_CY)
+	BATCH:layer(s, x * s, y *s)
+	BATCH:layer(-SCREEN_CX, -SCREEN_CY)
+end
+
+local function close_camera()
+	BATCH:layer()
+	BATCH:layer()
+	BATCH:layer()
+end
+
+function M.camera_focus(x, y, scale)
+	local camera = CAMERA
+	if x == nil then
+		if camera then
+			camera.from_x = camera.x
+			camera.from_y = camera.y
+			camera.from_s = camera.s
+			camera.x = 0
+			camera.y = 0
+			camera.s = 1
+			camera.timeline = -(DURATION + camera.timeline)
+		end
+	else
+		if not camera then
+			camera = {}
+			CAMERA = camera
+		end
+		camera.from_x = 0
+		camera.from_y = 0
+		camera.from_s = 1
+		camera.x = x
+		camera.y = y
+		camera.s = scale or 1
+		camera.timeline = -DURATION
+	end
+end
+
 function M.set_mouse(x, y)
 	mouse_x = x
 	mouse_y = y
@@ -286,11 +359,14 @@ function M.set_mouse(x, y)
 	else
 		test_list = TESTLIST.hud
 	end
+	if CAMERA then open_camera() end
 	widget.test(mouse_x, mouse_y, BATCH, test_list)
+	if CAMERA then close_camera() end
 end
 
 local focus_state = {}
 function M.draw(count)
+	if CAMERA then open_camera() end
 	-- todo : find a better place to check unfocus :
 	--		code trigger unfocus, rather than mouse move
 	if mouse.get(focus_state) then
@@ -299,6 +375,8 @@ function M.draw(count)
 	end
 	-- todo : support multiple hud layer
 	widget.draw(BATCH, DRAWLIST.hud, mouse.focus_region())
+	
+	if CAMERA then close_camera() end
 	if DESC then
 		widget.draw(BATCH, DRAWLIST.describe)
 	end
@@ -402,6 +480,12 @@ function M.sync(where, pile)
 		draw = draw,
 		discard = list,
 	}
+end
+
+function M.screen_sector_coord(sec)
+	local map_x, map_y = widget.get("hud", "map")
+	local x, y = vmap.coord(sec)
+	return SCREEN_CX - (map_x + x) , SCREEN_CY - (map_y + y)
 end
 
 function M.init(args)

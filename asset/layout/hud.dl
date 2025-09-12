@@ -17,6 +17,7 @@ desktop :
 			direction : column
 			justify : center
 			map :
+				id : map
 				width : 532
 				height : 590
 				region : map

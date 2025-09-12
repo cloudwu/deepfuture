@@ -2,6 +2,7 @@ init :
 	worlds : 12
 setup :
 	draw : 5
+	random_sectors : 12
 start :
 	draw : 5
 	hand_limit : 10
@@ -19,4 +20,5 @@ power :
 	draw : 2
 grow :
 	add : 2
+	limit : 5
 	
