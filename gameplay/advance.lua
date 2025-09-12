@@ -426,7 +426,7 @@ return function(extra, action_name)
 		end
 		flow.sleep(0)
 	end
-	if card.type == "tech" and card.complete(advcard) then
+	if advcard.type == "tech" and card.complete(advcard) then
 		name.tech(advcard)
 	end
 	card.sync(advcard)
@@ -442,7 +442,7 @@ return function(extra, action_name)
 		}
 		advs:discard_used_cards()
 	end
-	
+
 	advs:reset()
 	vcard.mask(advcard)
 	
