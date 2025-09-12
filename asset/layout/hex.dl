@@ -17,9 +17,9 @@ people :
 	width : 100%
 	height : 100%
 	text : hex.people
-	env : content
 	size : 16
 	text_align : C
+	env : content
 id :
 	position : absolute
 	left : 28%
@@ -28,3 +28,13 @@ id :
 	top : 3
 	text : hex.id
 	size : 12
+wonder:
+	position : absolute
+	height : 20
+	width : 75%
+	top : 3
+	text : hex.wonder
+	size : 12
+	env : content
+	color : 0x000080
+	text_align : R

@@ -90,15 +90,15 @@ start :
 	name : TEST1
 	adv :
 		art
-		computation
-		infrastructure
+		engineering
+		communication
 	---
 	to : homeworld
 	type : tech
 	name : TEST2
 	adv :
-		history
-		economy
+		weapons
+		industry
 		exploration
 	---
 	to : homeworld

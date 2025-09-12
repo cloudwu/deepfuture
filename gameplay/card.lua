@@ -714,17 +714,19 @@ function card.find_upkeep(suits, r)
 	return r
 end
 
-local function suit_info(c)
-	return "$(suit."..ui.suit[c.suit]..")"
-end
+local suit_info = util.cache(function(suit)
+	return "$(suit."..ui.suit[suit]..")"
+end)
 
-card.suit_info = suit_info
+function card.suit_info(obj)
+	return suit_info[obj.suit]
+end
 
 local function suit_text(s)
 	if s == nil or s.value == nil then
 		return ""
 	else
-		return suit_info(s)
+		return suit_info[s.suit]
 	end
 end
 
@@ -796,6 +798,23 @@ function card.find_uncomplete(where, r)
 		end
 		n = n + 1
 	end
+end
+
+local function collect_suits(adv, suits)
+	if adv == nil then
+		return
+	end
+	suits[adv.suit] = (suits[adv.suit] or 0) + 1
+end
+
+function card.collect_suits(c, suits)
+	if not card.complete(c) then
+		return suits
+	end
+	collect_suits(c.adv1, suits)
+	collect_suits(c.adv2, suits)
+	collect_suits(c.adv3, suits)
+	return suits
 end
 
 return card

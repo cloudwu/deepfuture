@@ -21,4 +21,3 @@ power :
 grow :
 	add : 2
 	limit : 5
-	

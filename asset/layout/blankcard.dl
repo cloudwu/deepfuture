@@ -15,4 +15,11 @@ title :
 	size : 18
 	flex : 0.1
 	text_align : C
+info :
+	text : card.blank.info
+	size : 14
+	flex : 0.8
+	text_align : V
+blank :
+	flex : 0.1
 	

@@ -41,14 +41,34 @@ function map.setup()
 	colony = {}
 end
 
+function map.get_name(sec)
+	return sector_name and sector_name[sec]
+end
+
 function map.set_sector_name(sec, name)
 	if sector_name == nil then
 		sector_name = persist.init("map", {})
 	end
-	sector_name[sec] = name
-	vmap.set_sector_name(sec, name)
+	if sector_name[sec] then
+		-- if sector is named, ignore
+		return
+	end
+	local obj = {
+		name = name
+	}
+	sector_name[sec] = obj
+	vmap.set_sector_name(sec, obj)
 	util.dirty_trigger(map.update)
 end
+
+function map.set_sector_wonder(sec, symbol, suit)
+	local obj = sector_name[sec] or error (sec .. " is not named")
+	obj.wonder = symbol
+	obj.suit = suit
+	vmap.set_sector_name(sec, obj)
+	util.dirty_trigger(map.update)
+end
+
 
 function map.load()
 	galaxy = persist.get "galaxy"
@@ -169,8 +189,8 @@ function map.sync()
 		vmap.set(sec, COLOR[obj.camp], obj.n)
 	end
 	if sector_name then
-		for sec, name in pairs(sector_name) do
-			vmap.set_sector_name(sec, name)
+		for sec, obj in pairs(sector_name) do
+			vmap.set_sector_name(sec, obj)
 		end
 	end
 	vmap.update()
@@ -870,17 +890,33 @@ function map.setup_named_sector()
 		return
 	end
 	local count = 0
-	for sec in pairs(sector_name) do
+	for sec, obj in pairs(sector_name) do
 		if galaxy[sec] == nil then
 			count = count + 1
+		elseif obj.wonder then
+			-- empty wonder sector must add 1
+			map.add_neutral(sec, 1)
 		end
 	end
 	if count > rules.setup.random_sectors then
 		return rules.setup.random_sectors
 	end
-	for sec in pairs(sector_name) do
-		if galaxy[sec] == nil then
+	for sec, obj in pairs(sector_name) do
+		if galaxy[sec] == nil and not obj.wonder then
+			-- add left empty sector without wonder
 			map.add_neutral(sec, 1)
+		end
+	end
+end
+
+function map.wonder_available(wonders)
+	if sector_name == nil then
+		return
+	end
+	for sec, obj in pairs(sector_name) do
+		if obj.wonder then
+			local key = obj.wonder .. obj.suit
+			wonders[key] = nil
 		end
 	end
 end

@@ -3,6 +3,7 @@ condition :
 	people : 25
 	tech : 3
 advancement : 2
+wonder : 5
 name :
 	territory
 	population
@@ -10,3 +11,10 @@ name :
 	might
 	stability
 	xeno
+symbol:
+	territory : T
+	population : P
+	culture : C
+	might : M
+	stability : S
+	xeno : X

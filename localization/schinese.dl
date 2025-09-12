@@ -191,6 +191,9 @@ schinese:
   tips.civ.advancement.advice : "从$(desc.place.homeworld)中有${n}以上同类提升的选项中选择增强$(card.type.civ)"
   tips.civ.confirm : "[lbutton]将这张$(card.type.civ)加入你的牌组\n - 在以后的游戏中你可以使用它"
   tips.civ.confirm.advice : "确认新创建的$(card.type.civ)"
+  tips.wonder.symbol : "[lbutton]选择在[sector] ${sector} 创建 ${symbol} 类奇迹\n - $(EXPAND)到[sector] ${sector}可触发效果：\n - ${desc} \n - 需丢弃${suit}手牌\n - # 为弃牌的数值"
+  tips.wonder.advice : "选择一种奇迹"
+  tips.wonder.suit : "[lbutton]选择用${suit}触发位于[sector] ${sector} 的奇迹"
   challenge.corruption.name : "腐败遍地"
   challenge.resource.name : "资源枯竭"
   challenge.pirate.name : "海盗袭击"
@@ -286,6 +289,7 @@ schinese:
   phase.challenge : 挑战
   phase.end : 结束
   phase.victory : 胜利
+  phase.victory.wonder : "[blue]创建奇迹[n]"
   victory.territory : 领土胜利
   victory.territory.title : "[sector]x${vic.sec}"
   victory.population : 人口胜利
@@ -298,6 +302,16 @@ schinese:
   victory.stability.title : "$(hud.S.logo)"
   victory.xeno : 异星胜利
   victory.xeno.title : "$(hud.X.logo)"
+  wonder.choose : "在以后的游戏中：\n[blue] - $(EXPAND)[n]到[sector] ${sector}\n - 弃掉手牌中的${suit}卡\n - 触发效果\n\n  [blue]${desc}[n]\n\n  # 为弃掉卡的数值",
+  wonder.choose.title : "[blue]选择奇迹[n] ${symbol}${suit}"
+  wonder.suits.title : "[blue]选择由 ${suit} 触发奇迹[n]"
+  wonder.suits.choose : "奇迹效果：\n\n  ${desc}\n\n触发条件：\n - $(EXPAND)[n]到[sector] ${sector}\n - 弃掉手牌中的${suit}卡"
+  wonder.T : "抽取 ${n|#} [card]"
+  wonder.P : "向[sector] ${sector} 增加 ${n|#} [blue][people][n]"
+  wonder.C : "$(hud.C.logo)进度条$(hud.C)推进 ${n|#} 格"
+  wonder.M : "$(hud.M.logo)进度条$(hud.M)推进 ${n|#} 格"
+  wonder.S : "$(hud.S.logo)进度条$(hud.S)推进 ${n|#} 格"
+  wonder.X : "$(hud.X.logo)进度条$(hud.X)推进 ${n|#} 格"
   card.type.world : "[worldcard]星球卡"
   card.type.blank : "[blankcard]空白卡"
   card.type.tech : "[techcard]科技卡"
@@ -355,6 +369,7 @@ schinese:
   hex.id : "[gray]${id}"
   hex.people : "${people|}"
   hex.name : "${name|}"
+  hex.wonder : "${wonder|}${suit|}"
   suit.sun : "[sun]"
   suit.moon : "[moon]"
   suit.heart : "[heart]"
@@ -367,6 +382,7 @@ schinese:
   card.tech.name : "${name|}"
   card.tech.title : "${era}. [tech]科技"
   card.blank.name : "[blue]${name|}[n]"
+  card.blank.info : "${info|}"
   card.evoke.action : "行动卡"
   card.adv : "${_suit|} ${_name|}"
   card.desc : "${_stage|} ${_desc|}"

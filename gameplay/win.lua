@@ -19,7 +19,7 @@ local name = require "gameplay.name"
 
 local table = table
 local string = string
-global print, pairs, next, ipairs, assert
+global print, pairs, next, ipairs, assert, print_r
 
 local COLOR <const> = color.blend(0x01000000, ui.card.mask_focus)
 local DURATION <const> = ui.desktop.focus_duration
@@ -205,14 +205,6 @@ local function choose_victory(c, vics)
 	drop_float(choose)
 end
 
-local function add_adv(c, adv, index)
-	local a = c[index]
-	if a == nil then
-		return
-	end
-	adv[a.suit] = (adv[a.suit] or 0) + 1
-end
-
 local function collect_advs()
 	local n = 1
 	local adv = {}
@@ -221,15 +213,14 @@ local function collect_advs()
 		if c == nil then
 			break
 		end
-		add_adv(c, adv, "adv1")
-		add_adv(c, adv, "adv2")
-		add_adv(c, adv, "adv3")
+		card.collect_suits(c, adv)
 		n = n + 1
 	end
 	return adv
 end
 
 local ADV_NEED <const> = rules_vic.advancement
+local WONDER_NEED <const> = rules_vic.wonder
 
 local function choose_advancement(c, advs)
 	local choose = {}
@@ -392,13 +383,203 @@ local function name_sector(sector)
 	local x, y = vdesktop.screen_sector_coord(sector)	
 	vdesktop.camera_focus(x, y, 5)
 	flow.sleep(30)
+	local name_object = {}
 	for i = 1, 255 do
 		local vname = string.format("[%08X]%s[n]", (i << 24) | 0x202040, n)
-		vmap.set_sector_name(sector, vname)
+		name_object.name = vname
+		vmap.set_sector_name(sector, name_object)
 		vmap.update()
 		flow.sleep(0)
 	end
-	map.set_sector_name(sector, n)
+	map.set_sector_name(sector, n )
+	map.update()
+	loadsave.sync_map()
+	vdesktop.camera_focus()
+end
+
+local function checker_wonder(vics, advs, sec)
+	local obj = map.get_name(sec)
+	if obj.wonder then
+		--already has wonder
+		return
+	end
+	local suits = {}
+	for suit, n in pairs(advs) do
+		if n >= WONDER_NEED then
+			suits[#suits+1] = suit
+		end
+	end
+	if #suits == 0 then
+		-- no suit >= 5 (WONDER_NEED)
+		return
+	end
+	local wonder_types = {}
+	for _, vic in ipairs(vics) do
+		local symbol = rules_vic.symbol[vic]
+		for _, suit in ipairs(suits) do
+			local key = symbol .. suit
+			wonder_types[key] = true
+		end
+	end
+	map.wonder_available(wonder_types)
+	if next(wonder_types) == nil then
+		-- no available wonders
+		return
+	end
+	return wonder_types
+end
+
+local function merge_suits(wonders)
+	local r = {}
+	for key in pairs(wonders) do
+		local symbol = key:sub(1,1)
+		local suit = key:sub(2,2)
+		r[symbol] = (r[symbol] or "") .. suit
+	end
+	return r
+end
+
+local function gen_symbol_choice(wonders,sec)
+	local choose = {}
+	local tmp = {}
+	for symbol, suits in pairs(wonders) do
+		local suit = suits:gsub("." , function(c) tmp.suit = c; return card.suit_info(tmp) end)
+		local clone = {
+			type = "blank" ,
+			name = "$(wonder.choose.title)",
+			desc = "$(wonder." .. symbol .. ")",
+			symbol = symbol,
+			suit = suit,
+			suits = suits,
+			sector = sec,
+			info = "$(wonder.choose)",
+		}
+		choose[clone] = true
+		vcard.mask(clone, true)
+		vdesktop.add("deck", clone)
+		vdesktop.transfer("deck", clone, "float")
+		flow.sleep(5)
+	end
+	return choose
+end
+
+local function choose_symbol(choose, sec)
+	local focus_state = {}
+	local desc = { sector = sec }
+	while true do
+		if mouse.get(focus_state) then
+			if focus_state.active == "float" then
+				local c = focus_state.object
+				local vic = choose[c]
+				desc.symbol = c.symbol
+				desc.suit = c.suit
+				desc.desc = "$(wonder." .. c.symbol .. ")"
+				vtips.set("tips.wonder.symbol", desc)
+			elseif focus_state.object then
+				vtips.set "tips.wonder.advice"
+			else
+				vtips.set()
+			end
+		end
+		local clone = mouse.click(focus_state, "left")
+		if choose[clone] then
+			return clone
+		end
+		flow.sleep(0)
+	end
+end
+
+local function gen_suit_choice(choose_card, sec)
+	local tmp = {}
+	local choose = {}
+	local suits = choose_card.suits 
+	local symbol = choose_card.symbol
+	for i = 1, #suits do
+		tmp.suit = suits:sub(i,i)
+		local clone = {
+			type = "blank" ,
+			name = "$(wonder.suits.title)",
+			desc = "$(wonder." .. symbol .. ")",
+			suit = card.suit_info(tmp),
+			suits = tmp.suit,
+			sector = sec,
+			info = "$(wonder.suits.choose)",
+		}
+		choose[clone] = tmp.suit
+		vcard.mask(clone, true)
+		vdesktop.add("deck", clone)
+		vdesktop.transfer("deck", clone, "float")
+		flow.sleep(5)
+	end
+	return choose
+end
+
+local function choose_suit(choose, symbol, sec)
+	local focus_state = {}
+	local desc = {
+		sector = sec,
+		symbol = symbol,
+	}
+	while true do
+		if mouse.get(focus_state) then
+			if focus_state.active == "float" then
+				local c = focus_state.object
+				desc.suit = c.suit
+				desc.desc = "$(wonder." .. symbol .. ")"
+				vtips.set("tips.wonder.suit", desc)
+			elseif focus_state.object then
+				vtips.set "tips.wonder.advice"
+			else
+				vtips.set()
+			end
+		end
+		local clone = mouse.click(focus_state, "left")
+		if choose[clone] then
+			return clone
+		end
+		flow.sleep(0)
+	end
+end
+
+local function choose_wonder(wonders, sec)
+	vdesktop.set_text("phase", {
+		extra = "$(phase.victory.wonder)",
+	})
+	wonders.TM = true
+	wonders = merge_suits(wonders)
+	local choose = gen_symbol_choice(wonders, sec)
+	local choose_card = choose_symbol(choose, sec)
+	drop_float(choose)
+	
+	if #choose_card.suits == 1 then
+		-- no choise of suits
+		return choose_card.symbol, choose_card.suits
+	end
+
+	local choose = gen_suit_choice(choose_card, sec)
+	local symbol = choose_card.symbol
+	local choose_card = choose_suit(choose, symbol, sec)
+	drop_float(choose)
+	
+	return symbol, choose_card.suits
+end
+
+local function create_wonder(sector, symbol, suit)
+	local x, y = vdesktop.screen_sector_coord(sector)	
+	vdesktop.camera_focus(x, y, 5)
+	flow.sleep(30)
+	local name_object = {
+		name = map.get_name(sector).name,
+		suit = suit,
+	}
+	for i = 1, 255 do
+		local vsymbol = string.format("[%08X]%s", (i << 24) | 0x000040, symbol)
+		name_object.wonder = vsymbol
+		vmap.set_sector_name(sector, name_object)
+		vmap.update()
+		flow.sleep(0)
+	end
+	map.set_sector_wonder(sector, symbol, suit)
 	map.update()
 	loadsave.sync_map()
 	vdesktop.camera_focus()
@@ -409,13 +590,24 @@ return function()
 		text = "$(phase.victory)",
 	})
 	check_tech()
-	
+
 	local vics = {}
 	local checker = victory.checker()
 	for _, vic in ipairs(rules_vic.name) do
 		if checker[vic](checker) then
 			vics[#vics+1] = vic
 		end
+	end
+	
+	local h = card.card("homeworld", 1)
+	if not map.get_name(h.sector) then
+		name_sector(h.sector)
+	end
+	local advs = collect_advs()
+	local wonders = checker_wonder(vics, advs, h.sector)
+	if wonders then
+		local symbol, suit = choose_wonder(wonders, h.sector)
+		create_wonder(h.sector, symbol, suit)
 	end
 	
 	local extra = {
@@ -432,25 +624,12 @@ return function()
 			vdesktop.set_text("phase", extra)
 		end
 	end
-	
-	local h = card.card("homeworld", 1)
-	name_sector(h.sector)
-	
+
 	extra.extra = "$(civ.phase.create)"
 	vdesktop.set_text("phase", extra)
-	
-	local advs = collect_advs()
+
 	gen_civ_card(vics, advs)
---[[
-	local focus_state = {}
-	while true do
-		mouse.get(focus_state)	
-		if mouse.click(focus_state, "left") then
-			break
-		end
-		flow.sleep(0)
-	end
-]]
+
 	card.next_era()
 
 	return flow.state.nextgame

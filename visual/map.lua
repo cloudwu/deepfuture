@@ -2,6 +2,7 @@ local widget = require "core.widget"
 local mask = require "soluna.material.mask"
 local config = require "core.rules".ui
 local mouse = require "core.mouse"
+local card = require "gameplay.card"
 local map = {}
 local table = table
 
@@ -146,10 +147,15 @@ function map.update()
 		if sector ~= 0 then
 			local p = hex_people[sector]
 			local name = hex_name[sector]
-			hex_text.content = {
+			local content = {
 				people = p and people_icons(table.unpack(p)),
-				name = name,
 			}
+			if name then
+				content.name = name.name
+				content.wonder = name.wonder
+				content.suit = name.suit and card.suit_info(name)
+			end
+			hex_text.content = content
 			hex_text.id = sector
 			hex_drawlist[sector] = widget.draw_list("hex", hex_text, FONT_ID, SPRITES)
 		end
