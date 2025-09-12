@@ -135,6 +135,7 @@ schinese:
   tips.expand.invalid.full : "星区[sector] ${sec} 已达人口上限"
   tips.expand.invalid.already : "无法将星区[sector] ${sec} 设为第二目的地"
   tips.expand.invalid.spacecraft : "需要更多的[blue]$(adv.spacecraft.name)[n]"
+  tips.expand.invalid.departure : "这是你的扩张出发地"
   tips.expand.undo : "[rbutton]撤回[blue][people][n]到星区[sector] ${from}"
   tips.expand.confirm : "[lbutton]确定从星区[sector] ${from} 移出 [blue][people][n]x${n}"
   tips.expand.confirm.invalid : "选定一个星区[sector]，至少移出一个[blue][people][n]"
@@ -194,6 +195,9 @@ schinese:
   tips.wonder.symbol : "[lbutton]选择在[sector] ${sector} 创建 ${symbol} 类奇迹\n - $(EXPAND)到[sector] ${sector}可触发效果：\n - ${desc} \n - 需丢弃${suit}手牌\n - # 为弃牌的数值"
   tips.wonder.advice : "选择一种奇迹"
   tips.wonder.suit : "[lbutton]选择用${suit}触发位于[sector] ${sector} 的奇迹"
+  tips.wonder.active : "[lbutton]丢弃这张牌触发[sector] ${sector} 的奇迹效果：\n - ${extra}\n - ${n}来自于这张卡的点数"
+  tips.wonder.cancel : "[lbutton]不触发[sector] ${sector} 的奇迹效果"
+  tips.wonder.active.advice : "丢弃一张${suit}卡触发[sector] ${sector} 的奇迹效果：\n - ${extra}\n - # 为卡的点数\n长按牌堆可放弃触发"
   challenge.corruption.name : "腐败遍地"
   challenge.resource.name : "资源枯竭"
   challenge.pirate.name : "海盗袭击"
@@ -290,6 +294,7 @@ schinese:
   phase.end : 结束
   phase.victory : 胜利
   phase.victory.wonder : "[blue]创建奇迹[n]"
+  phase.wonder : 奇迹
   victory.territory : 领土胜利
   victory.territory.title : "[sector]x${vic.sec}"
   victory.population : 人口胜利

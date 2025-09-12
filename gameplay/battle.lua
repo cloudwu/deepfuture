@@ -137,7 +137,6 @@ end
 local function choose_battlefield()
 	vdesktop.set_text("phase", { extra = "$(tips.battle.battlefield)" })
 	choose_battlefield_()
-	flow.sleep(1)	-- reset mouse click
 	set_title()
 end
 
@@ -190,20 +189,22 @@ return function()
 	loadsave.sync_game "battle"
 	sync()
 	vdesktop.set_text("phase", { text = "$(phase.action)" })
-	
-	if map.is_safe() then
-		if not track.all_full() then
-			inc_track()
-		end
-	else
-		choose_battlefield()
-	end
 
 	local map_message = {}
 	local desc = {
 		n = 0,
 		lost = nil,
 	}
+
+	if map.is_safe() then
+		if not track.all_full() then
+			inc_track()
+		end
+	else
+		choose_battlefield()
+		-- default add 1
+		desc.n = map.army(1)
+	end
 	
 	local button = {
 		text = "button.battle.confirm",

@@ -385,6 +385,7 @@ end
 function M.draw_pile_focus(enable)
 	local c = desktop.discard
 	vcard.mask(c, enable)
+	return c
 end
 
 function M.card_count(draw, discard, seen)

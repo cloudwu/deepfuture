@@ -9,9 +9,11 @@ local vtips = require "visual.tips".layer "hud"
 local mouse = require "core.mouse"
 local vbutton = require "visual.button"
 local loadsave = require "core.loadsave"
+local vcard = require "visual.card"
 local sync = require "gameplay.sync"
+local desktop = require "gameplay.desktop"
 
-global pairs, setmetatable, print, next, print_r
+global pairs, ipairs, setmetatable, print, next, print_r, assert, error
 
 local adv_focus = {}
 
@@ -25,6 +27,149 @@ end
 
 function adv_focus.religion()
 	track.focus("C", true)
+end
+
+local function check_wonder(wonders)
+	if next(wonders) == nil then
+		return
+	end
+	local suits = {}
+	for _, w in pairs(wonders) do
+		suits[w.suit] = true
+	end
+	local hands = card.pile "hand"
+	for i, c in ipairs(hands) do
+		if suits[c.suit] then
+			hands[c] = c.suit
+		end
+		hands[i] = nil
+	end
+	if next(hands) then
+		return hands
+	end
+end
+
+local TRACK_WONDER = {
+	C = true,
+	M = true,
+	X = true,
+	S = true,
+}
+
+local function ignore_unused_wonder(wonder)
+	for sec, w in pairs(wonder) do
+		local symbol = w.symbol
+		if TRACK_WONDER[symbol] then
+			if not track.check(symbol, 1) then
+				-- already full
+				wonder[sec] = nil
+			end
+		end
+	end
+end
+
+local function excute_wonder(w, sec, value)
+	local symbol = w.wonder
+	if symbol == "T" then
+		-- draw cards
+		for i = 1, value do
+			local c = card.draw_hand()
+			vdesktop.add("deck", c)
+			vdesktop.transfer("deck", c, "hand")
+			flow.sleep(5)
+		end
+	elseif symbol == "P" then
+		-- add cubes
+		for i = 1, value do
+			vmap.focus(sec)
+			map.add_player(sec, 1)
+			flow.sleep(5)
+		end
+	else
+		if not TRACK_WONDER[symbol] then
+			error("Invalid wonder", symbol)
+		end
+		-- add tracks
+		track.focus(symbol)
+		track.advance(symbol, value)
+		flow.sleep(10)
+		track.focus(false)
+	end
+end
+
+local function find_sun(wonders)
+	-- draw cards first
+	for sec, w in pairs(wonders) do
+		if w.symbol == "T" then
+			return sec, w
+		end
+	end
+	return next(wonders)
+end
+
+local function choose_wonder(wonders, cards)
+	local sec, w = find_sun(wonders)
+	vdesktop.set_text("phase", { text = "$(phase.wonder)" })
+	local desc = {
+		sector = sec,
+		extra = "$(wonder." .. w.wonder .. ")",
+		suit = card.suit_info(w),
+	}
+	vdesktop.set_text("phase", desc)
+	vtips.set()
+	vmap.set_sector_mask(sec, true)
+	for c in pairs(cards) do
+		if c.suit ~= w.suit then
+			cards[c] = nil
+		end
+	end
+	
+	local discard = vdesktop.draw_pile_focus()
+	
+	local confirm = desktop.confirm(discard, cards)
+	confirm:set_mask(true)
+
+	local focus_state = {}
+	local click
+	while true do
+		if mouse.get(focus_state) then
+			local c = focus_state.object
+			if cards[c] then
+				desc.n = c.value
+				vtips.set("tips.wonder.active", desc)
+				vdesktop.set_text("phase", desc)
+			elseif c == discard then
+				vtips.set("tips.wonder.cancel", desc)
+			elseif c then
+				desc.n = false
+				vtips.set("tips.wonder.active.advice", desc)
+				vdesktop.set_text("phase", desc)
+			else
+				vtips.set()
+			end
+		end
+		click = mouse.click(focus_state, "left")
+		if cards[click] then
+			break
+		end
+		if click == discard and confirm:click() then
+			click = nil
+			break
+		end
+		confirm:update()
+		flow.sleep(0)
+	end
+
+	confirm:set_mask()
+	
+	if click then
+		card.pickup("hand", click)
+		card.discard(click)
+		vdesktop.transfer("hand", click, "deck")
+		excute_wonder(w, sec, click.value)
+	end
+	vmap.set_sector_mask(sec)
+	wonders[sec] = nil
 end
 
 return function()
@@ -209,9 +354,20 @@ return function()
 	end
 	vdesktop.button_enable("button1", nil)
 	
+	local wonder = map.expand_wonder()
 	map:reset()
+	if wonder then
+		ignore_unused_wonder(wonder)
+		while true do
+			local cards = check_wonder(wonder)
+			if cards == nil then
+				break
+			end
+			choose_wonder(wonder, cards)
+			flow.sleep(0)
+		end
+	end
 	
-	-- todo : wonder
 	flow.sleep(1)
 	
 	return flow.state.action

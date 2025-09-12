@@ -474,9 +474,8 @@ function map.check_expand(sec, spacecraft)
 		-- no start
 		return
 	end
-	local people = start.n - (start.extra or 0)
-	if people <= 1 then
-		return false, "$(tips.expand.invalid.lastpeople)"
+	if sec == expand.start then
+		return false, "$(tips.expand.invalid.departure)"
 	end
 	if not expand[sec] then
 		return false, "$(tips.expand.invalid.dest)"
@@ -484,6 +483,10 @@ function map.check_expand(sec, spacecraft)
 	local s = galaxy[sec]
 	if s and s.n + 1 > LIMIT then
 		return false, "$(tips.expand.invalid.full)"
+	end
+	local people = start.n - (start.extra or 0)
+	if people <= 1 then
+		return false, "$(tips.expand.invalid.lastpeople)"
 	end
 	local extra = (s and s.extra) or 0
 	if extra > 1 then
@@ -663,7 +666,7 @@ function map.reset()
 	clear_battlefield()
 	battlefield = {}
 	for sec, enable in pairs(expand) do
-		if enable then
+		if enable == true then
 			set_extra(sec)
 			vmap.set_sector_mask(sec)
 		end
@@ -674,6 +677,30 @@ function map.reset()
 	util.dirty_trigger(map.can_grow)
 	map.update()
 	expand = {}
+end
+
+function map.expand_wonder()
+	if sector_name == nil then
+		return
+	end
+	local s = galaxy[expand.start] or error "Not in expand"
+	local r
+	for sec, enable in pairs(expand) do
+		if enable == true then
+			local s = galaxy[sec]
+			if s and s.n == s.extra then
+				local name = sector_name[sec]
+				if name and name.wonder then
+					r = r or {}
+					r[sec] = {
+						wonder = name.wonder,
+						suit = name.suit,
+					}
+				end
+			end
+		end
+	end
+	return r
 end
 
 function map.grow(sec)

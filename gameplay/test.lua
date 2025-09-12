@@ -36,8 +36,17 @@ local function add_hand(action)
 	elseif action.type == "drop" then
 		card.drophand()
 	elseif action.type == "galaxy" then
-		map.set_galaxy(action.sector, action.n, action.camp)
-		map.settle(action.sector)
+		if action.n then
+			local camp = action.camp or "player"
+			map.set_galaxy(action.sector, action.n, camp)
+			if camp == "player" then
+				map.settle(action.sector)
+			end
+		end
+		if action.wonder then
+			map.set_sector_name(action.sector, action.name or "TEST")
+			map.set_sector_wonder(action.sector, action.wonder, action.suit or "S")
+		end
 	else
 		-- add new card
 		local c = card.test_newcard(action)

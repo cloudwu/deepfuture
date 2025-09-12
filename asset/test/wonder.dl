@@ -1,0 +1,52 @@
+setup:
+	---
+	type : world
+	name : TEST
+	sector : 64
+	adv :
+		spacecraft
+		ftl
+	---
+	type : galaxy
+	sector : 65
+	wonder : T
+	---
+	type : galaxy
+	sector : 66
+	wonder : P
+	---
+	type : galaxy
+	sector : 55
+	wonder : C
+	---
+	type : galaxy
+	sector : 53
+	wonder : M
+	---
+	type : galaxy
+	sector : 61
+	wonder : S
+	---
+	type : galaxy
+	sector : 62
+	wonder : X
+start:
+	---
+	type : blank
+	suit : S
+	value : 1
+	---
+	type : blank
+	suit : S
+	value : 3
+	---
+	type : blank
+	suit : H
+	---
+	type : blank
+	suit : R
+	---
+	type : blank
+	suit : F
+
+	
