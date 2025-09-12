@@ -404,6 +404,11 @@ function effect:choose_cards(args)
 					card_tips.nextadv = advancement.info(next_adv, "name")
 					vtips.set("tips.advancement.card.multiple", card_tips)
 				end
+			elseif map_message and region == "map" then
+				map_message.click(switch_card, "right")
+				if update_adv() then
+					break
+				end
 			end
 		end
 		local c, btn = mouse.click(focus_state, "left")
@@ -435,15 +440,6 @@ function effect:choose_cards(args)
 				self:look_drawpile(focus_state, button)
 			else
 				vtips.set(nil)
-			end
-		end
-		if map_message then
-			local c, where = mouse.click(focus_state, "right")
-			if where == "map" then
-				map_message.click(c, "right")
-				if update_adv() then
-					break
-				end
 			end
 		end
 		flow.sleep(0)
