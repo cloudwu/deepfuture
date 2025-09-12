@@ -18,6 +18,7 @@ function M.load_game()
 		persist.init("game", data.game)
 		persist.init("track", data.track)
 		persist.init("galaxy", data.galaxy)
+		persist.init("map", data.map)
 		-- 加载卡片并重新生成描述信息
 		local card = require "gameplay.card"
 		card.load()
