@@ -101,7 +101,7 @@ return function()
 		map.settle(c.sector)
 	end
 	local homeworld = card.card ("homeworld", 1)
-	if homeworld then	-- no homeworld in setup phase 
+	if homeworld and homeworld.type == "world" then	-- no homeworld in setup phase 
 		map.settle(homeworld.sector)
 	end
 	

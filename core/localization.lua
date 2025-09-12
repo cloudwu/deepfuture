@@ -91,7 +91,7 @@ function localization.convert(str, args)
 	end
 	repeat
 		t = replacement(t)
-	until not t:find "${"
+	until not t:find "${[^}]*}"
 	return t
 end
 

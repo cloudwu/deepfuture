@@ -389,6 +389,7 @@ function effect:choose_cards(args)
 					vtips.set()
 					advancement_unfocus()
 					show_desc.start {
+						phase = self[false],
 						region = region,
 						card = switch_card,
 						name = self:focus(switch_card),
