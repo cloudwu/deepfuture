@@ -133,7 +133,7 @@ local function dec_tracks()
 				local what = focus_state.object	-- C/M/S/X
 				track.focus(false)
 				desc.type = "$(hud." .. what .. ")"
-				if track.check(what, -1) then
+				if not track.check(what, -1) then
 					vtips.set("tips.track.invalid", desc)
 				else
 					vtips.set("tips.track.valid", desc)
@@ -150,7 +150,7 @@ local function dec_tracks()
 		
 		local t, where = mouse.click(focus_state, "left")
 		if where == "track" then
-			if not track.check(t, -1) then
+			if track.check(t, -1) then
 				track.use(t, 1)
 				track.focus(false)
 				vtips.set()

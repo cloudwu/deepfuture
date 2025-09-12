@@ -12,7 +12,7 @@ local show_desc = require "gameplay.desc"
 local vbutton = require "visual.button"
 local map = require "gameplay.map"
 
-global setmetatable, pairs, assert, print, ipairs, error
+global setmetatable, pairs, assert, print, ipairs, error, print_r
 
 local effect = class.container "effect"
 
@@ -109,9 +109,11 @@ function effect:update(select_adv)
 			end
 		end
 	end
-	
+
+	local mask
 	for c, index in pairs(tmp) do
 		if index then
+			mask = true
 			vcard.mask(c, true)
 			self[c].focus = index
 			vcard.focus_adv(c, index, true)
