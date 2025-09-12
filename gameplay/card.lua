@@ -298,6 +298,12 @@ function card.sync(c)
 		adv2 = sync_adv(c.adv2),
 		adv3 = sync_adv(c.adv3),
 	}
+	if c.type == "civ" then
+		data.world = c.world
+		data.tech = c.tech
+		data.victory = c.victory
+		data.advancement = c.advancement
+	end
 	loadsave.sync_card(c._id, data)
 end
 
