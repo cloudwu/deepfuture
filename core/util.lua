@@ -1,7 +1,7 @@
 local util = {}
 
 local next = next
-global type, getmetatable, setmetatable, pairs
+global type, getmetatable, setmetatable, pairs, tostring, error
 
 -- todo: flush all cache (change localization)
 function util.cache(f)
@@ -82,6 +82,32 @@ function util.keys(t)
 		n = n + 1
 	end
 	return keys
+end
+
+local function merge(merge_into, patch)
+	for k,v in pairs(patch) do
+		local s = merge_into[k]
+		if s == nil then
+			merge_into[k] = v
+		elseif type(s) ~= "table" or type(v) ~= "table" then
+			-- error
+			return tostring(k)
+		else
+			local errkey = merge(s, v)
+			if errkey then
+				return tostring(k) .. "." .. errkey
+			end
+		end
+	end
+end
+
+function util.merge_table(merge_into, patch)
+	local errkey = merge(merge_into, patch)
+	if errkey then
+		error("Invalid key " .. errkey)
+	else
+		return merge_into
+	end
 end
 
 return util

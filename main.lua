@@ -7,6 +7,7 @@ local initial = require "gameplay.initial"
 local card = require "gameplay.card"
 local map = require "gameplay.map"
 local persist = require "gameplay.persist"
+local language = require "core.language"
 local localization = require "core.localization"
 local config = require "core.rules".ui
 local test = require "gameplay.test"
@@ -14,6 +15,7 @@ local loadsave = require "core.loadsave"
 local track = require "gameplay.track"
 local vbutton = require "visual.button"
 local mouse = require "core.mouse"
+local text = require "soluna.text"
 
 local utf8 = utf8
 local math = math
@@ -22,43 +24,19 @@ global require, assert, print
 
 local args = ...
 
--- 解析启动参数中的语言设置，默认使用schinese
-local function parse_language()
-	local settings = soluna.settings()
-	local lang = settings.lang or "schinese"  -- 默认语言
-	
-	-- 检查语言文件是否存在
-	local file = io.open("localization/" .. lang .. ".dl", "r")
-	if file then
-		file:close()
-		print("Using language: " .. lang)
-		return lang
-	else
-		print("Language file not found: " .. lang .. ".dl, falling back to schinese")
-		return "schinese"
-	end
-end
+text.init "asset/icons.dl"
+language.init()
 
-local LANG <const> = parse_language()
-
-local function font_init()
-	local font = require "soluna.font"
-	local text = require "soluna.text"
-	local sysfont = require "soluna.font.system"
-	local gamefont = config.lang[LANG].font or config.lang[LANG][soluna.platform].font
-	font.import(assert(sysfont.ttfdata (gamefont)))
-	text.init "asset/icons.dl"
-	return font.name ""
-end
+local LANG <const> = language.get_default()
 
 local callback = {}
 
-localization.load("localization/" .. LANG .. ".dl", LANG)
+language.switch(LANG)
 soluna.set_window_title(localization.convert "app.title")
 
 vdesktop.init {
 	batch = args.batch,
-	font_id = font_init(),
+	font_id = language.font_id(LANG),
 	sprites = soluna.load_sprites "asset/sprites.dl",
 	width = args.width,
 	height = args.height,
@@ -160,7 +138,6 @@ end
 function callback.char(c)
 -- todo : name card
 --	print("Char", c, utf8.char(c))
-	print(vdesktop.screen_sector_coord(22))
 end
 
 return callback

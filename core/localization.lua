@@ -1,5 +1,3 @@
-local datalist = require "soluna.datalist"
-local file = require "soluna.file"
 local tointeger = math.tointeger
 
 global pairs, type, ipairs, print, tostring
@@ -24,27 +22,11 @@ local function substitution(text)
 	return (text:gsub("$(%b())", subtext))
 end
 
-local function load_text(filename, lang)
-	local data = datalist.parse(file.loader(filename))[lang]
-	if data then
-		for k,v in pairs(data) do
-			TEXT[k] = v
-		end
-	end
-	for k,v in pairs(TEXT) do
+function localization.load(source)
+	TEXT = {}
+	for k,v in pairs(source) do
 		TEXT[k] = nil
 		TEXT[k] = substitution(v)
-	end
-end
-
-function localization.load(filename, lang)
-	TEXT = {}
-	if type(filename) == "table" then
-		for _, name in ipairs(filename) do
-			load_text(name, lang)
-		end
-	else
-		load_text(filename, lang)
 	end
 end
 
