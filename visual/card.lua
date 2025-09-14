@@ -34,7 +34,12 @@ local function flush_card(data)
 	return widget.draw_list(ct, data, FONT_ID, SPRITES)
 end
 
-local card_draw_list = util.cache(flush_card)
+local card_draw_list
+
+function card.change_font(id)
+	FONT_ID = id
+	card_draw_list = util.cache(flush_card)
+end
 
 function card.flush(c)
 	card_draw_list[c] = flush_card(c)
@@ -100,8 +105,8 @@ end
 
 function card.init(args)
 	BATCH = assert(args.batch)
-	FONT_ID = assert(args.font_id)
 	SPRITES = assert(args.sprites)
+	card.change_font(assert(args.font_id))
 end
 
 return card

@@ -229,10 +229,15 @@ function track.register(args)
 	test.track = track.test
 end
 
+function track.change_font(id)
+	FONT_ID = id
+	track.flush()
+end
+
 function track.init(args)
 	BATCH = assert(args.batch)
-	FONT_ID = assert(args.font_id)
 	SPRITES = assert(args.sprites)
+	FONT_ID = assert(args.font_id)
 end
 
 return track

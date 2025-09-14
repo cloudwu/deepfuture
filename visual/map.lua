@@ -271,6 +271,11 @@ function map.clear()
 	map.update()
 end
 
+function map.change_font(id)
+	FONT_ID = id
+	map.update()
+end
+
 function map.init(args)
 	BATCH = assert(args.batch)
 	FONT_ID = assert(args.font_id)

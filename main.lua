@@ -135,9 +135,25 @@ function callback.frame(count)
 	mouse.frame()
 end
 
+-- todo :  just a test
+local function switch_language(name)
+	print("switch to",name)
+	language.switch(name)
+	local font_id = language.font_id(name)
+	vdesktop.change_font(font_id)
+	soluna.set_window_title(localization.convert "app.title")
+	vdesktop.change_font(font_id)
+end
+
 function callback.char(c)
+	local c = utf8.char(c)
+	if c == "e" then
+		switch_language "english"
+	elseif c == "c" then
+		switch_language "schinese"
+	end
 -- todo : name card
---	print("Char", c, utf8.char(c))
+--	print("Char", c)
 end
 
 return callback

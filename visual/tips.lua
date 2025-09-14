@@ -20,13 +20,14 @@ local fontbox = {
 	color = 0,
 	align = "LT",
 }
+local tips_cache
 
-local tips_cache = util.cache(function (text)
+local function tips_text(text)
 	text = textconv.convert[text]
 	local block = mattext.block(fontcobj, FONT_ID, fontbox.size, fontbox.color, fontbox.align)
 	local drawlist = block(text, fontbox.width, fontbox.height)
 	return drawlist
-end)
+end
 
 function tips.set(str, env)
 	if str then
@@ -79,19 +80,15 @@ function M.layer(name)
 	return LAYER_OBJECT[name]
 end
 
-function M.flush(args)
-	if args then
-		fontbox.size = args.size or fontbox.size
-		fontbox.color = args.color or fontbox.color
-		fontbox.align = args.size or fontbox.align
-	end
-	tips_cache = util.cache(tips_cache)	-- clear cache
+function M.change_font(id)
+	FONT_ID = id
+	tips_cache = util.cache(tips_text)
 end
 
 function M.init(args)
 	BATCH = assert(args.batch)
-	FONT_ID = assert(args.font_id)
 	SPRITES = assert(args.sprites)
+	M.change_font(assert(args.font_id))
 end
 
 return M

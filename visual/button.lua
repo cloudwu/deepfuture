@@ -53,6 +53,14 @@ function button.update(name)
 	update_all(states[name])
 end
 
+local function flush_all()
+	for name, state in pairs(states) do
+		if state then
+			update_all(state)
+		end
+	end
+end
+
 function button.register(args)
 	local ui = args.draw
 	local test = args.test
@@ -155,11 +163,17 @@ function button.test(name, flag, mx, my, w, h)
 	return false
 end
 
-function button.init(args)
-	BATCH = assert(args.batch)
-	FONT_ID = assert(args.font_id)
+function button.change_font(id)
+	FONT_ID = id
+	-- todo : use different font size for multi-languages
 	TEXT = mattext.block(font.cobj(), FONT_ID, config.font_size, config.color, "CV")
 	TEXT_DISABLE = mattext.block(font.cobj(), FONT_ID, config.font_size, config.font_disable, "CV")
+	flush_all()
+end
+
+function button.init(args)
+	BATCH = assert(args.batch)
+	button.change_font(assert(args.font_id))
 end
 
 return button

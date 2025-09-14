@@ -36,6 +36,10 @@ function progress.draw(percent, x, y)
 	BATCH:layer()
 end
 
+function progress.change_font()
+	-- ignore
+end
+
 function progress.init(args)
 	BATCH = assert(args.batch)
 	SPRITES = assert(args.sprites)

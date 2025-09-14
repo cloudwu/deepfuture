@@ -41,6 +41,15 @@ region.background = vregion.rect()
 local hud = {}
 local describe = {}
 
+local function flush(action, args)
+	vcard[action](args)
+	vmap[action](args)
+	vtips[action](args)
+	vtrack[action](args)
+	vbutton[action](args)
+	vprogress[action](args)
+end
+
 do
 	local _, _, card_w, card_h = widget.get("blankcard", "card")
 
@@ -214,6 +223,13 @@ end
 -- todo : call update_draw_list when changing localization
 function M.flush(w, h)
 	update_draw_list(w, h)
+end
+
+-- change language/font
+function M.change_font(id)
+	FONT_ID = id
+	flush("change_font", id)
+	update_draw_list()
 end
 
 local function focus_map_test(region_name, flag, mx, my)
@@ -492,12 +508,7 @@ function M.screen_sector_coord(sec)
 end
 
 function M.init(args)
-	vcard.init(args)
-	vmap.init(args)
-	vtips.init(args)
-	vtrack.init(args)
-	vbutton.init(args)
-	vprogress.init(args)
+	flush("init", args)
 	VTIPS.hud = vtips.layer "hud"
 	VTIPS.desc = vtips.layer "desc"
 	VTIPS.hud.push()
