@@ -34,14 +34,18 @@ function addadv.choose_random_adv(c)
 	return choose
 end
 
-function addadv.add_choice(choose)
+function addadv.add_choice(choose, pick)
 	local n = #choose
 	for i = 1, n do
 		local c = choose[i]
 		local clone = util.shallow_clone(c, {})
 		local adv_index = clone._random
 		clone._random = nil
-		clone[adv_index] = util.shallow_clone(c[adv_index], { chosen = true })
+		local adv = {}
+		if not pick then
+			adv.chosen = true
+		end
+		clone[adv_index] = util.shallow_clone(c[adv_index], adv)
 		card.gen_desc(clone)
 		clone[adv_index]._name = "$(adv.choose.value)"
 		clone._choose = adv_index
@@ -121,7 +125,8 @@ function addadv.choose_or_random(choose, c, advs)
 	end
 end
 
-function addadv.choose_value(c, adv_index)
+-- pick = true, no cicle (evoke effect)
+function addadv.choose_value(c, adv_index, pick)
 	vdesktop.transfer("float", c, "deck")
 	flow.sleep(5)
 	local cards = {}
@@ -134,12 +139,13 @@ function addadv.choose_value(c, adv_index)
 			suit = adv_suit,
 			value = i,
 			era = c.era,
-			chosen = i,
 		}
-		
 		clone[adv_index] = adv
 		card.gen_desc(clone)
-		adv._circle = "[blue][circle][n]"
+		if not pick then
+			adv.chosen = i
+			adv._circle = "[blue][circle][n]"
+		end
 		cards[clone] = true
 		vdesktop.add("deck", clone)
 		vdesktop.transfer("deck", clone, "float")
@@ -176,7 +182,9 @@ function addadv.choose_value(c, adv_index)
 			flow.sleep(20)
 			c[adv_index].value = clone[adv_index].value
 			c[adv_index].era = clone.era
-			c[adv_index].chosen = true
+			if not pick then
+				c[adv_index].chosen = true
+			end
 			card.gen_desc(c)
 			vcard.flush(c)
 			vdesktop.replace("float", clone, c)

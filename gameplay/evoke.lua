@@ -17,7 +17,7 @@ local class = require "core.class"
 local name = require "gameplay.name"
 local action = rules.action
 local table = table
-global assert, error, tostring, next, pairs, print
+global assert, error, tostring, next, pairs, print, print_r
 
 local WARNING_MASK <const> = ui.card.mask_warning
 local LIMIT <const> = rules.grow.limit
@@ -302,52 +302,6 @@ function advancement.M(focus_state)
 	vdesktop.transfer("float", world, "colony")
 end
 
-local function pick_suit(c, focus_state)
-	vtips.set()
-	vdesktop.transfer("float", c, "deck")
-	flow.sleep(5)
-	c.adv1 = {}
-	local suits = {}
-	for _, suit in pairs(SUITS) do
-		local clone = util.shallow_clone(c, {})
-		clone.name = "$(card.pick.suit)"
-		clone.adv1 = { suit = suit }
-		card.gen_desc(clone)
-		vdesktop.add("deck", clone)
-		vdesktop.transfer("deck", clone, "float")
-		flow.sleep(5)
-		suits[clone] = suit
-		vcard.mask(clone, true)
-	end
-	local desc = {}
-	while true do
-		if mouse.get(focus_state) then
-			local suit = suits[focus_state.object]
-			if suit then
-				desc.suit = "$(civ.advancement."..suit..")"
-				vtips.set("tips.evoke.K.picksuit", desc)
-			elseif focus_state.object then
-				vtips.set "tips.evoke.K.picksuit.advice"
-			else
-				vtips.set()
-			end
-		end
-		local suit = suits[mouse.click(focus_state, "left")]
-		if suit then
-			c.adv1.suit = suit
-			for clone in pairs(suits) do
-				vdesktop.transfer("float", clone, "deck")
-				flow.sleep(5)
-			end
-			card.gen_desc(c)
-			vdesktop.add("deck", c)
-			vdesktop.transfer("deck", c, "float")
-			return c
-		end
-		flow.sleep(0)
-	end
-end
-
 local function add_suit(c, index)
 	local adv = {}
 	c[index] = adv
@@ -362,17 +316,103 @@ local function add_suit(c, index)
 	flow.sleep(5)
 end
 
+local function pick_suit(c, focus_state, adv_index)
+	vtips.set()
+	vdesktop.transfer("float", c, "deck")
+	flow.sleep(5)
+	local suits = {}
+	for _, suit in pairs(SUITS) do
+		local clone = util.shallow_clone(c, {})
+		clone.name = "$(card.pick.suit)"
+		clone[adv_index] = { suit = suit }
+		card.gen_desc(clone)
+		vdesktop.add("deck", clone)
+		vdesktop.transfer("deck", clone, "float")
+		flow.sleep(5)
+		suits[clone] = suit
+		vcard.mask(clone, true)
+	end
+	-- random choice
+	local clone = util.shallow_clone(c, {})
+	clone.name = "$(card.pick.suit.random)"
+	card.gen_desc(clone)
+	vdesktop.add("deck", clone)
+	vdesktop.transfer("deck", clone, "float")
+	flow.sleep(5)
+	suits[clone] = true
+	vcard.mask(clone, true)
+
+	local desc = {}
+	while true do
+		if mouse.get(focus_state) then
+			local suit = suits[focus_state.object]
+			if suit then
+				if suit == true then
+					vtips.set("tips.evoke.K.picksuit.random")
+				else
+					desc.suit = "$(civ.advancement."..suit..")"
+					vtips.set("tips.evoke.K.picksuit", desc)
+				end
+			elseif focus_state.object then
+				vtips.set "tips.evoke.K.picksuit.advice"
+			else
+				vtips.set()
+			end
+		end
+		local suit = suits[mouse.click(focus_state, "left")]
+		if suit then
+			local lastcard
+			for clone in pairs(suits) do
+				vdesktop.transfer("float", clone, "deck")
+				flow.sleep(5)
+				lastcard = clone
+			end
+			while vdesktop.moving("deck", lastcard) do
+				flow.sleep(0)
+			end
+			if suit == true then
+				return
+			end
+			c[adv_index] = { suit = suit }
+			card.gen_desc(c)
+			vdesktop.add("deck", c)
+			vdesktop.transfer("deck", c, "float")
+			return c
+		end
+		flow.sleep(0)
+	end
+end
+
 local function draw_tech(focus_state)
 	local c = desktop.draw_tech_card()
 	if c.type == "blank" then
 		-- pick the first suit
 		card.blank_tech(c)
-		pick_suit(c, focus_state)
-		vtips.set()
-		add_suit(c, "adv2")
-		add_suit(c, "adv3")
+		local p = pick_suit(c, focus_state, "adv1")
+		if p then
+			add_suit(c, "adv2")
+			add_suit(c, "adv3")
+			return true, c
+		else
+			add_suit(c, "adv1")
+		end
+		
+		local p = pick_suit(c, focus_state, "adv2")
+		if p then
+			add_suit(c, "adv3")
+			return true, c
+		else
+			add_suit(c, "adv2")
+		end
+
+		local p = pick_suit(c, focus_state, "adv3")
+		if p then
+			return true, c
+		else
+			add_suit(c, "adv3")
+		end
 	end
-	return c
+	return false, c
 end
 
 function advancement.K(focus_state)
@@ -380,8 +420,10 @@ function advancement.K(focus_state)
 	local cards = card.find_uncomplete("homeworld", {})
 	cards[card.card("homeworld",1)] = nil	-- remove homeworld
 	local tech, from = pick_card(focus_state, cards, "tips.evoke.K")
+	local pick
 	if tech == nil then
-		tech = draw_tech(focus_state)
+		pick, tech = draw_tech(focus_state)
+		vtips.set()
 	end
 	while vdesktop.moving("float", tech) do
 		flow.sleep(0)
@@ -389,12 +431,12 @@ function advancement.K(focus_state)
 	flow.sleep(30)
 	vdesktop.transfer("float", tech, "deck")
 	local choose = addadv.choose_random_adv(tech)
-	local n = #choose
-	addadv.add_choice(choose)
-	choose = table.move(choose, n+1, n*2, 1, {})
-	local advs = class.effect "ADVANCE"
+	addadv.add_choice(choose, not pick)
+	local advs = class.effect "ADVANCE"	-- never advancement can be used in evoke
+	-- choose only
 	local click_card = addadv.choose_or_random(choose, tech, advs)
-	addadv.choose_value(tech, click_card._choose)
+	-- pick no cicle , https://boardgamegeek.com/thread/3575002/skull-and-expand-effect-in-civilization-card
+	addadv.choose_value(tech, click_card._choose, not pick)
 	if card.complete(tech) then
 		name.tech(tech)
 	end

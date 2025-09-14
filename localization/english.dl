@@ -303,6 +303,8 @@ english:
   card.adv : "${_suit|} ${_name|}"
   card.desc : "${_stage|} ${_desc|}"
   card.circle : "${_circle|}"
+  card.pick.suit : "[blue]Pick Suit[n]"
+  card.pick.suit.random : "[blue]Random Suit[n]"
   CHOOSE : "Choose Action"
   START : START
   ADVANCE : ADVANCE

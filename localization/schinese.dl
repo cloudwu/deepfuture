@@ -96,7 +96,8 @@ schinese:
   tips.evoke.K.exist : "[lbutton]提升这张$(card.type.tech)\n - 挑选一个提升项目"
   tips.evoke.K.advice : " - 抽取一张$(card.type.tech)\n - 提升$(desc.place.homeworld)的$(card.type.tech)"
   tips.evoke.K.picksuit : "[lbutton]为这张$(card.type.tech)挑选${suit}"
-  tips.evoke.K.picksuit.advice : "为这张$(card.type.tech)挑选提升类型"
+  tips.evoke.K.picksuit.random : "[lbutton]抽取一张卡决定提升类型"
+  tips.evoke.K.picksuit.advice : "为这张$(card.type.tech)挑选提升类型\n - 也可以随机抽一张卡决定花色\n - 之后可挑选具体提升项目"
   tips.settle.capture : "[lbutton]占领位于 ${world.sector} 星区[sector]的${world.name}\n - 移动到$(desc.place.colony)\n - [blue]$(action.power)[n]行动\n - [blue]$(action.advance)[n]行动"
   tips.settle.hand : "[lbutton]殖民这张$(card.type.world)\n - 放置到$(desc.place.colony)\n - 抽 1 [card]"
   tips.settle.blank : "[lbutton]在领地[sector]内殖民\n - 这张$(card.type.blank)变为$(card.type.world)\n - 星区[sector]在领地中选择\n - 放置到$(desc.place.colony)\n - 抽 1 [card]"
@@ -395,6 +396,7 @@ schinese:
   card.desc : "${_stage|} ${_desc|}"
   card.circle : "${_circle|}"
   card.pick.suit : "[blue]挑选提升类型[n]"
+  card.pick.suit.random : "[blue]随机抽取提升[n]"
   CHOOSE : 选择行动
   START : 开始
   ADVANCE : 提升
