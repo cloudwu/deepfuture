@@ -10,7 +10,6 @@ schinese:
   button.setting : "[gear]"
   button.menu.returngame : "返回游戏"
   button.menu.restart : "重新开始"
-  button.create_civilization : "创建文明奇观"
   tips.setup.homeworld : "[lbutton]选择 [blue]${world}[n] 作为母星"
   tips.setup.invalid : "请选择$(card.type.world)，这是${type}"
   tips.setup.newworld : "[lbutton]创建一张[blue]新的$(card.type.world)[n]作为母星\n - 因为手牌中没有$(card.type.world)"
@@ -29,7 +28,7 @@ schinese:
   tips.action.map.desc : "$(tips.grow.desc)"
   tips.action.track : "游戏进度条\n - $(hud.C.logo)文化 $(hud.M.logo)力量 $(hud.S.logo)稳定 $(hud.X.logo)异星\n - 应当避免[coin]落到[cross]\n - 尽可能将[coin]推进到[star]"
   tips.action.button_setting : "[lbutton]游戏菜单"
-  tips.action.evoke : " - 选择$(action.evoke)这张$(card.type.civ)\n"
+  tips.action.evoke : " - $(action.evoke)这张$(card.type.civ)\n"
   tips.button.plan : "[lbutton]创建并保留一张$(card.type.blank)\n - 指定$(card.type.blank)的类型\n - 弃掉所有其它手牌\n$(tips.action.finish)"
   tips.button.actionskip : "[lbutton]跳过 ${n} 个行动\n$(tips.action.finish)"
   tips.explain : "[rbutton]解释这张卡"
@@ -451,9 +450,6 @@ schinese:
   adv.infrastructure.name : 基建
   adv.infrastructure.desc : "$(adv.track.use)放置[cube]"
   adv.infrastructure.detail : "$(adv.track.use.detail)，然后在母星增加一个[cube]。"
-  adv.random.confirm : "[blue]请确认[n]"
-  adv.random.value : "[blue]随机抽取[n]"
-  adv.choose.value : "[blue]自主挑选[n]"
   adv.labor.name : 工作
   adv.labor.desc : "S+1"
   adv.labor.detail : "$(adv.track.C1)"
@@ -523,4 +519,6 @@ schinese:
   adv.ftl.name : 曲速
   adv.ftl.desc : "多移动一格"
   adv.ftl.detail : "在移动时增加一格航程，可以通过银河中心或敌对星区[sector]（但不可以停留）。" 
-  
+  adv.random.confirm : "[blue]请确认[n]"
+  adv.random.value : "[blue]随机抽取[n]"
+  adv.choose.value : "[blue]自主挑选[n]"
