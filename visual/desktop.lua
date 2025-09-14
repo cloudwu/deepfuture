@@ -515,8 +515,6 @@ function M.init(args)
 	BATCH = args.batch
 	FONT_ID = args.font_id
 	SPRITES = args.sprites
-	local font_id = args.font_id
-	local sprites = args.sprites
 	local width = args.width
 	local height = args.height
 	function update_draw_list(w, h)
@@ -525,11 +523,11 @@ function M.init(args)
 		set_hud(w, h)
 		for i = 1, #layouts do
 			local name = layouts[i]
-			DRAWLIST[name] = widget.draw_list(name, layouts[name], font_id, sprites)
+			DRAWLIST[name] = widget.draw_list(name, layouts[name], FONT_ID, SPRITES)
 		end
 	end
 	function update_desc_list()
-		DRAWLIST.describe = widget.draw_list("describe", layouts.describe, font_id, sprites)
+		DRAWLIST.describe = widget.draw_list("describe", layouts.describe, FONT_ID, SPRITES)
 	end
 	region.discard:add(desktop.discard)
 	local d = {
