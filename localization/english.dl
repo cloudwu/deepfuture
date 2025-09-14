@@ -81,7 +81,7 @@ english:
   tips.settle.map.desc : "$(tips.grow.desc)"
   tips.settle.map.advice : "Please select a sector you control\n - $(card.type.blank) will convert to $(card.type.world)"
   tips.battle.set : "[lbutton]Add sector ${sec} to battlefield\n - ${desc}"
-  tips.battle.set.invalid : "This sector cannot be a battlefield\n - Need a sector you control\n - Need adjacent enemy sectors"
+  tips.battle.set.invalid : "This sector cannot be a battlefield\n - Need a sector you control\n - Need adjacent rival sectors"
   tips.battle.set.advice : "Please select battlefield on the star map"
   tips.battle.buildup : "[lbutton]Add one unit [blue][people][n] to battlefield"
   tips.battle.effect : " - Both sides eliminate [blackman] at 1:1 ratio"
@@ -124,7 +124,7 @@ english:
   tips.track.invalid : "${type} track cannot be moved back further"
   tips.track.out : "Please select a track to move back one space"
   tips.upkeep.valid : "[lbutton]Add a [cube] to this card"
-  tips.upkeep.full : "This card's [cube] space is full"
+  tips.upkeep.full : "This card's [cube] space is full" 
   tips.upkeep.invalid  : "Please select a card in the homeworld area"
   tips.exploration.from : "[lbutton]Move a [people] from sector ${from}"
   tips.exploration.invalid : "Please select a sector with [people]"
@@ -227,17 +227,17 @@ english:
   action.advance.desc : "Advance [planet] planet or [tech] technology"
   action.advance.detail : "Advance your homeworld or colonies once, or add a new $(card.type.tech) to homeworld, or advance an incomplete $(card.type.tech) in homeworld"
   action.grow : "[heart]$(GROW)"
-  action.grow.desc : "Add 2 [people] population"
-  action.grow.desc.invalid : "No sectors available to add [people] population"
-  action.grow.detail : "Add 2 [people] population in sectors you control"
+  action.grow.desc : "Add 2 [people]"
+  action.grow.desc.invalid : "No sectors available to add [people]"
+  action.grow.detail : "Add 2 [people] in sectors you control"
   action.battle : "[hand]$(BATTLE)"
-  action.battle.desc : "Attack adjacent sectors"
-  action.battle.desc.safe : "No adjacent enemies, advance any [token]"
-  action.battle.detail : "Select a sector you control and its adjacent enemy sector, eliminate any number of your and enemy [people] population at 1:1 ratio. Number can be 0 or all. If you have no adjacent enemy sectors, advance any [token] one space"
+  action.battle.desc : "Attack adjacent [sector]"
+  action.battle.desc.safe : "No adjacent rivals, advance any [token]"
+  action.battle.detail : "Select a sector you control and its adjacent rival sector, eliminate any number of your and rival [people] at 1:1 ratio. Number can be 0 or all. If you have no adjacent rival sectors, advance any [token] one space"
   action.expand : "[foot]$(EXPAND)"
-  action.expand.desc : "Send [people] population to adjacent sectors"
-  action.expand.detail : "Send at least one [people] population to adjacent empty sectors\n - Destination has no enemies\n - Destination population not at limit\n - Cannot lose control of departure sector as a result"
-  action.expand.desc.invalid : "No movable population [blue][people][n] available"
+  action.expand.desc : "Send [people] to adjacent [sector]"
+  action.expand.detail : "Send at least one [people] to adjacent empty sectors\n - Destination has no enemies\n - Destination [people] not at limit\n - Cannot lose control of departure sector as a result"
+  action.expand.desc.invalid : "No movable [blue][people][n] available"
   phase.setup : Setup
   phase.start : Start
   phase.discard : Discard
@@ -312,7 +312,14 @@ english:
   SETTLE : SETTLE
   GROW : GROW
   FREEACTION : "Colonization Bonus:"
-  adv.track.use : "Move back [token];"
+  START.card : START
+  ADVANCE.card : ADV
+  EXPAND.card : EXP
+  BATTLE.card : BAT
+  POWER.card : POW
+  SETTLE.card : SET
+  GROW.card : GROW
+  adv.track.use : "Back [token];"
   adv.track.use.detail : "Select any [token] to move back one space (cannot move to [cross] position)"
   adv.track.C1 : "Advance [token] on C track one space, [token] reaching [star] position is a prerequisite for [culture] Culture victory"
   adv.track.C2 : "Advance [token] on C track two spaces, [token] reaching [star] position is a prerequisite for [culture] Culture victory"
@@ -320,7 +327,7 @@ english:
   adv.track.X1 : "Advance [token] on X track one space, [token] reaching [star] position is a prerequisite for [xeno] Xenology victory"
   adv.track.S1 : "Advance [token] on S track one space, [token] reaching [star] position is a prerequisite for [stable] Stability victory"
   adv.computation.name : Computation
-  adv.computation.desc : "Draw [card]+1;Discard 1[discard]"
+  adv.computation.desc : "Draw 1[card]; 1[discard]"
   adv.computation.detail : "Draw 1 card and add to hand, then discard 1 hand card."
   adv.engineering.name : Engineering
   adv.engineering.desc : "M+1"
@@ -332,10 +339,10 @@ english:
   adv.weapons.desc : "M+1"
   adv.weapons.detail : "$(adv.track.M1)"
   adv.industry.name : Industry
-  adv.industry.desc : "Discard 1[discard];Draw [card]+2"
+  adv.industry.desc : "1[discard];Draw 2[card]"
   adv.industry.detail : "First discard 1 hand card, then draw 2 cards and add to hand."
   adv.energy.name : Energy
-  adv.energy.desc : "Draw [card]+1"
+  adv.energy.desc : "Draw 1[card]"
   adv.energy.detail : "Draw 1 card and add to hand."
   adv.art.name : Art
   adv.art.desc : "C+1"
@@ -350,13 +357,13 @@ english:
   adv.literature.desc : "C+2"
   adv.literature.detail : "$(adv.track.C2)"
   adv.government.name : Government
-  adv.government.desc : "Advance colonized planet"
+  adv.government.desc : "Add an advancement to a world when settling it"
   adv.government.detail : "Immediately advance the planet colonized this time."
   adv.society.name : Society
-  adv.society.desc : "Colonize a planet"
+  adv.society.desc : "May settle on a new world"
   adv.society.detail : "Regardless of whether hand contains $(card.type.world) or $(card.type.blank), can create a new $(card.type.world) or convert a $(card.type.blank) in hand for colonization. This avoids inability to initiate [blue]$(action.settle)[n] action."
   adv.infrastructure.name : Infrastructure
-  adv.infrastructure.desc : "$(adv.track.use)Place [cube]"
+  adv.infrastructure.desc : "$(adv.track.use)Place 1[cube]"
   adv.infrastructure.detail : "$(adv.track.use.detail), then add a [cube] to homeworld."
   adv.labor.name : Labor
   adv.labor.desc : "S+1"
@@ -368,14 +375,14 @@ english:
   adv.medicine.desc : "S+1"
   adv.medicine.detail : "$(adv.track.S1)"
   adv.biology.name : Biology
-  adv.biology.desc : "Different sector +1[people]"
+  adv.biology.desc : "+1[people] in diff [sector]"
   adv.biology.detail : "Additionally select another sector you control and add one [people] population."
   adv.genetics.name : Genetics
   adv.genetics.desc : "+2[people]"
   adv.genetics.detail : "Select a sector that gained [people] population and add two more [people] population."
   adv.history.name : History
-  adv.history.desc : "Look at draw pile +1"
-  adv.history.detail : "Look at one additional card from the top of draw pile, can stack."
+  adv.history.desc : "Look 1 more [card]"
+  adv.history.detail : "Look at one additional card from the top of deck, can stack."
   adv.education.name : Education
   adv.education.desc : "X+1"
   adv.education.detail : "$(adv.track.X1)"
@@ -386,13 +393,13 @@ english:
   adv.astronomy.desc : "X+1"
   adv.astronomy.detail : "$(adv.track.X1)"
   adv.chemistry.name : Chemistry
-  adv.chemistry.desc : "Redraw advancement"
+  adv.chemistry.desc : "Redraw generating"
   adv.chemistry.detail : "If unsatisfied with the drawn advancement type or entry, redraw once. Can be used when determining advancement type during new $(card.type.tech) creation."
   adv.physics.name : Physics
-  adv.physics.desc : "Tech advancement choice +1"
+  adv.physics.desc : "Choose +1 on a tech"
   adv.physics.detail : "Can additionally select advancement entries on $(card.type.tech) once more, can stack up to twice."
   adv.economy.name : Economy
-  adv.economy.desc : "$(adv.track.use)Draw [card]+2"
+  adv.economy.desc : "$(adv.track.use)Draw 2[card]"
   adv.economy.detail : "$(adv.track.use.detail), then draw two cards and add to hand."
   adv.diplomacy.name : Diplomacy
   adv.diplomacy.desc : "C+2"
@@ -404,11 +411,11 @@ english:
   adv.construction.desc : "C+2"
   adv.construction.detail : "$(adv.track.C2)"
   adv.military.name : Military
-  adv.military.desc : "Open a new battlefield"
-  adv.military.detail : "Additionally designate one friendly sector and one enemy sector to join the war, can designate previously selected sectors."
+  adv.military.desc : "Battle another 2[sector]"
+  adv.military.detail : "Additionally designate one friendly sector and one rival sector to join the war, can designate previously selected sectors."
   adv.defense.name : Defense
-  adv.defense.desc : "Remove enemy 1[people]"
-  adv.defense.detail : "Remove 1 enemy [people] from participating enemy sectors."
+  adv.defense.desc : "[people]-1 from battle"
+  adv.defense.detail : "Remove 1 rival [people] from participating rival sectors."
   adv.exploration.name : Exploration
   adv.exploration.desc : "$(adv.track.use)Move 1[people]"
   adv.exploration.detail : "$(adv.track.use.detail), then move one friendly [people] population one space. Losing control of departure sector after movement is allowed."
@@ -422,11 +429,11 @@ english:
   adv.devices.desc : "C+2"
   adv.devices.detail : "$(adv.track.C2)"
   adv.spacecraft.name : Spacecraft
-  adv.spacecraft.desc : "Move 1[people] to another space"
+  adv.spacecraft.desc : "1[people] to another [sector]"
   adv.spacecraft.detail : "From departure point, move 1[people] to another different sector."
   adv.ftl.name : FTL
-  adv.ftl.desc : "Move one additional space"
-  adv.ftl.detail : "When moving, add one space to range, can pass through galactic center or enemy sectors (but cannot stop)."
+  adv.ftl.desc : "Move on extra [sector]"
+  adv.ftl.detail : "When moving, add one space to range, can pass through galactic center or rival [sector] (but cannot stop)."
   adv.random.confirm : "[blue]Please confirm[n]"
   adv.random.value : "[blue]Random draw[n]"
   adv.choose.value : "[blue]Free choice[n]"

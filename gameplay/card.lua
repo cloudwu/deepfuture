@@ -444,7 +444,7 @@ local function gen_adv_desc(adv)
 		adv._name = advancement.info(adv_name, "name").. "." .. adv.era
 		adv._desc = advancement.info(adv_name, "desc")
 		local stage = advancement.stage(adv.suit, adv.value)
-		adv._stage = "[[$(".. stage .. ")]"
+		adv._stage = "[[$(".. stage .. ".card)]"
 		adv._stage_focus = "[blue]" .. adv._stage .. "[n]"
 		adv._stage_use = "[40000000]" .. adv._stage .. "[n]"
 		adv._stage_normal = adv._stage

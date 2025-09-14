@@ -25,7 +25,9 @@ end
 function localization.load(source)
 	TEXT = {}
 	for k,v in pairs(source) do
-		TEXT[k] = nil
+		TEXT[k] = v
+	end
+	for k,v in pairs(source) do
 		TEXT[k] = substitution(v)
 	end
 end

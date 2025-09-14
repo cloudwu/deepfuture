@@ -404,6 +404,13 @@ schinese:
   SETTLE : 殖民
   GROW : 发展
   FREEACTION : "殖民奖励："
+  START.card : 开始
+  ADVANCE.card : 提升
+  EXPAND.card : 扩张
+  BATTLE.card : 战斗
+  POWER.card : 力量
+  SETTLE.card : 殖民
+  GROW.card : 发展
   adv.track.use : "退后[token]；"
   adv.track.use.detail : "选择任意[token]后退一格（不可移动到[cross]位置）"
   adv.track.C1 : "推进 C 条上的[token]一格，[token]抵达[star]位置是[culture]$(victory.culture)胜利的先决条件"

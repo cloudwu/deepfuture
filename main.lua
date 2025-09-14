@@ -137,8 +137,8 @@ end
 
 -- todo :  just a test
 local function switch_language(name)
-	print("switch to",name)
 	language.switch(name)
+	print("switch to",name)
 	local font_id = language.font_id(name)
 	vdesktop.change_font(font_id)
 	soluna.set_window_title(localization.convert "app.title")
