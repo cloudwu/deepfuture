@@ -6,6 +6,8 @@ setting :
 			font : 微软雅黑
 		macos :
 			font : "Yuanti SC"
+		linux :
+			font : "WenQuanYi Micro Hei"
 	english:
 		name : English
 		font : Arial
