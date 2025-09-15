@@ -310,7 +310,7 @@ schinese:
   victory.stability.title : "$(hud.S.logo)"
   victory.xeno : 异星胜利
   victory.xeno.title : "$(hud.X.logo)"
-  wonder.choose : "在以后的游戏中：\n[blue] - $(EXPAND)[n]到[sector] ${sector}\n - 弃掉手牌中的${suit}卡\n - 触发效果\n\n  [blue]${desc}[n]\n\n  # 为弃掉卡的数值",
+  wonder.choose : "在以后的游戏中：\n[blue] - $(EXPAND)[n]到[sector] ${sector}\n - 弃掉手牌中的${suit}卡\n - 触发效果\n\n  [blue]${desc}[n]\n\n  # 为弃掉卡的数值"
   wonder.choose.title : "[blue]选择奇迹[n] ${symbol}${suit}"
   wonder.suits.title : "[blue]选择由 ${suit} 触发奇迹[n]"
   wonder.suits.choose : "奇迹效果：\n\n  ${desc}\n\n触发条件：\n - $(EXPAND)[n]到[sector] ${sector}\n - 弃掉手牌中的${suit}卡"
