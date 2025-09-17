@@ -28,7 +28,7 @@ local FOCUS_COLOR <const> = config.hover
 local function update_text(obj, key)
 	local str = obj[key]
 	if not str then
-		return
+		return key
 	end
 	local label = localization.convert(str, obj)
 	return textconv.convert[label]
@@ -98,7 +98,8 @@ function button.draw(name, self)
 		obj.h = h
 		local func 
 		if self.size then
-			func = mattext.block(font.cobj(), FONT_ID, self.size, config.color, "CV")
+			local c = disable and config.font_disable or config.color
+			func = mattext.block(font.cobj(), FONT_ID, self.size, c, "CV")
 		else
 			func = disable and TEXT_DISABLE or TEXT
 		end
@@ -155,9 +156,9 @@ function button.test(name, flag, mx, my, w, h)
 	if x >= 0 and x < w and y >= 0 and y < h then
 		if not obj._env.disable then
 			obj.color = FOCUS_COLOR
+			mouse.set_focus(name, true)
+			return true
 		end
-		mouse.set_focus(name, true)
-		return true
 	end
 	obj.color = NORMAL_COLOR
 	return false

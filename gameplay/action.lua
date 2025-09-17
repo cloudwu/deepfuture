@@ -36,6 +36,11 @@ local BUTTONS = {
 	},
 }
 
+local MENU = {
+	"returngame",
+	{ "restart", "restart_confirm" }
+}
+
 local function button_enable(what, enable)
 	if what == nil then
 		for name,v in pairs(BUTTONS) do
@@ -370,7 +375,7 @@ local function choose_action(hands, evoke_cards, last_action)
 				return "skip"
 			end
 		elseif where == "button_setting" then
-			local r = menu()
+			local r = menu(MENU)
 			if r then
 				return r
 			end

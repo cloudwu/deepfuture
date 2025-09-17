@@ -46,16 +46,48 @@ menu :
 		padding : 10
 		gap : 10
 		justify : center
-		button1:
+		button:
 			region : menu1
 			height : 40
 			size : 24
-		button2:
+			level2 :
+				left : 200
+				width : 150
+				height : 400
+				gap : 10
+				button:
+					region : menu21
+					height : 40
+					size : 24
+				button:
+					region : menu22
+					height : 40
+					size : 24
+				button:
+					region : menu23
+					height : 40
+					size : 24
+				button:
+					region : menu24
+					height : 40
+					size : 24
+				button:
+					region : menu25
+					height : 40
+					size : 24
+				button:
+					region : menu26
+					height : 40
+					size : 24
+		button:
 			region : menu2
 			height : 40
 			size : 24
-		button3:
+		button:
 			region : menu3
 			height : 40
 			size : 24
-			
+		button:
+			region : menu4
+			height : 40
+			size : 24
