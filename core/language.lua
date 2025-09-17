@@ -6,14 +6,16 @@ local localization = require "core.localization"
 local soluna = require "soluna"
 local font = require "soluna.font"
 local sysfont = require "soluna.font.system"
+local vdesktop = require "visual.desktop"
 
-global print, assert, print_r, error
+global print, assert, print_r, error, pairs
 
 local LOCALIZATION_PATH = "localization/"
 local DOT <const> = 46	; assert(("."):byte() == DOT)
 
 local lang = {}
 local DATA
+local LANG = "schinese"
 
 function lang.init()
 	local data = {}
@@ -26,12 +28,20 @@ function lang.init()
 	DATA = data
 end
 
--- todo : flush visual
-function lang.switch(lang)
-	if DATA[lang] == nil then
-		lang = "schinese"	-- default language
+function lang.switch(name)
+	if DATA[name] == nil then
+		name = "schinese"	-- default language
 	end
-	localization.load(DATA[lang])
+	LANG = name
+	localization.load(DATA[name])
+end
+
+function lang.switch_flush(name)
+	lang.switch(name)
+	local font_id = lang.font_id(name)
+	vdesktop.change_font(font_id)
+	soluna.set_window_title(localization.convert "app.title")
+	vdesktop.change_font(font_id)
 end
 
 -- todo : read user settings
@@ -56,6 +66,28 @@ function lang.font_id(lang)
 		lang_setting.font_import = true
 	end
 	return font.name(gamefont)
+end
+
+function lang.menu(m)
+	local r = { "language" }
+	local i = 1
+	for k,v in pairs(DATA.setting) do
+		local key = "lang_" .. i
+		m[key] = {
+			lang = k,
+			name = v.name,
+			text = "button.menu.lang_select",
+			tips = "tips.menu.lang_select",
+			action = "lang_select",
+			font_id = lang.font_id(k),
+		}
+		i = i + 1
+		r[i] = key
+	end
+	m.language = {
+		name = DATA.setting[LANG].name
+	}
+	m[#m+1] = r
 end
 
 return lang

@@ -18,6 +18,7 @@ local menu = require "gameplay.menu"
 local mouse = require "core.mouse"
 local victory = require "gameplay.victory"
 local evoke = require "gameplay.evoke"
+local language = require "core.language"
 
 require "gameplay.effect"
 
@@ -38,8 +39,9 @@ local BUTTONS = {
 
 local MENU = {
 	"returngame",
-	{ "restart", "restart_confirm" }
+	{ "restart", "restart_confirm" },
 }
+language.menu(MENU)
 
 local function button_enable(what, enable)
 	if what == nil then
