@@ -36,6 +36,13 @@ function persist.get(entry)
 end
 
 function persist.load(filename)
+	if not file.exist(filename) then
+		if file.exist(filename .. ".save") then
+			os.rename(filename .. ".save", filename)
+		else
+			return false
+		end
+	end
 	return pcall(loadfile, filename)
 end
 
@@ -148,9 +155,9 @@ do
 	
 	function persist.save(filename, data)
 		data = data or DATA
-		local f <close> = io.open(filename, "wb")
+		local f <close>, err = io.open(filename .. ".saving", "wb")
 		if not f then
-			print ("Save to " .. filename .. " failed")
+			print ("Save to " .. filename .. " failed : ", err)
 			return false
 		end
 		data.version = version.full()
@@ -170,6 +177,10 @@ do
 			end
 		end
 		f:close()
+		os.remove(filename..".save")
+		os.rename(filename .. ".saving", filename .. ".save")
+		os.remove(filename)
+		os.rename(filename .. ".save", filename)
 		return true
 	end
 end

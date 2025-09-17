@@ -187,7 +187,7 @@ function card.add_seen()
 end
 
 function card.seen()
-	return GAME.seen
+	return GAME and GAME.seen or 0
 end
 
 function card.add_action(action)
@@ -413,6 +413,9 @@ function card.discard(card)
 end
 
 function card.count(pile)
+	if not GAME then
+		return 0
+	end
 	return #GAME[pile]
 end
 

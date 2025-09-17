@@ -1,6 +1,7 @@
 setting :
 	schinese :
 		name : 简体中文
+		english_name : "Simplified Chinese"
 		windows :
 			font : 微软雅黑
 		macos :

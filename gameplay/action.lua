@@ -41,6 +41,7 @@ local MENU = {
 	"returngame",
 	{ "restart", "restart_confirm" },
 }
+
 language.menu(MENU)
 
 local function button_enable(what, enable)

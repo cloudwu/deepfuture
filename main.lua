@@ -16,6 +16,7 @@ local track = require "gameplay.track"
 local vbutton = require "visual.button"
 local mouse = require "core.mouse"
 local text = require "soluna.text"
+local setting =require "core.setting"
 
 local utf8 = utf8
 local math = math
@@ -26,8 +27,9 @@ local args = ...
 
 text.init "asset/icons.dl"
 language.init()
+local app_setting = setting.load()
 
-local LANG <const> = language.get_default()
+local LANG <const> = app_setting.language or language.get_default()
 
 local callback = {}
 
@@ -55,14 +57,13 @@ function game.init()
 end
 
 function game.load()
-	card.load()
-	track.load()
-	map.load()
-	local game = persist.get "game"
-	if game then
-		return flow.state[game.phase]
+	local dir = setting.path()
+	card.profile("GAME", dir .. "save.txt")
+	local ok, phase = loadsave.load_game()
+	if ok then
+		return phase or "start"
 	else
-		return flow.state.setup
+		flow.enter "init"
 	end
 end
 
@@ -82,6 +83,7 @@ game.freepower = require "gameplay.freepower"
 game.freeadvance = require "gameplay.freeadvance"
 game.win = require "gameplay.win"
 game.nextgame = require "gameplay.nextgame"
+game.chooselang = require "gameplay.chooselang"
 
 function game.idle()
 	return flow.state.idle
@@ -96,13 +98,10 @@ local function run_game()
 		flow.enter "init"
 		return
 	end
-	local dir = soluna.gamedir "deepfuture"
-	card.profile("GAME", dir .. "save.txt")
-	local ok, phase = loadsave.load_game()
-	if ok then
-		flow.enter(phase or "start")
+	if app_setting.language == nil then
+		flow.enter "chooselang"
 	else
-		flow.enter "init"
+		flow.enter "load"
 	end
 end
 
@@ -129,6 +128,7 @@ function callback.frame(count)
 	local x, y = mouse.sync(count)
 	vdesktop.set_mouse(x, y)
 	flow.update()
+	-- todo :  don't flush card here
 	vdesktop.card_count(card.count "draw", card.count "discard", card.seen())
 	map.update()
 	vdesktop.draw(count)

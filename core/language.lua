@@ -7,6 +7,7 @@ local soluna = require "soluna"
 local font = require "soluna.font"
 local sysfont = require "soluna.font.system"
 local vdesktop = require "visual.desktop"
+local setting = require "core.setting"
 
 global print, assert, print_r, error, pairs
 
@@ -30,7 +31,7 @@ end
 
 function lang.switch(name)
 	if DATA[name] == nil then
-		name = "schinese"	-- default language
+		name = lang.get_default()
 	end
 	LANG = name
 	localization.load(DATA[name])
@@ -42,16 +43,19 @@ function lang.switch_flush(name)
 	vdesktop.change_font(font_id)
 	soluna.set_window_title(localization.convert "app.title")
 	vdesktop.change_font(font_id)
+	local s = setting.get()
+	s.language = LANG
+	setting.save()
 end
 
 -- todo : read user settings
 function lang.get_default()
 	local settings = soluna.settings()
-	local lang = settings.lang or "schinese"
+	local lang = settings.lang or "english"
 	
 	if not DATA[lang] then
 		print("Language " .. lang .. " not found, falling back to schinese")
-		lang = "schinese"
+		lang = "english"
 	end
 	
 	print("Using language: " .. lang)
@@ -76,6 +80,7 @@ function lang.menu(m)
 		m[key] = {
 			lang = k,
 			name = v.name,
+			english_name = v.english_name or v.name,
 			text = "button.menu.lang_select",
 			tips = "tips.menu.lang_select",
 			action = "lang_select",
