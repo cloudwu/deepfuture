@@ -136,9 +136,9 @@ local function draw_new(advs)
 	if c.type == "blank" then
 		interval()
 		card.blank_tech(c)
+		vtips.set()
+		add_suits(c, advs)
 	end
-	vtips.set()
-	add_suits(c, advs)
 	return c
 end
 
