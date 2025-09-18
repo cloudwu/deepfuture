@@ -63,7 +63,7 @@ function game.load()
 	if ok then
 		return phase or "start"
 	else
-		flow.enter "init"
+		return "init"
 	end
 end
 
