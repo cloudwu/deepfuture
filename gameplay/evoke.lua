@@ -521,7 +521,7 @@ function advancement.H(focus_state)
 				end
 				enemy = nil
 			end
-			if inc_track and track.check(object, 1) then
+			if inc_track and where == "track" and track.check(object, 1) then
 				vtips.set()
 				track.advance(object, 1)
 				track.focus(false)
