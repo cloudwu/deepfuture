@@ -49,3 +49,8 @@ suit :
 	K : skull
 	H : hand
 	F : foot
+credits :
+	font_size : 30
+	left_color : 0
+	right_color : 0x000080
+	gap : 20

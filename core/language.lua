@@ -64,6 +64,7 @@ function lang.get_default()
 end
 
 function lang.font_id(lang)
+	lang = lang or LANG
 	local lang_setting = DATA.setting[lang] or error ("No lang setting : " .. lang)
 	local gamefont = lang_setting.font or lang_setting[soluna.platform].font
 	if not lang_setting.font_import then

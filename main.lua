@@ -68,6 +68,7 @@ end
 local states = {
 	"chooselang",
 	"startmenu",
+	"credits",
 	"exit",
 	"setup",
 	"start",

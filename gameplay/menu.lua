@@ -59,6 +59,10 @@ function action.erasegame_confirm()
 	return "STARTMENU"
 end
 
+function action.credits()
+	return flow.state.credits
+end
+
 function action.lang_select(button_list, v)
 	button_list.language.name = v.name
 	language.switch_flush(v.lang)

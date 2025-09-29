@@ -383,6 +383,18 @@ function M.set_mouse(x, y)
 end
 
 local focus_state = {}
+local ADDITIONAL_LIST
+
+local function draw_additional()
+	for _, item in ipairs(ADDITIONAL_LIST) do
+		BATCH:add(item.obj, item.x, item.y)
+	end
+end
+
+function M.additional(list)
+	ADDITIONAL_LIST = list
+end
+
 function M.draw(count)
 	if CAMERA then open_camera() end
 	-- todo : find a better place to check unfocus :
@@ -397,6 +409,9 @@ function M.draw(count)
 	if CAMERA then close_camera() end
 	if DESC then
 		widget.draw(BATCH, DRAWLIST.describe)
+	end
+	if ADDITIONAL_LIST then
+		draw_additional()
 	end
 end
 
@@ -540,6 +555,13 @@ function M.init(args)
 	TESTLIST.desc = widget.test_list("describe", test)
 	update_draw_list()
 	update_test_list()
+end
+
+function M.describe_layout()
+	return {
+		left = { widget.get("describe", "left") },
+		right = { widget.get("describe", "right") },
+	}
 end
 
 return M
