@@ -560,6 +560,7 @@ english:
   credits.artist : "Artist"
   credits.designer : "Designer"
   credits.boardgame : "Boardgame Designer"
+  credits.engine : "Game Engine (Windows)"
   credits.macos : "MacOS Version"
   credits.linux : "Linux Vesion"
   credits.localization : "Localization"

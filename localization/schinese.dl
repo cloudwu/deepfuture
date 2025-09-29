@@ -561,6 +561,7 @@ schinese:
   credits.artist : "美术"
   credits.designer : "策划"
   credits.boardgame : "桌游设计"
+  credits.engine : "游戏引擎 Windows"
   credits.macos : "MacOS 版本"
   credits.linux : "Linux 版本"
   credits.localization : "本地化"
