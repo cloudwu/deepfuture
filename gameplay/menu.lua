@@ -73,6 +73,10 @@ function action.exit()
 	return flow.state.exit
 end
 
+function action.manual()
+	language.open_manual()
+end
+
 local desc = {}
 
 local function button_text_meta(button_list)

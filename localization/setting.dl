@@ -9,6 +9,7 @@ setting :
 		linux :
 			font : "WenQuanYi Micro Hei"
 		timefmt : "%Y/%m/%d %H:%M"
+		homepage : "https://blog.codingnow.com/2025/07/deep_future.html"
 	english:
 		name : English
 		windows :
@@ -18,3 +19,4 @@ setting :
 		linux :
 			font : "Noto Sans"
 		timefmt : "%b %d, %Y %H:%M"
+		homepage : "https://boardgamegeek.com/boardgame/194986/deep-future"

@@ -39,6 +39,7 @@ local BUTTONS = {
 
 local MENU = {
 	"returngame",
+	"manual",
 	"startmenu",
 	{ "restart", "restart_confirm" },
 	{ "erasegame", "erasegame_confirm" },

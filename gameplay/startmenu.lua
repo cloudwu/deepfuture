@@ -45,6 +45,7 @@ return function()
 	choose_profile(MENU)
 	language.menu(MENU)
 
+	MENU[#MENU+1] = "manual"
 	MENU[#MENU+1] = "exit"
 	return menu(MENU) or flow.state.startmenu
 end
