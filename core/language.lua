@@ -9,7 +9,7 @@ local sysfont = require "soluna.font.system"
 local vdesktop = require "visual.desktop"
 local setting = require "core.setting"
 
-global print, assert, print_r, error, pairs
+global print, assert, print_r, error, pairs, os
 
 local LOCALIZATION_PATH = "localization/"
 local DOT <const> = 46	; assert(("."):byte() == DOT)
@@ -93,6 +93,12 @@ function lang.menu(m)
 		name = DATA.setting[LANG].name
 	}
 	m[#m+1] = r
+end
+
+function lang.time(t)
+	local lang_setting = DATA.setting[LANG] or error ("No lang setting : " .. LANG)
+	local fmt = lang_setting.timefmt or error ("No timefmt : " .. LANG)
+	return os.date(fmt, t)
 end
 
 return lang

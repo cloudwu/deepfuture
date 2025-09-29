@@ -21,7 +21,7 @@ local setting =require "core.setting"
 local utf8 = utf8
 local math = math
 local io = io
-global require, assert, print
+global require, assert, print, ipairs
 
 local args = ...
 
@@ -57,8 +57,6 @@ function game.init()
 end
 
 function game.load()
-	local dir = setting.path()
-	card.profile("GAME", dir .. "save.txt")
 	local ok, phase = loadsave.load_game()
 	if ok then
 		return phase or "start"
@@ -67,23 +65,31 @@ function game.load()
 	end
 end
 
-game.setup = require "gameplay.setup"
-game.start = require "gameplay.start"
-game.action = require "gameplay.action"
-game.payment = require "gameplay.payment"
-game.challenge = require "gameplay.challenge"
-game.loss = require "gameplay.loss"
-game.power = require "gameplay.power"
-game.advance = require "gameplay.advance"
-game.grow = require "gameplay.grow"
-game.settle = require "gameplay.settle"
-game.battle = require "gameplay.battle"
-game.expand = require "gameplay.expand"
-game.freepower = require "gameplay.freepower"
-game.freeadvance = require "gameplay.freeadvance"
-game.win = require "gameplay.win"
-game.nextgame = require "gameplay.nextgame"
-game.chooselang = require "gameplay.chooselang"
+local states = {
+	"chooselang",
+	"startmenu",
+	"exit",
+	"setup",
+	"start",
+	"action",
+	"payment",
+	"challenge",
+	"loss",
+	"power",
+	"advance",
+	"grow",
+	"settle",
+	"battle",
+	"expand",
+	"freepower",
+	"freeadvance",
+	"win",
+	"nextgame",
+}
+
+for _, action in ipairs(states) do
+	game[action] = require ("gameplay." .. action)
+end
 
 function game.idle()
 	return flow.state.idle
@@ -95,13 +101,13 @@ local function run_game()
 	if test.init() then
 		-- don't touch savefile when test
 		card.profile "TEST"
-		flow.enter "init"
+		flow.enter(flow.state.init)
 		return
 	end
 	if app_setting.language == nil then
-		flow.enter "chooselang"
+		flow.enter(flow.state.chooselang)
 	else
-		flow.enter "load"
+		flow.enter(flow.state.startmenu)
 	end
 end
 

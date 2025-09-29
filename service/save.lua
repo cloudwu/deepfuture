@@ -2,11 +2,12 @@ local soluna = require "soluna"
 local persist = require "gameplay.persist"
 local util = require "core.util"
 local advancement = require "gameplay.advancement"
+local lfs = require "soluna.lfs"
 local settings = soluna.settings()
 local math = math
 local string = string
 local table = table
-global error, assert, tostring, type, pairs, print_r, print, ipairs
+global error, assert, tostring, type, pairs, print_r, print, ipairs, os
 
 local profile = {}
 
@@ -333,6 +334,25 @@ function save.init_deck(name)
 	local data = profile[name] or error ("new_profile first : " .. tostring(name))
 	data.deck = {}
 	print("INITDECK")
+end
+
+function save.profile_info(filename)
+	print("INFO", filename)
+	local ok, r = persist.load(filename, true)
+	if ok then
+		r.file_attributes = lfs.attributes(filename)
+	end
+	return ok, r
+end
+
+function save.profile_remove(name)
+	local data = profile[name]
+	if data then
+		profile[name] = nil
+		local filename = data._filename
+		print("REMOVE", filename)
+		os.remove(filename)
+	end
 end
 
 return save

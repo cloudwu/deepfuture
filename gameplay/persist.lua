@@ -13,12 +13,14 @@ local DATA = {}
 
 local persist = {}
 
-local function loadfile(filename)
+local function loadfile(filename, readonly)
 	local data = datalist.parse(file.loader(filename))
-	if data.version == nil or version.older_than(data.version, SUPPORT_VERSION) then
-		error ("Invalid version : " .. data.version)
+	if not readonly then
+		if data.version == nil or version.older_than(data.version, SUPPORT_VERSION) then
+			error ("Invalid version : " .. data.version)
+		end
+		DATA = data
 	end
-	DATA = data
 	return data
 end
 
@@ -35,7 +37,7 @@ function persist.get(entry)
 	return DATA[entry]
 end
 
-function persist.load(filename)
+function persist.load(filename, readonly)
 	if not file.exist(filename) then
 		if file.exist(filename .. ".save") then
 			os.rename(filename .. ".save", filename)
@@ -43,7 +45,7 @@ function persist.load(filename)
 			return false
 		end
 	end
-	return pcall(loadfile, filename)
+	return pcall(loadfile, filename, readonly)
 end
 
 do

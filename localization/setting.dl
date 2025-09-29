@@ -8,6 +8,7 @@ setting :
 			font : "Yuanti SC"
 		linux :
 			font : "WenQuanYi Micro Hei"
+		timefmt : "%Y/%m/%d %H:%M"
 	english:
 		name : English
 		windows :
@@ -16,3 +17,4 @@ setting :
 			font : Arial
 		linux :
 			font : "Noto Sans"
+		timefmt : "%b %d, %Y %H:%M"

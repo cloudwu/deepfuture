@@ -21,6 +21,10 @@ function card.profile(profile, filename)
 	loadsave.new_profile (profile, filename)
 end
 
+function card.cleanall()
+	loadsave.remove_current_profile()
+end
+
 --[[
 suits:
 

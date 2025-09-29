@@ -49,9 +49,28 @@ function action.restart_confirm()
 	return "RESTART"
 end
 
+function action.startmenu()
+	return "STARTMENU"
+end
+
+function action.erasegame_confirm()
+	card.cleanall()
+	-- todo: erase game
+	return "STARTMENU"
+end
+
 function action.lang_select(button_list, v)
 	button_list.language.name = v.name
 	language.switch_flush(v.lang)
+end
+
+function action.profile_select(button_list, v)
+	card.profile(v.profile, v.savefile)
+	return flow.state.load
+end
+
+function action.exit()
+	return flow.state.exit
 end
 
 local desc = {}

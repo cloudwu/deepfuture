@@ -1,5 +1,6 @@
 local language = require "core.language"
 local menu = require "gameplay.menu"
+local flow = require "core.flow"
 local table = table
 
 global print_r, ipairs
@@ -20,7 +21,6 @@ end
 
 return function()
 	local MENU = init_menu()
-	print_r(MENU)
 	menu(MENU)
-	return "load"
+	return flow.state.load
 end

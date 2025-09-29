@@ -83,4 +83,12 @@ function M.new_profile(name, filename)
 	ltask.send(SERVICE, "new_profile", name, filename)
 end
 
+function M.profile_info(filename)
+	return ltask.call(SERVICE, "profile_info", filename)
+end
+
+function M.remove_current_profile()
+	ltask.call(SERVICE, "profile_remove", PROFILE)
+end
+
 return M

@@ -39,7 +39,9 @@ local BUTTONS = {
 
 local MENU = {
 	"returngame",
+	"startmenu",
 	{ "restart", "restart_confirm" },
+	{ "erasegame", "erasegame_confirm" },
 }
 
 language.menu(MENU)
@@ -439,6 +441,8 @@ return function ()
 		end
 	elseif next_action == "RESTART" then
 		return flow.state.init
+	elseif next_action == "STARTMENU" then
+		return flow.state.startmenu
 	elseif next_action ~= "skip" then
 		card.add_action(next_action)
 		return flow.state[next_action]

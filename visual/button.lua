@@ -94,13 +94,14 @@ function button.draw(name, self)
 	local label = obj._text
 	local disable = obj._env.disable
 	local font_id = obj._env.font_id
+	local font_size = obj._env.font_size
 	if w ~= obj.w or h ~= obj.h or label == nil then
 		obj.w = w
 		obj.h = h
 		local func
-		if self.size or font_id then
+		if self.size or font_id or font_size then
 			local c = disable and config.font_disable or config.color
-			func = mattext.block(font.cobj(), font_id or FONT_ID, self.size, c, "CV")
+			func = mattext.block(font.cobj(), font_id or FONT_ID, font_size or self.size, c, "CV")
 		else
 			func = disable and TEXT_DISABLE or TEXT
 		end
