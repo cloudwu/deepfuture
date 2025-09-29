@@ -2,6 +2,7 @@ local language = require "core.language"
 local menu = require "gameplay.menu"
 local setting = require "core.setting"
 local loadsave = require "core.loadsave"
+local flow = require "core.flow"
 
 global print, print_r
 
@@ -45,5 +46,5 @@ return function()
 	language.menu(MENU)
 
 	MENU[#MENU+1] = "exit"
-	return menu(MENU)
+	return menu(MENU) or flow.state.startmenu
 end
