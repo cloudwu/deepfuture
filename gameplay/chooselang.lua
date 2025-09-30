@@ -22,5 +22,5 @@ end
 return function()
 	local MENU = init_menu()
 	menu(MENU)
-	return flow.state.load
+	return flow.state.startmenu
 end

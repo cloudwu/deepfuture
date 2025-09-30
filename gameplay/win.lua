@@ -380,6 +380,9 @@ end
 
 local function name_sector(sector)
 	local n = name.sector(sector)
+	while map.exist_name(n) do
+		n =  name.sector(sector)
+	end
 	local x, y = vdesktop.screen_sector_coord(sector)	
 	vdesktop.camera_focus(x, y, 5)
 	flow.sleep(30)

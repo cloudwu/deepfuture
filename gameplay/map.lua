@@ -45,6 +45,21 @@ function map.get_name(sec)
 	return sector_name and sector_name[sec]
 end
 
+local sector_name_set = {}
+
+local function exist_names(names)
+	if names == nil then
+		return
+	end
+	for k, name in pairs(names) do
+		sector_name_set[name] = true
+	end
+end
+
+function map.exist_name(name)
+	return sector_name_set[name]
+end
+
 function map.set_sector_name(sec, name)
 	if sector_name == nil then
 		sector_name = persist.init("map", {})
@@ -53,6 +68,7 @@ function map.set_sector_name(sec, name)
 		-- if sector is named, ignore
 		return
 	end
+	sector_name_set[name] = true
 	local obj = {
 		name = name
 	}
@@ -74,6 +90,7 @@ end
 function map.load()
 	galaxy = persist.get "galaxy"
 	sector_name = persist.get "map"
+	sector_name_set = exist_names(sector_name)
 	colony = {}
 	util.dirty_trigger(map.update)
 	util.dirty_trigger(map.is_safe)

@@ -40,7 +40,7 @@ end
 
 function name.sector(sec)
 	assert(type(sec) == "number")
-	return "NOWHERE"
+	return language.random_sector_name()
 end
 
 return name

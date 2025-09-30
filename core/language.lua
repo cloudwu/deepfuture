@@ -122,4 +122,19 @@ function lang.random_world_name()
 	return n
 end
 
+local random_sector = 0
+function lang.random_sector_name()
+	local names = DATA.sector[LANG]
+	local t = #names
+	if t == 0 then
+		local name = "NOWHERE" .. random_sector
+		random_sector = random_sector + 1
+		return name
+	end
+	local r = math.random(1, t)
+	local n = names[r]
+	names[t] = nil
+	return n
+end
+
 return lang
