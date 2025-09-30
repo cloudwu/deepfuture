@@ -1,5 +1,6 @@
 local ltask = require "ltask"
 local persist = require "gameplay.persist"
+local name = require "gameplay.name"
 local math = math
 
 -- see service/save.lua
@@ -13,13 +14,13 @@ local PROFILE
 function M.load_game()
 	local ok, data = ltask.call(SERVICE, "load_game", PROFILE)
 	if ok then
+		name.reset(data.deck)
 		persist.init("deck", data.deck)
 		persist.init("history", data.history)
 		persist.init("game", data.game)
 		persist.init("track", data.track)
 		persist.init("galaxy", data.galaxy)
 		persist.init("map", data.map)
-		-- 加载卡片并重新生成描述信息
 		local card = require "gameplay.card"
 		card.load()
 		local track = require "gameplay.track"

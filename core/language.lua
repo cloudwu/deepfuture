@@ -6,11 +6,10 @@ local localization = require "core.localization"
 local soluna = require "soluna"
 local font = require "soluna.font"
 local sysfont = require "soluna.font.system"
-local vdesktop = require "visual.desktop"
 local setting = require "core.setting"
 local url = require "soluna.url"
 
-global print, assert, print_r, error, pairs, os
+global print, assert, print_r, error, pairs, os, math
 
 local LOCALIZATION_PATH = "localization/"
 local DOT <const> = 46	; assert(("."):byte() == DOT)
@@ -38,7 +37,7 @@ function lang.switch(name)
 	localization.load(DATA[name])
 end
 
-function lang.switch_flush(name)
+function lang.switch_flush(name, vdesktop)
 	lang.switch(name)
 	local font_id = lang.font_id(name)
 	vdesktop.change_font(font_id)
@@ -106,6 +105,21 @@ end
 function lang.open_manual()
 	local lang_setting = DATA.setting[LANG] or error ("No lang setting : " .. LANG)
 	url.open(lang_setting.homepage)
+end
+
+local random_world = 0
+function lang.random_world_name()
+	local names = DATA.world[LANG]
+	local t = #names
+	if t == 0 then
+		local name = "NONAME" .. random_world
+		random_world = random_world + 1
+		return name
+	end
+	local r = math.random(1, t)
+	local n = names[r]
+	names[t] = nil
+	return n
 end
 
 return lang

@@ -145,9 +145,9 @@ end
 function callback.char(c)
 	local c = utf8.char(c)
 	if c == "e" then
-		language.switch_flush "english"
+		language.switch_flush("english", vdesktop)
 	elseif c == "c" then
-		language.switch_flush "schinese"
+		language.switch_flush("schinese", vdesktop)
 	end
 -- todo : name card
 --	print("Char", c)

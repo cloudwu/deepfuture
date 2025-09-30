@@ -87,6 +87,7 @@ function card.init_deck()
 	HISTORY = persist.init("history", {
 		era = 0
 	})
+	genname.reset()
 end
 
 local areas = { "draw", "discard", "hand", "neutral", "homeworld", "colony", "challenge" }
@@ -119,19 +120,16 @@ function card.load()
 	GAME = persist.get "game"
 	HISTORY = persist.get "history"
 	DECK = persist.get "deck"
-	
 	for id, c in ipairs(DECK) do
 		c._id = id
 		card.gen_desc(c)
 		new_card(c)
 		
-		-- 恢复维护方块视觉显示
 		local upkeep_count = GAME.upkeep[id]
 		if upkeep_count and upkeep_count > 0 then
 			c._upkeep = UPKEEP_LOGO:rep(upkeep_count)
 		end
 		
-		-- 刷新卡片视觉显示
 		vcard.flush(c)
 	end
 end
