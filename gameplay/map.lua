@@ -11,6 +11,7 @@ local map = {}
 
 local galaxy = {}
 local sector_name
+local sector_name_set = {}
 local colony = {}
 local battlefield = {}
 local expand = {}
@@ -39,13 +40,14 @@ end) ()
 function map.setup()
 	galaxy = persist.init("galaxy", {})
 	colony = {}
+	sector_name = nil
+	sector_name_set = {}
+	map.sync()
 end
 
 function map.get_name(sec)
 	return sector_name and sector_name[sec]
 end
-
-local sector_name_set = {}
 
 local function exist_names(names)
 	if names == nil then
@@ -97,6 +99,7 @@ function map.load()
 	util.dirty_trigger(map.can_move)
 	util.dirty_trigger(map.can_grow)
 	util.dirty_trigger(map.wonder_number)
+	map.sync()
 end
 
 local function add_people(sec, n, camp)
