@@ -34,6 +34,13 @@ workspace :
 				size : 20
 				text_align : T
 				env : text
+version :
+	position : absolute
+	bottom : 20
+	right : 20
+	left : 0
+	text : desc.version
+	text_align : R
 text :
 	position : absolute
 	direction : row

@@ -255,6 +255,7 @@ english:
   tips.adv.K.choice : " - 1 $(adv.history.name) 2 $(adv.education.name) 3 $(adv.ecology.name)\n - 4 $(adv.astronomy.name) 5 $(adv.chemistry.name) 6 $(adv.physics.name)"
   tips.adv.H.choice : " - 1 $(adv.economy.name) 2 $(adv.diplomacy.name) 3 $(adv.agriculture.name)\n - 4 $(adv.construction.name) 5 $(adv.military.name) 6 $(adv.defense.name)"
   tips.adv.F.choice : " - 1 $(adv.exploration.name) 2 $(adv.religion.name) 3 $(adv.empire.name)\n - 4 $(adv.devices.name) 5 $(adv.spacecraft.name) 6 $(adv.ftl.name)"
+  desc.version : "game ${game_version} soluna ${engine_version}"
   desc.text : "${content|}"
   desc.text.info : "This is a [blue]${type}[n] in ${place}.\n\n${detail}"
   desc.text.hand : "[blue]$(phase.action)[n] phase: Play as action card to initiate [blue]${action}[n] action:\n - ${action_desc}[n].\n\n[blue]$(phase.payment)[n] phase: This card allows cards with ${suit} advancements in the homeworld area to avoid challenges and produce [cube].\n\n[blue]$(phase.challenge)[n] phase: This card can be used to counter negative effects from ${suit} type challenges.\n\n"

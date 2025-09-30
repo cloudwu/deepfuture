@@ -256,6 +256,7 @@ schinese:
   tips.adv.K.choice : " - 1 $(adv.history.name) 2 $(adv.education.name) 3 $(adv.ecology.name)\n - 4 $(adv.astronomy.name) 5 $(adv.chemistry.name) 6 $(adv.physics.name)"
   tips.adv.H.choice : " - 1 $(adv.economy.name) 2 $(adv.diplomacy.name) 3 $(adv.agriculture.name)\n - 4 $(adv.construction.name) 5 $(adv.military.name) 6 $(adv.defense.name)"
   tips.adv.F.choice : " - 1 $(adv.exploration.name) 2 $(adv.religion.name) 3 $(adv.empire.name)\n - 4 $(adv.devices.name) 5 $(adv.spacecraft.name) 6 $(adv.ftl.name)"
+  desc.version : "game ${game_version} soluna ${engine_version}"
   desc.text : "${content|}"
   desc.text.info : "这是一张${place}中的[blue]${type}[n]。\n\n${detail}"
   desc.text.hand : "[blue]$(phase.action)[n]阶段：作为行动牌打出，发起[blue]${action}[n]行动：\n - ${action_desc}[n]。\n\n[blue]$(phase.payment)[n]阶段：这张卡可让母星区中有${suit}类提升的卡牌避免挑战并产生[cube]。\n\n[blue]$(phase.challenge)[n]阶段：这张牌可用来抵消${suit}类型挑战所带来的负面效果。\n\n"

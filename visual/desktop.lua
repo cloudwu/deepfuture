@@ -8,7 +8,9 @@ local widget = require "core.widget"
 local util = require "core.util"
 local mouse = require "core.mouse"
 local vprogress = require "visual.progress"
+local soluna = require "soluna"
 local ui = require "core.rules".ui
+local version = require "gameplay.version"
 local table = table
 local math = math
 global ipairs, error, pairs, print, tostring
@@ -294,6 +296,8 @@ function M.describe(text)
 	DESC = not not text
 	if text then
 		describe.text = text
+		describe.engine_version = soluna.version
+		describe.game_version = version.text()
 		update_desc_list()
 	else
 		describe.text = nil
