@@ -1,6 +1,6 @@
 local tointeger = math.tointeger
 
-global pairs, type, ipairs, print, tostring
+global pairs, type, ipairs, print, tostring, error, print_r
 
 local localization = {}
 
@@ -73,8 +73,13 @@ function localization.convert(str, args)
 		end
 		return (s:gsub("$(%b())", subtext))
 	end
+	local i = 0
 	repeat
 		t = replacement(t)
+		i = i + 1
+		if i > 100 then
+			error ("Too depth replacement :" .. t)
+		end
 	until not t:find "${[^}]*}"
 	return t
 end

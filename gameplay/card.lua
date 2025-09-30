@@ -127,6 +127,11 @@ local function gen_civ(c)
 			c.tech[i] = nil
 		end
 	end
+	local homeworld = tonumber(c.world)
+	if homeworld and DECK[homeworld] then
+		c._world = DECK[homeworld].name
+		c._sector = DECK[homeworld].sector
+	end
 end
 
 function card.load()

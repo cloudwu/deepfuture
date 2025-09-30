@@ -287,10 +287,11 @@ end
 local function add_homeworld(c, clone)
 	local h = card.card("homeworld", 1)
 	wait_moving(h, "homeworld", "float")
-	c.sector = h.sector
-	clone.sector = h.sector
-	c.world = h.name
-	clone.world = h.name
+	c._sector = h.sector
+	clone._sector = h.sector
+	c.world = h._id
+	c._world = h.name
+	clone._world = h.name
 	
 	name.civ(c)
 	clone.name = c.name
