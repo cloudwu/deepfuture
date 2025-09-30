@@ -116,6 +116,19 @@ function card.setup()
 	GAME = persist.init("game", game)
 end
 
+local function gen_civ(c)
+	local names = {}
+	c._techname = names
+	for i, id in ipairs(c.tech) do
+		id = tonumber(id)
+		if id and DECK[id] then
+			names[i] = DECK[id].name
+		else
+			c.tech[i] = nil
+		end
+	end
+end
+
 function card.load()
 	GAME = persist.get "game"
 	HISTORY = persist.get "history"
@@ -123,6 +136,9 @@ function card.load()
 	for id, c in ipairs(DECK) do
 		c._id = id
 		card.gen_desc(c)
+		if c.type == "civ" then
+			gen_civ(c)
+		end
 		new_card(c)
 		
 		local upkeep_count = GAME.upkeep[id]

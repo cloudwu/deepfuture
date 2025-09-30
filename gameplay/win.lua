@@ -303,7 +303,8 @@ end
 
 local function add_tech(clone, tech, index)
 	wait_moving(tech, "homeworld", "float")
-	clone.tech[index] = tech.name
+	clone.tech[index] = tech._id
+	clone._techname[index] = tech.name
 	vcard.flush(clone)
 	flow.sleep(10)
 	wait_moving(tech, "float", "homeworld")
@@ -311,7 +312,9 @@ end
 
 local function add_techs(c, clone)
 	c.tech = {}
+	c._techname = {}
 	clone.tech = c.tech
+	clone._techname = c._techname
 	local n = 2
 	local tech = 0
 	while true do
