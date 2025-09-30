@@ -541,8 +541,8 @@ function card.test_newcard(args)
 		sector = args.sector or 11,
 	}
 	if c.type == "civ" then
+		c.sector = nil
 		c.tech = args.tech
-		c.world = args.world
 		c.victory = args.victory
 		c.advancement = args.advancement
 	end
@@ -552,6 +552,9 @@ function card.test_newcard(args)
 	end
 	loadsave.sync_card(newcard, c)
 	c._id = newcard
+	if c.type == "civ" then
+		c._sector = args.sector
+	end
 	local def
 	if c.type == "tech" then
 		def = "S"

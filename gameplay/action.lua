@@ -233,7 +233,7 @@ local function check_evoke(hands)
 		end
 		n = n + 1
 		if c.type == "civ" then
-			local enable = map.player_ctrl(c.sector)
+			local enable = map.player_ctrl(c._sector)
 			cards[c] = {
 				action = hands[c],
 				evoke = enable,

@@ -56,7 +56,7 @@ local function evoke_or_action(c, state, last_action)
 					confirm.notice = focus_state.object == clone
 				end
 				if focus_state.object == c then
-					desc.sector = c.sector
+					desc.sector = c._sector
 					desc.victory = c._victory
 					desc.advancement = c._advancement
 					if state.evoke then
@@ -436,7 +436,23 @@ function advancement.K(focus_state)
 	-- choose only
 	local click_card = addadv.choose_or_random(choose, tech, advs)
 	-- pick no cicle , https://boardgamegeek.com/thread/3575002/skull-and-expand-effect-in-civilization-card
-	addadv.choose_value(tech, click_card._choose, not pick)
+	local adv_index = click_card._random
+	if adv_index then
+		-- draw card
+		local value_card = card.draw_discard()
+		vdesktop.add("deck", value_card)
+		vdesktop.transfer("deck", value_card, "float")
+		flow.sleep(20)
+		tech[adv_index].value = value_card.value
+		tech[adv_index].era = tech.era
+		card.gen_desc(tech)
+		vcard.flush(tech)
+		flow.sleep(20)
+		vdesktop.transfer("float", value_card, "deck")
+	elseif click_card._choose then
+		-- choose adv
+		addadv.choose_value(tech, click_card._choose, not pick)
+	end
 	if card.complete(tech) then
 		name.tech(tech)
 	end
