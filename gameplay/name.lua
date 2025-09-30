@@ -35,7 +35,9 @@ end
 
 function name.civ(card)
 	assert(card.type == "civ")
-	card.name = "CIV"
+	repeat
+		card.name = language.random_civ_name()
+	until not names.civ[card.name]
 end
 
 function name.sector(sec)

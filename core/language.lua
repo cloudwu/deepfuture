@@ -137,4 +137,19 @@ function lang.random_sector_name()
 	return n
 end
 
+local random_civ = 0
+function lang.random_civ_name()
+	local names = DATA.civ[LANG]
+	local t = #names
+	if t == 0 then
+		local name = "CIV" .. random_civ
+		random_civ = random_civ + 1
+		return name
+	end
+	local r = math.random(1, t)
+	local n = names[r]
+	names[t] = nil
+	return n
+end
+
 return lang

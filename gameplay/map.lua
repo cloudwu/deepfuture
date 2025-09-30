@@ -51,7 +51,7 @@ end
 
 local function exist_names(names)
 	if names == nil then
-		return
+		return {}
 	end
 	for k, name in pairs(names) do
 		sector_name_set[name] = true
