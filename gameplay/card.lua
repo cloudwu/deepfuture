@@ -591,6 +591,10 @@ function card.card(where, index)
 	end
 end
 
+function card.deck()
+	return table.move(DECK, 1, #DECK, 1, {})
+end
+
 function card.pile(where, r)
 	r = r or {}
 	local n = #r

@@ -45,6 +45,14 @@ function card.flush(c)
 	card_draw_list[c] = flush_card(c)
 end
 
+function card.object(c)
+	return card_draw_list[c]
+end
+
+function card.size()
+	return card_w, card_h
+end
+
 function card.draw(c, x, y, scale)
 	local color = c._active
 	BATCH:layer(scale or 1, x or 0 , y or 0)

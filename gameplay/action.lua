@@ -19,6 +19,7 @@ local mouse = require "core.mouse"
 local victory = require "gameplay.victory"
 local evoke = require "gameplay.evoke"
 local language = require "core.language"
+local cardlist = require "gameplay.cardlist"
 
 require "gameplay.effect"
 
@@ -36,16 +37,6 @@ local BUTTONS = {
 		text = "button.action.skip",
 	},
 }
-
-local MENU = {
-	"returngame",
-	"manual",
-	"startmenu",
-	{ "restart", "restart_confirm" },
-	{ "erasegame", "erasegame_confirm" },
-}
-
-language.menu(MENU)
 
 local function button_enable(what, enable)
 	if what == nil then
@@ -381,9 +372,24 @@ local function choose_action(hands, evoke_cards, last_action)
 				return "skip"
 			end
 		elseif where == "button_setting" then
+			local MENU = {
+				"returngame",
+				"cardlist",
+			}
+
+			language.menu(MENU)
+			MENU[#MENU+1] = "manual"
+			MENU[#MENU+1] =	"startmenu"
+			MENU[#MENU+1] =	{ "restart", "restart_confirm" }
+			MENU[#MENU+1] =	{ "erasegame", "erasegame_confirm" }
 			local r = menu(MENU)
 			if r then
-				return r
+				if r == "CARDLIST" then
+					-- show card list and continue
+					cardlist()
+				else
+					return r
+				end
 			end
 		elseif hands[c] then
 			c = card.pickup("hand", c)

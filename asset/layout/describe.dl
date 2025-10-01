@@ -54,6 +54,7 @@ text :
 	right :
 		id : right
 		flex : 1
+	region : discribe
 menu :
 	position : absolute
 	width : 100%
@@ -117,5 +118,9 @@ menu :
 			size : 24
 		button:
 			region : menu6
+			height : 40
+			size : 24
+		button:
+			region : menu7
 			height : 40
 			size : 24

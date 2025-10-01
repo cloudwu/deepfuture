@@ -41,6 +41,10 @@ end)
 
 local action = {}
 
+function action.cardlist()
+	return "CARDLIST"
+end
+
 function action.returngame()
 	return
 end

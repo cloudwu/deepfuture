@@ -10,9 +10,6 @@ local lang = require "core.language"
 local localization = require "core.localization"
 local textconv = require "soluna.text"
 
---				local label = localization.convert(obj.text, env)
---				label = textconv.convert[label]
-
 local table = table
 
 global print_r, ipairs

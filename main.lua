@@ -131,6 +131,10 @@ function callback.mouse_button(btn, state)
 	mouse.mouse_button(btn, state)
 end
 
+function callback.mouse_scroll(x, y)
+	mouse.scroll(x)
+end
+
 function callback.frame(count)
 	local x, y = mouse.sync(count)
 	vdesktop.set_mouse(x, y)

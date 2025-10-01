@@ -42,7 +42,7 @@ desktop :
 				position : absolute
 				top : 0
 				left : 0
-				width : 45%
+				width : 42%
 				height : 20%
 				region : tips
 			phase :

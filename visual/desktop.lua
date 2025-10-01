@@ -265,6 +265,21 @@ local function map_focus(region_name, card)
 	end
 end
 
+local DESCRIBE_TEST
+local function describe_test(_, flag, mx, my)
+	if flag then
+		return flag
+	end
+	if DESCRIBE_TEST then
+		DESCRIBE_TEST(mx, my)
+	end
+	return true
+end
+
+function M.describe_test(f)
+	DESCRIBE_TEST = f
+end
+
 local test = {
 	neutral = focus_map_test,
 	homeworld = focus_map_test,
@@ -273,6 +288,7 @@ local test = {
 	discard = focus_map_test,
 	background = focus_map_test,
 	float = focus_map_test,
+	describe = describe_test,
 }
 
 local mouse_x = 0
@@ -390,8 +406,21 @@ local focus_state = {}
 local ADDITIONAL_LIST
 
 local function draw_additional()
+	local x, y = ADDITIONAL_LIST.x, ADDITIONAL_LIST.y
+	if x then
+		BATCH:layer(x,y)
+	end
 	for _, item in ipairs(ADDITIONAL_LIST) do
-		BATCH:add(item.obj, item.x, item.y)
+		if item.widget then
+			BATCH:layer(item.x, item.y)
+			widget.draw(BATCH, item.obj)
+			BATCH:layer()
+		else
+			BATCH:add(item.obj, item.x, item.y)
+		end
+	end
+	if x then
+		BATCH:layer()
 	end
 end
 

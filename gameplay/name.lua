@@ -30,7 +30,7 @@ end
 
 function name.tech(card)
 	assert(card.type == "tech")
-	card.name = "TECH"
+	card.name = "TECH" .. card._id
 end
 
 function name.civ(card)

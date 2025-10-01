@@ -141,4 +141,9 @@ function mouse.focus_region()
 	return focus.region
 end
 
+mouse.z = 0
+function mouse.scroll(delta)
+	mouse.z = mouse.z + delta
+end
+
 return mouse

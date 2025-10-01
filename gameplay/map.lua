@@ -56,6 +56,7 @@ local function exist_names(names)
 	for k, name in pairs(names) do
 		sector_name_set[name] = true
 	end
+	return sector_name_set
 end
 
 function map.exist_name(name)
