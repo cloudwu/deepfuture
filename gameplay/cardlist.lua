@@ -4,10 +4,13 @@ local vdesktop = require "visual.desktop"
 local vcard = require "visual.card"
 local card = require "gameplay.card"
 local ui = require "core.rules".ui.cardlist
+local keyboard = require "core.keyboard"
+local lang = require "core.language"
+local loadsave = require "core.loadsave"
 
 local table = table
 local math = math
-global print, print_r
+global print, print_r, ipairs
 
 local SPEED <const> = ui.scroll
 
@@ -67,9 +70,11 @@ local function gen_list()
 			pos_y = pos_y + h
 			j = 0
 		end
+		local c = deck[i]
 		list[i] = {
 			widget = true,
-			obj = vcard.object(deck[i]),
+			card = c,
+			obj = vcard.object(c),
 			x = pos_x,
 			y = pos_y,
 		}
@@ -77,6 +82,131 @@ local function gen_list()
 		j = j + 1
 	end
 	return list, pos_y + h - layout.left[4] + layout.left[2]
+end
+
+local function click_card(list)
+	local x, y = mouse.x, mouse.y
+	local w, h = vcard.size()
+	x = x - list.x
+	y = y - list.y
+	for _, item in ipairs(list) do
+		if x >= item.x and x < item.x + w and y >= item.y and y < item.y + h then
+			return item
+		end
+	end
+end
+
+local can_edit = {
+	world = true,
+	tech = true,
+	civ = true,
+}
+
+local function edit(text, x, y, w, h, list, editbox, item)
+	local attribs = editbox:attribs()
+	local desc = {
+		text = text or "",
+		align = attribs.text_align,
+		fontsize = attribs.size,
+		fontid = lang.font_id(),
+		width = w,
+		height = h,
+	}
+	local list_n = #list + 1
+	local text_label = {
+		x = x,
+		y = y,
+	}
+	local cursor = {}
+	list[list_n] = text_label
+	local result
+	local focus_state = {}
+	while true do
+		mouse.get(focus_state)
+		local c = mouse.click(focus_state, "left")
+		if c and c ~= item then
+			result = true
+			break
+		end
+		if mouse.click(focus_state, "right") then
+			result = false
+			break
+		end
+		result = keyboard.editbox(desc)
+		if result ~= nil then
+			break
+		end
+		text_label.obj = desc.label
+		if desc.cursor_quad then
+			cursor.x = x + desc.cursor_x
+			cursor.y = y + desc.cursor_y
+			cursor.obj = desc.cursor_quad
+			list[list_n + 1] = cursor
+		else
+			list[list_n + 1] = nil
+		end
+		flow.sleep(0)
+	end
+	list[list_n] = nil
+	list[list_n+1] = nil
+	if result then
+		-- enter
+		return desc.text
+	else
+		-- escape
+		return text
+	end
+end
+
+local function edit_card(item, list)
+	local c = item.card
+	if not can_edit[c.type] then
+		return
+	end
+	if c.type == "tech" and not card.complete(c) then
+		return
+	end
+	local sector
+	if c.type == "world" then
+		sector = c.sector
+		c.sector = nil
+	end
+	if c.type == "civ" then
+		c._name = "${name|}"
+	end
+	local editbox = vcard.editbox(c)
+	local x, y, w, h = editbox:get()
+	local text = c.name
+	c.name = nil
+	vcard.flush(c)
+	item.obj = vcard.object(c)
+	
+	text = edit(text, item.x + x, item.y + y, w, h, list, editbox, item)
+	
+	c.name = text
+	if sector then
+		c.sector = sector
+	end
+	if c.type == "civ" then
+		c._name = "$(card.civ.name.final)"
+	end
+	vcard.flush(c)
+	if c.type ~= "civ" then
+		-- sync civ card
+		for i = 1, #list do
+			local _item = list[i]
+			local c = _item.card
+			if c and c.type == "civ" then
+				card.gen_desc(c)
+				vcard.flush(c)
+				_item.obj = vcard.object(c)
+				print("Flush", _item.card, _item.obj)
+			end
+		end
+	end
+	item.obj = vcard.object(c)
+	card.sync(c)
+	loadsave.save_deck()	
 end
 
 return function()
@@ -106,6 +236,15 @@ return function()
 	while true do
 		mouse.get(focus_state)
 		local c = mouse.click(focus_state, "left")
+		if c then
+			c = click_card(list)
+			if not c then
+				break
+			else
+				edit_card(c, list)
+			end
+		end
+		local c = mouse.click(focus_state, "right")
 		if c then
 			break
 		end

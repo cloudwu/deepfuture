@@ -38,6 +38,10 @@ function M.save_game()
 	ltask.send(SERVICE, "save_game", PROFILE)
 end
 
+function M.save_deck()
+	ltask.send(SERVICE, "save_deck", PROFILE)
+end
+
 function M.sync_game(phase)
 	local track = persist.get "track"
 	local map = persist.get "galaxy"

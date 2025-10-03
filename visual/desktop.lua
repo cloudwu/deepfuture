@@ -53,7 +53,7 @@ local function flush(action, args)
 end
 
 do
-	local _, _, card_w, card_h = widget.get("blankcard", "card")
+	local _, _, card_w, card_h = widget.get("blankcard", "card"):get()
 
 	local function calc_scale(self, n)
 		local w = self.w - (n - 1) * 3
@@ -550,7 +550,7 @@ function M.sync(where, pile)
 end
 
 function M.screen_sector_coord(sec)
-	local map_x, map_y = widget.get("hud", "map")
+	local map_x, map_y = widget.get("hud", "map"):get()
 	local x, y = vmap.coord(sec)
 	return SCREEN_CX - (map_x + x) , SCREEN_CY - (map_y + y)
 end
@@ -592,8 +592,8 @@ end
 
 function M.describe_layout()
 	return {
-		left = { widget.get("describe", "left") },
-		right = { widget.get("describe", "right") },
+		left = { widget.get("describe", "left"):get() },
+		right = { widget.get("describe", "right"):get() },
 	}
 end
 

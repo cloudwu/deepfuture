@@ -15,6 +15,7 @@ local loadsave = require "core.loadsave"
 local track = require "gameplay.track"
 local vbutton = require "visual.button"
 local mouse = require "core.mouse"
+local keyboard = require "core.keyboard"
 local text = require "soluna.text"
 local setting =require "core.setting"
 
@@ -146,15 +147,6 @@ function callback.frame(count)
 	mouse.frame()
 end
 
-function callback.char(c)
-	local c = utf8.char(c)
-	if c == "e" then
-		language.switch_flush("english", vdesktop)
-	elseif c == "c" then
-		language.switch_flush("schinese", vdesktop)
-	end
--- todo : name card
---	print("Char", c)
-end
+keyboard.setup(callback)
 
 return callback

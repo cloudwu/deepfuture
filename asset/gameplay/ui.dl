@@ -56,3 +56,6 @@ credits :
 	gap : 20
 cardlist :
 	scroll : 20
+editbox :
+	cursor_speed : 20
+	cursor_color : 0x0000ff

@@ -4,8 +4,9 @@ width : 200
 height : 280
 padding : 10
 title :
+	id : editbox
 	text : card.tech.name
-	size : 18
+	size : 16
 	flex : 0.1
 	text_align : C
 content :

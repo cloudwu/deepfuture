@@ -105,6 +105,7 @@ corner :
 	width : 40
 	height : 40
 world :
+	id : editbox
 	direction: row
 	position : absolute
 	width : 50%

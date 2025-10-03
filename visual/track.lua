@@ -13,7 +13,7 @@ local sin = math.sin
 
 global assert, pairs, print, print_r
 
-local _, _, track_w, track_h = widget.get("track", "track")
+local _, _, track_w, track_h = widget.get("track", "track"):get()
 local FONT_ID
 local SPRITES
 local BATCH
@@ -41,7 +41,7 @@ local function update_coord()
 		coord[name] = row
 		for i = minmax.min , minmax.max do
 			local id = "mark_" .. name .. i
-			local x, y, w, h = widget.get("track", id)
+			local x, y, w, h = widget.get("track", id):get()
 			row[i] = {
 				x = x,
 				y = y,
@@ -71,8 +71,9 @@ local function update(w,h)
 			}
 		})
 		DRAWLIST[key] = widget.draw_list(name, content, FONT_ID, SPRITES)
-		local x, y, w, h = widget.get(name, "focus")
-		if x then
+		local c = widget.get(name, "focus")
+		if c then
+			local x, y, w, h = c:get()
 			FOCUS[key] = {
 				x1 = x,
 				y1 = y,

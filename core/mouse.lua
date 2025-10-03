@@ -1,8 +1,10 @@
-local mouse = {}
+local mouse = {
+	x = 0,
+	y = 0,
+	z = 0,
+}
 
 local mouse_frame = 0
-local mouse_x = 0
-local mouse_y = 0
 local mouse_press = {}	-- press from frame
 local mouse_release = { false, false } -- is click
 local mouse_state = {}	-- is press
@@ -15,8 +17,8 @@ local focus = {
 }
 
 function mouse.mouse_move(x, y)
-	mouse_x = x
-	mouse_y = y
+	mouse.x = x
+	mouse.y = y
 end
 
 
@@ -55,7 +57,7 @@ end
 
 function mouse.sync(frame)
 	mouse_frame = frame
-	return mouse_x, mouse_y
+	return mouse.x, mouse.y
 end
 
 function mouse.frame()
@@ -141,7 +143,6 @@ function mouse.focus_region()
 	return focus.region
 end
 
-mouse.z = 0
 function mouse.scroll(delta)
 	mouse.z = mouse.z + delta
 end

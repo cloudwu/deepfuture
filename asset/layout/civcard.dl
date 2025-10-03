@@ -11,6 +11,7 @@ corner :
 	width : 40
 	height : 40
 name :
+	id : editbox
 	left : 10%
 	width : 90%
 	text : card.civ.name

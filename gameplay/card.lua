@@ -141,9 +141,6 @@ function card.load()
 	for id, c in ipairs(DECK) do
 		c._id = id
 		card.gen_desc(c)
-		if c.type == "civ" then
-			gen_civ(c)
-		end
 		new_card(c)
 		
 		local upkeep_count = GAME.upkeep[id]
@@ -517,6 +514,7 @@ function card.gen_desc(c)
 			c._advancement = "$(civ." .. c.advancement .. ".desc)"
 		end
 		c._name = "$(card.civ.name.final)"
+		gen_civ(c)
 	end
 	gen_marker(c)
 end

@@ -312,6 +312,20 @@ function save.save_game(name)
 	end
 end
 
+function save.save_deck(name)
+	local data = profile[name] or error ("new_profile first : " .. tostring(name))
+	local filename = data._filename
+	if filename then
+		local ok, last = persist.load(filename)
+		if not ok then
+			return
+		end
+		last.deck = data.deck
+		print("SAVEDECK", filename)
+		persist.save(filename, last)
+	end
+end
+
 function save.load_game(name)
 	local predata = profile[name] or error ("new_profile first : " .. tostring(name))
 	local filename = predata._filename

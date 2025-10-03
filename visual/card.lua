@@ -22,7 +22,7 @@ local card_type = {
 
 local mask_color <const> = config.card.mask_normal
 
-local _, _, card_w, card_h = widget.get("blankcard", "card")
+local _, _, card_w, card_h = widget.get("blankcard", "card"):get()
 local center_x = card_w / 2
 local center_y = card_h / 2
 
@@ -51,6 +51,10 @@ end
 
 function card.size()
 	return card_w, card_h
+end
+
+function card.editbox(c)
+	return widget.get(card_type[c.type], "editbox")
 end
 
 function card.draw(c, x, y, scale)
