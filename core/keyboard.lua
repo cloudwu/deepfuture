@@ -71,8 +71,11 @@ function keyboard.setup(callback)
 			end
 		end
 	end
+	local function is_control_char(codepoint)
+		return codepoint < 32 or (codepoint >= 127 and codepoint <= 159)
+	end
 	function callback.char(codepoint)
-		if CURRENT_EDITBOX then
+		if CURRENT_EDITBOX and not is_control_char(codepoint) then
 			local c = utf8.char(codepoint)
 			CURRENT_EDITBOX.input = (CURRENT_EDITBOX.input or "") .. c
 		end
