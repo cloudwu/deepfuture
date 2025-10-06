@@ -514,7 +514,10 @@ function card.gen_desc(c)
 			c._advancement = "$(civ." .. c.advancement .. ".desc)"
 		end
 		c._name = "$(card.civ.name.final)"
-		gen_civ(c)
+		if c.tech then
+			-- may in generating process (no c.tech yet)
+			gen_civ(c)
+		end
 	end
 	gen_marker(c)
 end
