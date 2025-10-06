@@ -100,6 +100,10 @@ menu :
 					region : menu26
 					height : 40
 					size : 24
+				button:
+					region : menu27
+					height : 40
+					size : 24
 		button:
 			region : menu2
 			height : 40
