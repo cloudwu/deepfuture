@@ -97,17 +97,17 @@ function keyboard.editbox(desc)
 		local text = desc.text or ""
 		local width = desc.width
 		local height = desc.height
-		local cx, cy, cw, ch, cursor = desc.cursor_get(text, desc.cursor or utf8.len(text), width, height)
+		local cx, cy, cw, ch, cursor, ascent = desc.cursor_get(text, desc.cursor or utf8.len(text), width, height)
 		if desc.input then
 			local input_len = utf8.len(desc.input)
 			local offset = utf8.offset(text, cursor + 1)
 			text = text:sub(1, offset-1) .. desc.input .. text:sub(offset)
 			desc.input = nil
 			cursor = cursor + input_len
-			cx, cy, cw, ch, cursor = desc.cursor_get(text, cursor, width, height)
+			cx, cy, cw, ch, cursor, ascent = desc.cursor_get(text, cursor, width, height)
 			desc.label = nil
 		end
-		app.set_ime_rect(cx+desc.ime_x, -cy+desc.ime_y, cw, ch)
+		app.set_ime_rect(cx+desc.ime_x, -ascent-cy+desc.ime_y, cw, ch)
 		app.set_ime_font(desc.fontname, desc.fontsize)
 		desc.cursor = cursor
 		desc.text = text

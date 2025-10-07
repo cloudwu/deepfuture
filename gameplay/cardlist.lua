@@ -108,7 +108,6 @@ local function edit(text, x, y, w, h, list, editbox, item)
 	local _, view_h = vdesktop.screen_size()
 	local fontid = lang.font_id()
 	local fontsize = attribs.size or 16	-- see widget
-	local fontattr = font.size(fontid, fontsize)
 	local desc = {
 		text = text or "",
 		align = attribs.text_align,
@@ -118,7 +117,7 @@ local function edit(text, x, y, w, h, list, editbox, item)
 		width = w,
 		height = h,
 		ime_x = x + list.x,
-		ime_y = view_h - (y + list.y + fontattr.ascent),
+		ime_y = view_h - (y + list.y),
 	}
 	local list_n = #list + 1
 	local text_label = {
