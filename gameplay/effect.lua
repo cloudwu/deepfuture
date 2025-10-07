@@ -11,10 +11,13 @@ local track = require "gameplay.track"
 local show_desc = require "gameplay.desc"
 local vbutton = require "visual.button"
 local map = require "gameplay.map"
+local ui = require "core.rules".ui
 
 global setmetatable, pairs, assert, print, ipairs, error, print_r
 
 local effect = class.container "effect"
+local WARNING_MASK <const> = ui.card.mask_warning
+local DURATION <const> = ui.desktop.focus_duration
 
 function effect:add(c, from)
 	if from == "hand" and (c.type ~= "tech" or not card.complete(c)) then
@@ -468,9 +471,10 @@ function effect:discard_one_card(phase, advname, action)
 	end
 	self:reset()
 	for _, c in ipairs(discards) do
-		vcard.mask(c, true)
+		vcard.mask(c, WARNING_MASK)
 	end
 	local focus_state = {}
+	local confirm = {}
 	while true do
 		if mouse.get(focus_state) then
 			if focus_state.active == "hand" then
@@ -486,7 +490,7 @@ function effect:discard_one_card(phase, advname, action)
 			vtips.set()
 		end
 		local c = mouse.click(focus_state, "left")
-		if c and not self:is_used(c) then
+		if c and confirm[c] and c._progress == nil then
 			local discard_card = card.pickup("hand", c)
 			if discard_card then
 				card.discard(discard_card)
@@ -498,6 +502,38 @@ function effect:discard_one_card(phase, advname, action)
 				vdesktop.transfer("hand", discard_card, "deck")
 				vtips.set()
 				break
+			end
+		end
+		for i = 1, #discards do
+			local c = discards[i]
+			if mouse.press("left", c) then
+				local d = confirm[c] or 0
+				d = d + 1
+				if d > DURATION then
+					d = DURATION
+					c._progress = nil
+					vcard.mask(c, true)
+				else
+					local duration = d / DURATION
+					c._progress = duration
+				end
+				confirm[c] = d
+			else
+				local d = confirm[c]
+				if d then
+					d = d - 1
+					if d < 0 then
+						d = nil
+						c._progress = nil
+					else
+						local duration = d / DURATION
+						if c._progress == nil then
+							vcard.mask(c, WARNING_MASK)
+						end
+						c._progress = duration
+					end
+					confirm[c] = d
+				end
 			end
 		end
 		flow.sleep(0)
