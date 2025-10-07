@@ -1,3 +1,4 @@
+local app = require "soluna.app"
 local mattext = require "soluna.material.text"
 local matquad = require "soluna.material.quad"
 local font = require "soluna.font"
@@ -106,6 +107,7 @@ function keyboard.editbox(desc)
 			cx, cy, cw, ch, cursor = desc.cursor_get(text, cursor, width, height)
 			desc.label = nil
 		end
+		app.set_ime_rect(cx+desc.ime_x, cy+desc.ime_y, cw, ch)
 		desc.cursor = cursor
 		desc.text = text
 		if not desc.label then
@@ -131,6 +133,8 @@ function keyboard.editbox(desc)
 			desc.exit = nil
 			return r
 		end
+	else
+		app.set_ime_rect(nil)
 	end
 end
 
