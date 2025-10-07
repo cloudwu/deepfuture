@@ -93,6 +93,7 @@ function keyboard.editbox(desc)
 				assert(desc.fontsize),
 				desc.color or 0,
 				desc.align or "LV")
+			app.set_ime_font(desc.fontname, desc.fontsize)
 		end
 		local text = desc.text or ""
 		local width = desc.width
@@ -107,8 +108,13 @@ function keyboard.editbox(desc)
 			cx, cy, cw, ch, cursor, decent = desc.cursor_get(text, cursor, width, height)
 			desc.label = nil
 		end
-		app.set_ime_rect(cx+desc.ime_x, cy+desc.ime_y-decent, cw, ch)
-		app.set_ime_font(desc.fontname, desc.fontsize)
+		local x = cx+desc.ime_x
+		local y = cy+desc.ime_y-decent
+		if x ~= desc.ime_rect_x or y ~= desc.ime_rect_y then
+			desc.ime_rect_x = x
+			desc.ime_rect_y = y
+			app.set_ime_rect(x, y, cw, ch)
+		end
 		desc.cursor = cursor
 		desc.text = text
 		if not desc.label then
