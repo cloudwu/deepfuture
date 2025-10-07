@@ -108,6 +108,7 @@ function keyboard.editbox(desc)
 			desc.label = nil
 		end
 		app.set_ime_rect(cx+desc.ime_x, cy+desc.ime_y, cw, ch)
+		app.set_ime_font(desc.fontname, desc.fontsize)
 		desc.cursor = cursor
 		desc.text = text
 		if not desc.label then

@@ -62,6 +62,12 @@ function lang.get_default()
 	return lang
 end
 
+function lang.font_name(lang)
+	lang = lang or LANG
+	local lang_setting = DATA.setting[lang] or error ("No lang setting : " .. lang)
+	return lang_setting.font or lang_setting[soluna.platform].font
+end
+
 function lang.font_id(lang)
 	lang = lang or LANG
 	local lang_setting = DATA.setting[lang] or error ("No lang setting : " .. lang)

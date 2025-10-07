@@ -110,6 +110,7 @@ local function edit(text, x, y, w, h, list, editbox, item)
 		align = attribs.text_align,
 		fontsize = attribs.size,
 		fontid = lang.font_id(),
+		fontname = lang.font_name(),
 		width = w,
 		height = h,
 		ime_x = x + list.x,
