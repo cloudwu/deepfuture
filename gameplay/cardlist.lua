@@ -7,6 +7,7 @@ local ui = require "core.rules".ui.cardlist
 local keyboard = require "core.keyboard"
 local lang = require "core.language"
 local loadsave = require "core.loadsave"
+local font = require "soluna.font"
 
 local table = table
 local math = math
@@ -105,16 +106,19 @@ local can_edit = {
 local function edit(text, x, y, w, h, list, editbox, item)
 	local attribs = editbox:attribs()
 	local _, view_h = vdesktop.screen_size()
+	local fontid = lang.font_id()
+	local fontsize = attribs.size or 16	-- see widget
+	local fontattr = font.size(fontid, fontsize)
 	local desc = {
 		text = text or "",
 		align = attribs.text_align,
-		fontsize = attribs.size,
-		fontid = lang.font_id(),
+		fontsize = fontsize,
+		fontid = fontid,
 		fontname = lang.font_name(),
 		width = w,
 		height = h,
 		ime_x = x + list.x,
-		ime_y = view_h - (y + list.y + h),
+		ime_y = view_h - (y + list.y + fontattr.ascent),
 	}
 	local list_n = #list + 1
 	local text_label = {
