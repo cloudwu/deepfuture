@@ -207,12 +207,8 @@ layouts.hud = hud
 layouts.describe = describe
 local SCREEN_CX = 0
 local SCREEN_CY = 0
-local SCREEN_WIDTH = 0
-local SCREEN_HEIGHT = 0
 
 local function set_hud(w, h)
-	SCREEN_WIDTH = w
-	SCREEN_HEIGHT = h
 	SCREEN_CX = w / 2	-- center of screen
 	SCREEN_CY = h / 2
 	for i = 1, #layouts do
@@ -599,10 +595,6 @@ function M.describe_layout()
 		left = { widget.get("describe", "left"):get() },
 		right = { widget.get("describe", "right"):get() },
 	}
-end
-
-function M.screen_size()
-	return SCREEN_WIDTH, SCREEN_HEIGHT
 end
 
 return M
