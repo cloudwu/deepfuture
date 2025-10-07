@@ -62,7 +62,7 @@ english:
   tips.desc.return : "[lbutton][rbutton]Return"
   tips.discard.focus : "[lbutton]Discard this card\n - This is a randomly drawn card from hand"
   tips.discard.invalid : "Already exceeded hand limit ${limit}, must randomly discard excess cards"
-  tips.discard.advancement: "[lbutton]Discard this card"
+  tips.discard.advancement: "[lbutton]Longpress to discard this card"
   tips.discard.advancement.invalid: "Please select another hand card\n - This card has been used and will be discarded"
   tips.advancement.start : "$(START) phase"
   tips.advancement.power : "$(POWER) action"

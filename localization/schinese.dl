@@ -63,7 +63,7 @@ schinese:
   tips.desc.return : "[lbutton][rbutton]返回"
   tips.discard.focus : "[lbutton]丢弃这张卡\n - 这是一张从手牌中随机抽出的卡"
   tips.discard.invalid : "已经超出手牌上限 ${limit} ，必须随机丢弃超出的部分"
-  tips.discard.advancement: "[lbutton]丢弃这张卡"
+  tips.discard.advancement: "[lbutton]长按丢弃这张卡"
   tips.discard.advancement.invalid: "请选择另一张手牌\n - 这张卡已使用，即将被丢弃"
   tips.advancement.start : "$(START)阶段"
   tips.advancement.power : "$(POWER)行动"
