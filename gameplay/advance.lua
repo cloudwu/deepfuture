@@ -207,34 +207,31 @@ end
 
 local function gen_choose_cards(c, advs)
 	local choose = addadv.choose_random_adv(c)
-	if c.type == "tech" then
-		local chosen = card.chosen(c)	-- need chosen of physics
-		-- world card can't choose
-		if chosen == 0 then
-			-- first choice
-			addadv.add_choice(choose)
-		else
-			-- need physics
-			local n = advs:update(CHOOSE)
-			if n < chosen then
-				-- not enough physics, only random choice
-				if n > 0 then
-					advs:reset()
-				end
-			else
-				-- enough physics, only one choose card
-				local random_clone = choose[1] 
-				for i = 2, #choose do
-					local c = choose[i]
-					local adv_index = c._random
-					random_clone[adv_index] = c[adv_index]
-					choose[i] = nil
-				end
-				vdesktop.replace("float", c, random_clone)
-				local choose = choose_or_random(random_clone, advs, chosen)
-				vdesktop.replace("float", random_clone, c)
-				return choose
+	local chosen = card.chosen(c)	-- need chosen of physics
+	if chosen == 0 then
+		-- first choice
+		addadv.add_choice(choose)
+	elseif c.type == "tech" then
+		-- need physics
+		local n = advs:update(CHOOSE)
+		if n < chosen then
+			-- not enough physics, only random choice
+			if n > 0 then
+				advs:reset()
 			end
+		else
+			-- enough physics, only one choose card
+			local random_clone = choose[1]
+			for i = 2, #choose do
+				local c = choose[i]
+				local adv_index = c._random
+				random_clone[adv_index] = c[adv_index]
+				choose[i] = nil
+			end
+			vdesktop.replace("float", c, random_clone)
+			local choose = choose_or_random(random_clone, advs, chosen)
+			vdesktop.replace("float", random_clone, c)
+			return choose
 		end
 	end
 	return choose
@@ -305,16 +302,9 @@ local function draw_value(advs, c, adv_index)
 	return adv_index
 end
 
-local function advance_world(c, advs)
-	-- add a random suit
-	local adv_index = add_suit(advs, c)
-	draw_value(advs, c, adv_index)
-end
-
 local function advance(c, advs)
 	if c.type == "world" then
-		advance_world(c, advs)
-		return
+		add_suit(advs, c)
 	end
 	local choose = gen_choose_cards(c, advs)
 	if #choose == 1 then
