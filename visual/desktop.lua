@@ -566,9 +566,9 @@ function M.init(args)
 	local width = args.width
 	local height = args.height
 	function update_draw_list(w, h)
-		w = w or width
-		h = h or height
-		set_hud(w, h)
+		width = w or width
+		height = h or height
+		set_hud(width, height)
 		for i = 1, #layouts do
 			local name = layouts[i]
 			DRAWLIST[name] = widget.draw_list(name, layouts[name], FONT_ID, SPRITES)
