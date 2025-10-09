@@ -1,8 +1,6 @@
 local settings = require "soluna".settings()
-local lfs = require "soluna.lfs"
 local file = require "soluna.file"
 local crypt = require "soluna.crypt"
-
 
 global tostring, tonumber, table, assert, print, string
 
@@ -74,7 +72,7 @@ local function calc_hash(path, filelist)
 	local n = #filelist
 	for i = 1, n do
 		local fullpath = path .. filelist[i]
-		local t = lfs.attributes(fullpath, "mode")
+		local t = file.attributes(fullpath, "mode")
 		if t == "file" then
 			local content = file.load(fullpath)
 			n = n + 1
@@ -82,7 +80,7 @@ local function calc_hash(path, filelist)
 		elseif t == "directory" then
 			local sublist = {}
 			local j = 1
-			for name in lfs.dir(fullpath) do
+			for name in file.dir(fullpath) do
 				if name:byte() ~= DOT then
 					sublist[j] = name
 					j = j + 1

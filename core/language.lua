@@ -1,6 +1,5 @@
 local datalist = require "soluna.datalist"
 local file = require "soluna.file"
-local lfs = require "soluna.lfs"
 local util = require "core.util"
 local localization = require "core.localization"
 local soluna = require "soluna"
@@ -20,7 +19,7 @@ local LANG = "schinese"
 
 function lang.init()
 	local data = {}
-	for filename in lfs.dir(LOCALIZATION_PATH) do
+	for filename in file.dir(LOCALIZATION_PATH) do
 		if filename:byte() ~= DOT then
 			local t = datalist.parse (file.load(LOCALIZATION_PATH .. filename))
 			util.merge_table(data, t)

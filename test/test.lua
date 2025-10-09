@@ -1,4 +1,6 @@
 --math.randomseed(0)
+local widget = require "core.widget"
+widget.scripts(require "visual.ui")
 local version = require "gameplay.version"
 local persist = require "gameplay.persist"
 local init = require "gameplay.initial"
@@ -18,13 +20,3 @@ print_r("NEUTRAL", setup.neutral())
 
 persist.save "test.dl"
 ]]
-
-local localization = require "core.localization"
-
-localization.load("localization/schinese.dl", "schinese")
-print(localization.convert("abc", {
-	name = "$(NAME.a)",
-	value = {
-		x = "XXX",
-	}
-}))

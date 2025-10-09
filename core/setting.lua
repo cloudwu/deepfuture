@@ -17,8 +17,8 @@ end
 
 function setting.load()
 	local filename = setting.path().."setting.dl"
-	if file.exist(filename) then
-		SETTING = datalist.parse(file.load(filename))
+	if file.local_exist(filename) then
+		SETTING = datalist.parse(file.local_load(filename))
 	else
 		SETTING = {}
 	end
