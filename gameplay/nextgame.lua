@@ -18,10 +18,11 @@ local function clear(where)
 end
 
 return function()
+	card.clear_upkeeps()
+
 	clear "hand"
 	clear "homeworld"
-	clear "colony"	print("Xhacker test run game log");
-
+	clear "colony"
 	clear "neutral"
 	card.setup()
 	track.setup()
