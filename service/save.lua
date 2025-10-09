@@ -292,6 +292,10 @@ end
 local backup_dir = soluna.gamedir "deepfuture/backup"
 if settings.autosave == "off" then
 	print("Autosave : off")
+else
+    if not lfs.attributes(backup_dir, "mode") == "directory" then
+		lfs.mkdir(backup_dir)
+	end
 end
 
 function save.save_game(name)
