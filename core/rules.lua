@@ -6,7 +6,7 @@ global none
 
 local rules = util.cache(function (name)
 	local filename = "asset/gameplay/"..name..".dl"
-	local t = datalist.parse (file.loader(filename))
+	local t = datalist.parse (file.load(filename))
 	return t
 end)
 

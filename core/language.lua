@@ -22,7 +22,7 @@ function lang.init()
 	local data = {}
 	for filename in lfs.dir(LOCALIZATION_PATH) do
 		if filename:byte() ~= DOT then
-			local t = datalist.parse (file.loader(LOCALIZATION_PATH .. filename))
+			local t = datalist.parse (file.load(LOCALIZATION_PATH .. filename))
 			util.merge_table(data, t)
 		end
 	end

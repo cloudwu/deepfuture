@@ -14,7 +14,7 @@ local DATA = {}
 local persist = {}
 
 local function loadfile(filename, readonly)
-	local data = datalist.parse(file.loader(filename))
+	local data = datalist.parse(file.load(filename))
 	if not readonly then
 		if data.version == nil or version.older_than(data.version, SUPPORT_VERSION) then
 			error ("Invalid version : " .. data.version)

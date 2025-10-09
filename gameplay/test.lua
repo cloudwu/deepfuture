@@ -13,7 +13,7 @@ local TESTCASE
 
 function test.load(name)
 	local filename = "asset/test/"..name..".dl"
-	TESTCASE = datalist.parse (file.loader(filename))
+	TESTCASE = datalist.parse (file.load(filename))
 end
 
 function test.init()
