@@ -4,7 +4,7 @@ local lfs = require "soluna.lfs"
 local soluna = require "soluna"
 local io = io
 
-global tostring, pairs, print
+global tostring, pairs, print, assert
 
 local setting = {}
 
@@ -32,7 +32,7 @@ end
 function setting.save()
 	local filename = setting.path().."setting.dl"
 	SETTING = SETTING or {}
-	local f <close> = io.open(filename, "wb")
+	local f <close> = assert(io.open(filename, "wb"))
 	print("Setting update")
 	for k,v in pairs(SETTING) do
 		print("Setting:",k,v)
