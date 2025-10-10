@@ -654,7 +654,7 @@ end
 
 function card.clear_upkeeps()
 	if GAME and GAME.upkeep then
-		for _,id in pairs(GAME.upkeep) do
+		for id in pairs(GAME.upkeep) do
 			local c = DECK[id]
 			c._upkeep = nil
 			vcard.flush(c)
