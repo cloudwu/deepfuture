@@ -18,6 +18,8 @@ local mouse = require "core.mouse"
 local keyboard = require "core.keyboard"
 local text = require "soluna.text"
 local setting =require "core.setting"
+local image = require "soluna.image"
+local file = require "soluna.file"
 
 local utf8 = utf8
 local math = math
@@ -36,6 +38,12 @@ local callback = {}
 
 language.switch(LANG)
 soluna.set_window_title(localization.convert "app.title")
+
+do
+	local c = file.load "asset/icon.png"
+	local data, w, h = image.load(c)
+	soluna.set_icon({data = data, width = w, height = h})
+end
 
 vdesktop.init {
 	batch = args.batch,
