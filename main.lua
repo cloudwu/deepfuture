@@ -42,7 +42,13 @@ soluna.set_window_title(localization.convert "app.title")
 do
 	local c = file.load "asset/icon.png"
 	local data, w, h = image.load(c)
-	soluna.set_icon({data = data, width = w, height = h})
+	local mid_data, mid_w, mid_h = image.resize(data, w, h, 0.5)
+	local small_data, small_w, small_h = image.resize(data, w, h, 0.25)
+	soluna.set_icon {
+		{data = data, width = w, height = h},
+		{data = mid_data, width = mid_w, height = mid_h},
+		{data = small_data, width = small_w, height = small_h},
+	}
 end
 
 vdesktop.init {
