@@ -30,7 +30,7 @@ global require, assert, print, ipairs, string, error
 local args = ...
 
 if soluna.version_api ~= settings.soluna then
-	error (string.format("Mismatch soluna api version (%d) != settings.soluna (%s)", soluna.version_api, settings.soluna))
+	error (string.format("Mismatch soluna api version (%s) != settings.soluna (%s)", soluna.version_api, settings.soluna))
 end
 
 text.init "asset/icons.dl"
