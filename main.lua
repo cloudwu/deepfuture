@@ -24,9 +24,14 @@ local file = require "soluna.file"
 local utf8 = utf8
 local math = math
 local io = io
-global require, assert, print, ipairs
+local settings = soluna.settings()
+global require, assert, print, ipairs, string, error
 
 local args = ...
+
+if soluna.version_api ~= settings.soluna then
+	error (string.format("Mismatch soluna api version (%d) != settings.soluna (%s)", soluna.version_api, settings.soluna))
+end
 
 text.init "asset/icons.dl"
 language.init()
