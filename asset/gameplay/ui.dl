@@ -1,13 +1,3 @@
-lang :
-	schinese :
-		windows :
-			font : 微软雅黑
-		macos :
-			font : "Yuanti SC"
-		linux :
-			font : "WenQuanYi Micro Hei"
-	english:
-		font : Arial
 track :
 	color1 : 0x40ffffff
 	color2 : 0x40000000

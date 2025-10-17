@@ -70,9 +70,22 @@ end
 function lang.font_id(lang)
 	lang = lang or LANG
 	local lang_setting = DATA.setting[lang] or error ("No lang setting : " .. lang)
-	local gamefont = lang_setting.font or lang_setting[soluna.platform].font
+	local gamefont = lang_setting[soluna.platform].font or lang_setting.font
+	local fontfile = lang_setting[soluna.platform].fontfile or lang_setting.fontfile
 	if not lang_setting.font_import then
-		font.import(assert(sysfont.ttfdata (gamefont)))
+		if fontfile then
+			local data = file.load(fontfile)
+			if data == nil then
+				print("Can't load font file", fontfile)
+			else
+				font.import(data)
+				print("Load font file", fontfile)
+			end
+		end
+		local data = sysfont.ttfdata(gamefont)
+		if data then
+			font.import(data)
+		end
 		lang_setting.font_import = true
 	end
 	return font.name(gamefont)
