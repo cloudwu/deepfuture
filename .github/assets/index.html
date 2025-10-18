@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Deep Future</title>
+  <style>
+    body { margin: 0; background: #000; }
+    canvas { display: block; width: 100vw; height: 100vh; }
+  </style>
+  <script src="./coi-serviceworker.min.js"></script>
+</head>
+<body>
+  <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+
+  <script>
+  var Module = {
+    arguments: ["zipfile=/data/main.zip:/data/font.zip"],
+    canvas: document.getElementById('canvas'),
+    preRun: [function () {
+      const runDependency = 'load-main-zip';
+      const fontDependency = 'load-font';
+
+      const originalLookup = MEMFS.lookup;
+      MEMFS.lookup = function (parent, name) {
+        try {
+          return originalLookup.call(this, parent, name);
+        } catch (e) {
+          console.error('[MEMFS lookup failed]',
+                        'parent:', Module.FS.getPath(parent),
+                        'name:', name, e);
+          throw e;
+        }
+      };
+
+      Module.FS_createPath('/', 'data', true, true);
+
+      try {
+          FS.mkdir('/persistent');
+          FS.mount(IDBFS, {autoPersist: true}, '/persistent');
+          FS.syncfs(true, err => {
+            if (err) console.error('Failed to sync from IDBFS', err);
+            else console.log('Synced from IDBFS');
+          });
+
+          setInterval(() => {
+            FS.syncfs(false, err => {
+              if (err) console.error('Failed to sync to IDBFS', err);
+              else console.log('Synced to IDBFS');
+            });
+          }, 10000);
+      } catch (e) {}
+
+      Module.addRunDependency(runDependency);
+      fetch('./main.zip')
+        .then(function (response) {
+          if (!response.ok) {
+            throw new Error('HTTP ' + response.status + ' while fetching main.zip');
+          }
+          return response.arrayBuffer();
+        })
+        .then(function (buffer) {
+          const data = new Uint8Array(buffer);
+          Module.FS.writeFile('/data/main.zip', data, { canOwn: true });
+          console.log('main.zip loaded:', Module.FS.readdir('/data'));
+        })
+        .catch(function (err) {
+          console.error('Failed to load main.zip', err);
+          throw err;
+        })
+        .finally(function () {
+          Module.removeRunDependency(runDependency);
+        });
+      Module.addRunDependency(fontDependency);
+      fetch('./font.zip')
+        .then(function (response) {
+          if (!response.ok) {
+            throw new Error('HTTP ' + response.status + ' while fetching font.zip');
+          }
+          return response.arrayBuffer();
+        })
+        .then(function (buffer) {
+          const data = new Uint8Array(buffer);
+          Module.FS.writeFile('/data/font.zip', data, { canOwn: true });
+          console.log('font.zip loaded:', Module.FS.readdir('/data'));
+        })
+        .catch(function (err) {
+          console.error('Failed to load font.zip', err);
+          throw err;
+        })
+        .finally(function () {
+          Module.removeRunDependency(fontDependency);
+        });
+    }],
+    onRuntimeInitialized: function () {
+      console.log('Soluna runtime ready');
+    },
+    onExit: function (status) {
+      console.log('Program exited with status', status);
+    },
+    onAbort: function (what) {
+      console.error('Program aborted:', what);
+    },
+    print: console.log,
+    printErr: console.error
+  };
+  </script>
+  <script src="./soluna.js"></script>
+</body>
+</html>
