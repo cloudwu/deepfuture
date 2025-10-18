@@ -23,6 +23,6 @@ setting :
 			font : "Noto Sans"
 		wasm :
 			font : Arial
-			fontfile : asset/font/WenQuanWeiMiHei-1.ttf
+			fontfile : asset/font/arial.ttf
 		timefmt : "%b %d, %Y %H:%M"
 		homepage : "https://boardgamegeek.com/boardgame/194986/deep-future"
