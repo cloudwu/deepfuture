@@ -6,7 +6,7 @@ setting :
 		font :
 			微软雅黑
 			"Yuanti SC"
-			文泉驿微米黑
+			"WenQuanYi Micro Hei"
 		timefmt : "%Y/%m/%d %H:%M"
 		homepage : "https://blog.codingnow.com/2025/07/deep_future.html"
 	english:
