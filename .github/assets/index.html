@@ -4,106 +4,269 @@
   <meta charset="utf-8">
   <title>Deep Future</title>
   <style>
-    body { margin: 0; background: #000; }
-    canvas { display: block; width: 100vw; height: 100vh; }
+    body {
+      margin: 0;
+      background: #000;
+      font-family: "Segoe UI", "PingFang SC", "Hiragino Sans GB", Arial, sans-serif;
+      color: #f5f5f5;
+    }
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+    #overlay {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      box-sizing: border-box;
+      background: radial-gradient(circle at top, rgba(36, 64, 128, 0.8), rgba(6, 10, 24, 0.95));
+      text-align: center;
+      transition: opacity 0.4s ease;
+      z-index: 10;
+    }
+    #overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #overlay.error {
+      background: rgba(16, 16, 16, 0.95);
+    }
+    .overlay-content {
+      max-width: 640px;
+    }
+    #overlay-title {
+      font-size: 2rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 0 0 12px;
+    }
+    #overlay-intro {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    #overlay-intro p {
+      margin: 0 0 12px;
+    }
+    #overlay-status {
+      font-size: 0.95rem;
+      opacity: 0.85;
+      margin: 0;
+    }
   </style>
   <script src="./coi-serviceworker.min.js"></script>
 </head>
 <body>
+  <div id="overlay">
+    <div class="overlay-content">
+      <h1 id="overlay-title"></h1>
+      <div id="overlay-intro"></div>
+      <p id="overlay-status"></p>
+    </div>
+  </div>
   <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
 
   <script>
-  var Module = {
-    arguments: ["zipfile=/data/main.zip:/data/font.zip"],
-    canvas: document.getElementById('canvas'),
-    preRun: [function () {
-      const runDependency = 'load-main-zip';
-      const fontDependency = 'load-font';
+  (function () {
+    const overlay = document.getElementById('overlay');
+    const titleEl = document.getElementById('overlay-title');
+    const introEl = document.getElementById('overlay-intro');
+    const statusEl = document.getElementById('overlay-status');
 
-      const originalLookup = MEMFS.lookup;
-      MEMFS.lookup = function (parent, name) {
-        try {
-          return originalLookup.call(this, parent, name);
-        } catch (e) {
-          console.error('[MEMFS lookup failed]',
-                        'parent:', Module.FS.getPath(parent),
-                        'name:', name, e);
-          throw e;
-        }
+    const locale = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+    const isChinese = locale.startsWith('zh');
+
+    const strings = isChinese ? {
+      gameTitle: '深远未来',
+      intro: [
+        '拓殖星球，发展科技，永无止境地进化你银河系的深远未来。',
+        '《深远未来》是桌游的数字化版本，带来“边玩边创造”的独特体验，每一局都能拓展属于你的银河文明。'
+      ],
+      checkingWebGPU: '正在检查 WebGPU 支持…',
+      webgpuMissingTitle: '当前浏览器未开启 WebGPU 支持',
+      webgpuMissingDetail: '请在支持 WebGPU 的浏览器中打开，或者在浏览器设置中启用 WebGPU 后刷新页面。',
+      loadingResources: '正在加载游戏资源…',
+      loadingMainArchive: '正在加载核心资源包…',
+      loadingFontArchive: '正在加载字体资源包…',
+      runtimeReady: '引擎已就绪，正在启动…',
+      runtimeFailedTitle: '运行时加载失败',
+      runtimeFailedDetail: '加载运行时失败，请稍后重试。'
+    } : {
+      gameTitle: 'Deep Future',
+      intro: [
+        'Settle worlds, advance techs, and endlessly evolve your galaxy\'s deep future.',
+        'Deep Future is the digital take on the make-as-you-play board game where every session grows your galactic civilization.'
+      ],
+      checkingWebGPU: 'Checking for WebGPU support…',
+      webgpuMissingTitle: 'WebGPU is not enabled in this browser',
+      webgpuMissingDetail: 'Open the page in a browser with WebGPU support or enable it in your browser settings, then reload.',
+      loadingResources: 'Loading game assets…',
+      loadingMainArchive: 'Fetching core content…',
+      loadingFontArchive: 'Fetching font resources…',
+      runtimeReady: 'Runtime ready. Launching…',
+      runtimeFailedTitle: 'Runtime failed to load',
+      runtimeFailedDetail: 'We could not load the runtime. Please try again later.'
+    };
+
+    titleEl.textContent = strings.gameTitle;
+    introEl.innerHTML = strings.intro.map(text => '<p>' + text + '</p>').join('');
+
+    function setStatus(message) {
+      statusEl.textContent = message;
+    }
+
+    function showError(title, detail) {
+      overlay.classList.remove('hidden');
+      overlay.classList.add('error');
+      titleEl.textContent = title;
+      setStatus(detail);
+    }
+
+    function hideOverlay() {
+      overlay.classList.add('hidden');
+    }
+
+    async function hasWebGPU() {
+      if (!navigator.gpu || typeof navigator.gpu.requestAdapter !== 'function') {
+        return false;
+      }
+      try {
+        const adapter = await navigator.gpu.requestAdapter();
+        return Boolean(adapter);
+      } catch (err) {
+        console.error('WebGPU adapter request failed', err);
+        return false;
+      }
+    }
+
+    function loadRuntimeScript() {
+      return new Promise(function (resolve, reject) {
+        const script = document.createElement('script');
+        script.src = './soluna.js';
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Failed to load soluna.js'));
+        document.head.appendChild(script);
+      });
+    }
+
+    setStatus(strings.checkingWebGPU);
+
+    hasWebGPU().then(function (supported) {
+      if (!supported) {
+        showError(strings.webgpuMissingTitle, strings.webgpuMissingDetail);
+        return;
+      }
+
+      setStatus(strings.loadingResources);
+
+      window.Module = {
+        arguments: ["zipfile=/data/main.zip:/data/font.zip"],
+        canvas: document.getElementById('canvas'),
+        preRun: [function () {
+          const runDependency = 'load-main-zip';
+          const fontDependency = 'load-font';
+
+          const originalLookup = MEMFS.lookup;
+          MEMFS.lookup = function (parent, name) {
+            try {
+              return originalLookup.call(this, parent, name);
+            } catch (e) {
+              console.error('[MEMFS lookup failed]',
+                'parent:', Module.FS.getPath(parent),
+                'name:', name, e);
+              throw e;
+            }
+          };
+
+          Module.FS_createPath('/', 'data', true, true);
+
+          try {
+            FS.mkdir('/persistent');
+            FS.mount(IDBFS, { autoPersist: true }, '/persistent');
+            FS.syncfs(true, err => {
+              if (err) console.error('Failed to sync from IDBFS', err);
+              else console.log('Synced from IDBFS');
+            });
+
+            setInterval(() => {
+              FS.syncfs(false, err => {
+                if (err) console.error('Failed to sync to IDBFS', err);
+                else console.log('Synced to IDBFS');
+              });
+            }, 10000);
+          } catch (e) {
+            console.warn('Failed to init persistent storage', e);
+          }
+
+          Module.addRunDependency(runDependency);
+          setStatus(strings.loadingMainArchive);
+          fetch('./main.zip')
+            .then(function (response) {
+              if (!response.ok) {
+                throw new Error('HTTP ' + response.status + ' while fetching main.zip');
+              }
+              return response.arrayBuffer();
+            })
+            .then(function (buffer) {
+              const data = new Uint8Array(buffer);
+              Module.FS.writeFile('/data/main.zip', data, { canOwn: true });
+              console.log('main.zip loaded:', Module.FS.readdir('/data'));
+            })
+            .catch(function (err) {
+              console.error('Failed to load main.zip', err);
+              throw err;
+            })
+            .finally(function () {
+              Module.removeRunDependency(runDependency);
+            });
+          Module.addRunDependency(fontDependency);
+          setStatus(strings.loadingFontArchive);
+          fetch('./font.zip')
+            .then(function (response) {
+              if (!response.ok) {
+                throw new Error('HTTP ' + response.status + ' while fetching font.zip');
+              }
+              return response.arrayBuffer();
+            })
+            .then(function (buffer) {
+              const data = new Uint8Array(buffer);
+              Module.FS.writeFile('/data/font.zip', data, { canOwn: true });
+              console.log('font.zip loaded:', Module.FS.readdir('/data'));
+            })
+            .catch(function (err) {
+              console.error('Failed to load font.zip', err);
+              throw err;
+            })
+            .finally(function () {
+              Module.removeRunDependency(fontDependency);
+            });
+        }],
+        onRuntimeInitialized: function () {
+          console.log('Soluna runtime ready');
+          setStatus(strings.runtimeReady);
+          setTimeout(hideOverlay, 400);
+        },
+        onExit: function (status) {
+          console.log('Program exited with status', status);
+        },
+        onAbort: function (what) {
+          console.error('Program aborted:', what);
+          showError(strings.runtimeFailedTitle, strings.runtimeFailedDetail);
+        },
+        print: console.log,
+        printErr: console.error
       };
 
-      Module.FS_createPath('/', 'data', true, true);
-
-      try {
-          FS.mkdir('/persistent');
-          FS.mount(IDBFS, {autoPersist: true}, '/persistent');
-          FS.syncfs(true, err => {
-            if (err) console.error('Failed to sync from IDBFS', err);
-            else console.log('Synced from IDBFS');
-          });
-
-          setInterval(() => {
-            FS.syncfs(false, err => {
-              if (err) console.error('Failed to sync to IDBFS', err);
-              else console.log('Synced to IDBFS');
-            });
-          }, 10000);
-      } catch (e) {}
-
-      Module.addRunDependency(runDependency);
-      fetch('./main.zip')
-        .then(function (response) {
-          if (!response.ok) {
-            throw new Error('HTTP ' + response.status + ' while fetching main.zip');
-          }
-          return response.arrayBuffer();
-        })
-        .then(function (buffer) {
-          const data = new Uint8Array(buffer);
-          Module.FS.writeFile('/data/main.zip', data, { canOwn: true });
-          console.log('main.zip loaded:', Module.FS.readdir('/data'));
-        })
-        .catch(function (err) {
-          console.error('Failed to load main.zip', err);
-          throw err;
-        })
-        .finally(function () {
-          Module.removeRunDependency(runDependency);
-        });
-      Module.addRunDependency(fontDependency);
-      fetch('./font.zip')
-        .then(function (response) {
-          if (!response.ok) {
-            throw new Error('HTTP ' + response.status + ' while fetching font.zip');
-          }
-          return response.arrayBuffer();
-        })
-        .then(function (buffer) {
-          const data = new Uint8Array(buffer);
-          Module.FS.writeFile('/data/font.zip', data, { canOwn: true });
-          console.log('font.zip loaded:', Module.FS.readdir('/data'));
-        })
-        .catch(function (err) {
-          console.error('Failed to load font.zip', err);
-          throw err;
-        })
-        .finally(function () {
-          Module.removeRunDependency(fontDependency);
-        });
-    }],
-    onRuntimeInitialized: function () {
-      console.log('Soluna runtime ready');
-    },
-    onExit: function (status) {
-      console.log('Program exited with status', status);
-    },
-    onAbort: function (what) {
-      console.error('Program aborted:', what);
-    },
-    print: console.log,
-    printErr: console.error
-  };
+      loadRuntimeScript().catch(function (err) {
+        console.error(err);
+        showError(strings.runtimeFailedTitle, strings.runtimeFailedDetail);
+      });
+    });
+  })();
   </script>
-  <script src="./soluna.js"></script>
 </body>
 </html>
