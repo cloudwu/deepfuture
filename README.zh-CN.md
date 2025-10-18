@@ -1,5 +1,11 @@
 # 深远未来
 
+<div align="center">
+
+<strong><a href="https://cloudwu.github.io/deepfuture">>> 在线体验 <<</a></strong>
+
+</div>
+
 [English](./README.md)
 
 > 拓殖星球，发展科技，永无止境地进化你银河系的深远未来。
