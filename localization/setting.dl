@@ -3,17 +3,12 @@ setting :
 		name : 简体中文
 		english_name : "Simplified Chinese"
 		fontfile : asset/font/WenQuanWeiMiHei-1.ttf
-		font :
-			微软雅黑
-			"Yuanti SC"
-			文泉驿微米黑
+		font : 文泉驿微米黑
 		timefmt : "%Y/%m/%d %H:%M"
 		homepage : "https://blog.codingnow.com/2025/07/deep_future.html"
 	english:
 		name : English
 		fontfile : asset/font/arial.ttf
-		font :
-			Arial
-			"Noto Sans"
+		font : Arial
 		timefmt : "%b %d, %Y %H:%M"
 		homepage : "https://boardgamegeek.com/boardgame/194986/deep-future"
