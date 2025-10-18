@@ -565,5 +565,6 @@ english:
   credits.boardgame : "Boardgame Designer"
   credits.engine : "Game Engine (Windows)"
   credits.macos : "MacOS Version"
-  credits.linux : "Linux Vesion"
+  credits.linux : "Linux Veesion"
+  credits.wasm : "Web Version"
   credits.localization : "Localization"
