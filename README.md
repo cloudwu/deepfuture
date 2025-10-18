@@ -1,5 +1,11 @@
 # Deep Future
 
+<div align="center">
+
+<strong><a href="https://cloudwu.github.io/deepfuture">>> Play Online <<</a></strong>
+
+</div>
+
 [简体中文](./README.zh-CN.md)
 
 > Settle worlds, advance techs, and endlessly evolve your galaxy's deep future. 
