@@ -1,0 +1,89 @@
+name: Nightly Deploy
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Soluna
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
+      - uses: actions/checkout@v5
+        with:
+          repository: floooh/sokol-tools-bin
+          ref: "a06f19929ff8f9824ec6dd87c21329b1f205809e"
+          path: sokol-tools-bin
+          fetch-depth: 1
+      - name: Setup sokol-shdc
+        shell: bash
+        run: |
+          TARGET_DIR="/usr/local/bin"
+          SHDC_BINARY="sokol-shdc"
+          FIND_PATH="bin/linux"
+          echo "Setting up sokol-tools from sokol-tools-bin/$FIND_PATH"
+          find sokol-tools-bin/$FIND_PATH -name $SHDC_BINARY -exec cp {} $TARGET_DIR \;
+          $SHDC_BINARY -h
+      - uses: yuchanns/actions-luamake@v1
+        with:
+          luamake-version: "5bedfce66f075a9f68b1475747738b81b3b41c25"
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential \
+            libgl1-mesa-dev libglu1-mesa-dev libx11-dev \
+            libxrandr-dev libxi-dev libxxf86vm-dev libxcursor-dev \
+            libasound2-dev libfontconfig1-dev
+      - uses: mymindstorm/setup-emsdk@v14
+      - name: Build Emscripten
+        shell: bash
+        working-directory: soluna
+        run: |
+          luamake precompile
+          luamake -compiler emcc precompile
+          luamake -compiler emcc
+      - name: Prepare Game Content
+        shell: bash
+        run: |
+          mkdir build
+          SOLUNA_BINARY="soluna.wasm"
+          SOLUNA_PATH=$(find soluna/bin -name $SOLUNA_BINARY | head -n 1)
+          SOLUNA_JS="soluna.js"
+          SOLUNA_JS_PATH=$(find soluna/bin -name $SOLUNA_JS | head -n 1)
+          cp "$SOLUNA_PATH" ./build/
+          cp "$SOLUNA_JS_PATH" ./build/
+          zip -r ./build/main.zip asset core gameplay localization service visual main.game main.lua
+          cp .github/assets/index.html ./build/
+          cp .github/assets/font.zip ./build/
+          cp .github/assets/coi-serviceworker.min.js ./build/
+      - name: Upload static files as artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: [build]
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+
