@@ -2,27 +2,18 @@ setting :
 	schinese :
 		name : 简体中文
 		english_name : "Simplified Chinese"
-		windows :
-			font : 微软雅黑
-		macos :
-			font : "Yuanti SC"
-		linux :
-			font : "WenQuanYi Micro Hei"
-		wasm :
-			font : "WenQuanYi Micro Hei"
-			fontfile : asset/font/WenQuanWeiMiHei-1.ttf
+		fontfile : asset/font/WenQuanWeiMiHei-1.ttf
+		font :
+			微软雅黑
+			"Yuanti SC"
+			文泉驿微米黑
 		timefmt : "%Y/%m/%d %H:%M"
 		homepage : "https://blog.codingnow.com/2025/07/deep_future.html"
 	english:
 		name : English
-		windows :
-			font : Arial
-		macos :
-			font : Arial
-		linux :
-			font : "Noto Sans"
-		wasm :
-			font : Arial
-			fontfile : asset/font/arial.ttf
+		fontfile : asset/font/arial.ttf
+		font :
+			Arial
+			"Noto Sans"
 		timefmt : "%b %d, %Y %H:%M"
 		homepage : "https://boardgamegeek.com/boardgame/194986/deep-future"

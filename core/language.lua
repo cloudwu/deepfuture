@@ -8,7 +8,7 @@ local sysfont = require "soluna.font.system"
 local setting = require "core.setting"
 local url = require "soluna.url"
 
-global print, assert, print_r, error, pairs, os, math
+global print, assert, print_r, error, pairs, os, math, type, ipairs
 
 local LOCALIZATION_PATH = "localization/"
 local DOT <const> = 46	; assert(("."):byte() == DOT)
@@ -61,34 +61,91 @@ function lang.get_default()
 	return lang
 end
 
+local function fetch(fonts)
+	for _, fontname in ipairs(fonts) do
+		local fontid = font.name(fontname)
+		if fontid then
+			return fontid, fontname
+		end
+	end
+end
+
+local font_info = {}
+local font_import = {}
+
+local function get_font(lang)
+	local info = font_info[lang]
+	if info then
+		return info.fontid, info.fontname
+	end
+	info = {}
+	font_info[lang] = info
+	
+	local lang_setting = DATA.setting[lang] or error ("No lang setting : " .. lang)
+	local fonts = lang_setting.font
+	if type(fonts) ~= "table" then
+		fonts = { fonts }
+	end
+	local fontid, fontname = fetch(fonts)
+	if fontid then
+		return fontid, fontname
+	end
+	for _, fontname in ipairs(fonts) do
+		if font_import[fontname] == nil then
+			font_import[fontname] = true
+			local data = sysfont.ttfdata(fontname)
+			if data then
+				print("Load system font", fontname)
+				font.import(data)
+				local fontid = font.name(fontname)
+				if fontid then
+					info.fontid, info.fontname = fontid, fontname
+					return fontid, fontname
+				end
+			end
+		end
+	end
+
+	local fontfile = lang_setting.fontfile
+	if fontfile then
+		if type(fontfile) ~= "table" then
+			fontfile = { fontfile }
+		end
+		lang_setting.fontfile = fontfile
+		for _, filename in ipairs(fontfile) do
+			if font_import[filename] == nil then
+				font_import[filename] = true
+				local data = file.load(filename)
+				if data then
+					print("Load fontfile", filename)
+					font.import(data)
+					local fontid, fontname = fetch(fonts)
+					if fontid then
+						info.fontid, info.fontname = fontid, font
+						return fontid, font
+					end
+				else
+					print("Can't open fontfile", filename)
+				end
+			end
+		end
+	end
+	
+	print("No font for", lang)
+	local fontid = font.name "", fonts[1]
+	info.fontid, info.fontname = fontid, fontname
+	return fontid, fontname
+end
+
 function lang.font_name(lang)
 	lang = lang or LANG
-	local lang_setting = DATA.setting[lang] or error ("No lang setting : " .. lang)
-	return lang_setting.font or lang_setting[soluna.platform].font
+	local _, fontname = get_font(lang)
+	return fontname
 end
 
 function lang.font_id(lang)
 	lang = lang or LANG
-	local lang_setting = DATA.setting[lang] or error ("No lang setting : " .. lang)
-	local gamefont = lang_setting[soluna.platform].font or lang_setting.font
-	local fontfile = lang_setting[soluna.platform].fontfile or lang_setting.fontfile
-	if not lang_setting.font_import then
-		local data
-		if fontfile then
-			data = file.load(fontfile)
-			if data == nil then
-				print("Can't load font file", fontfile)
-			else
-				print("Load font file", fontfile)
-			end
-		end
-		if not data then
-			data = sysfont.ttfdata(gamefont)
-		end
-		font.import(data or error ("Can't load font " .. gamefont))
-		lang_setting.font_import = true
-	end
-	return font.name(gamefont)
+	return (get_font(lang))
 end
 
 function lang.menu(m)
