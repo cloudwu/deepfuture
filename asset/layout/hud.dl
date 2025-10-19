@@ -127,10 +127,7 @@ float :
 	position : absolute
 	left : 0
 	right : 100
-	top : 0
-	height : 100%
+	top : 240
 	justify : center
-	center :
-		height : 280
-		width : 100%
-		region : float
+	height : 280
+	region : float
