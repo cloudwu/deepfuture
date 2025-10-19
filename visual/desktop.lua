@@ -13,7 +13,7 @@ local ui = require "core.rules".ui
 local version = require "gameplay.version"
 local table = table
 local math = math
-global ipairs, error, pairs, print, tostring
+global ipairs, error, pairs, print, tostring, setmetatable
 
 local DRAWLIST = {}
 local TESTLIST = {}
@@ -428,6 +428,20 @@ function M.additional(list)
 	ADDITIONAL_LIST = list
 end
 
+local focus_map = {
+	map = {
+		map = true,
+		homeworld = true,
+		colony = true,
+	}
+}
+
+setmetatable(focus_map, { __index = function (o,k)
+	local r = { [k] = true }
+	o[k] = r
+	return r
+end })
+
 function M.draw(count)
 	if CAMERA then open_camera() end
 	-- todo : find a better place to check unfocus :
@@ -437,7 +451,8 @@ function M.draw(count)
 		map_focus(focus_state.lost)
 	end
 	-- todo : support multiple hud layer
-	widget.draw(BATCH, DRAWLIST.hud, mouse.focus_region())
+	local r = mouse.focus_region()
+	widget.draw(BATCH, DRAWLIST.hud, r and focus_map[r])
 	
 	if CAMERA then close_camera() end
 	if DESC then

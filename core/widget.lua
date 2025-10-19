@@ -79,23 +79,33 @@ function widget.draw_list(dom, texts, font_id, sprites)
 end
 
 function widget.draw(batch, list, focus)
-	local focus_region_func
-	local focus_region_object
+	local delay
 	for _, obj in ipairs(list) do
 		local o, x, y = table.unpack(obj)
 		if type(o) == "function" then
-			if x.region ~= focus then
-				o(x)
+			if focus and focus[x.region] then
+				local f = o
+				local arg = x
+				local last = delay
+				if delay then
+					delay = function()
+						last()
+						f(arg)
+					end
+				else
+					delay = function()
+						f(arg)
+					end
+				end
 			else
-				focus_region_func = o
-				focus_region_object = x
+				o(x)
 			end
 		else
 			batch:add(o, x, y)
 		end
 	end
-	if focus_region_func then
-		focus_region_func(focus_region_object)
+	if delay then
+		delay()
 	end
 end
 
