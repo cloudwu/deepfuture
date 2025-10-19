@@ -121,8 +121,8 @@ local function get_font(lang)
 					font.import(data)
 					local fontid, fontname = fetch(fonts)
 					if fontid then
-						info.fontid, info.fontname = fontid, font
-						return fontid, font
+						info.fontid, info.fontname = fontid, fontname
+						return fontid, fontname
 					end
 				else
 					print("Can't open fontfile", filename)
@@ -132,7 +132,7 @@ local function get_font(lang)
 	end
 	
 	print("No font for", lang)
-	local fontid = font.name "", fonts[1]
+	local fontid, fontname = font.name "", fonts[1]
 	info.fontid, info.fontname = fontid, fontname
 	return fontid, fontname
 end
