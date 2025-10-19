@@ -40,8 +40,10 @@ end) ()
 function map.setup()
 	galaxy = persist.init("galaxy", {})
 	colony = {}
-	sector_name = nil
-	sector_name_set = {}
+	util.dirty_trigger(map.update)
+	util.dirty_trigger(map.is_safe)
+	util.dirty_trigger(map.can_move)
+	util.dirty_trigger(map.can_grow)
 	map.sync()
 end
 
