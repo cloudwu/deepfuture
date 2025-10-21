@@ -2,11 +2,11 @@ local mouse = require "core.mouse"
 
 local TOUCH_LONG_PRESS_FRAMES <const> = 18
 local TOUCH_MOVE_THRESHOLD2 <const> = 12 * 12
+local TOUCH_REPEAT_DIST2 <const> = 160 * 160
 
 -- Regions that require a confirmation tap.
 local DOUBLE_TAP_REGIONS <const> = {
 	hand = true,
-	float = true,
 	neutral = true,
 	homeworld = true,
 	colony = true,
@@ -42,11 +42,17 @@ local state = {
 local last_tap = {
 	require_double = false,
 	object = nil,
+	region = nil,
+	x = 0,
+	y = 0,
 }
 
 local function clear_last_tap()
 	last_tap.require_double = false
 	last_tap.object = nil
+	last_tap.region = nil
+	last_tap.x = 0
+	last_tap.y = 0
 end
 
 local function reset_state()
@@ -90,7 +96,10 @@ function touch.begin(x, y)
 	end
 	if last_tap.require_double then
 		local focus_object = mouse.focus_object()
-		if focus_object and focus_object == last_tap.object then
+		local same_object = focus_object and focus_object == last_tap.object
+		local same_region = region ~= nil and region == last_tap.region
+		local same_spot = dist2(x, y, last_tap.x, last_tap.y) <= TOUCH_REPEAT_DIST2
+		if same_object or same_region or same_spot then
 			state.double_candidate = true
 		else
 			clear_last_tap()
@@ -115,6 +124,7 @@ function touch.ended(x, y)
 	mouse.mouse_move(x, y)
 	state.x = x
 	state.y = y
+	local region = mouse.focus_region()
 	if state.pressing then
 		mouse.mouse_button("left", false)
 		clear_last_tap()
@@ -130,12 +140,11 @@ function touch.ended(x, y)
 					clear_last_tap()
 				else
 					local focus_object = mouse.focus_object()
-					if focus_object then
-						last_tap.require_double = true
-						last_tap.object = focus_object
-					else
-						clear_last_tap()
-					end
+					last_tap.require_double = true
+					last_tap.object = focus_object
+					last_tap.region = region
+					last_tap.x = state.x
+					last_tap.y = state.y
 				end
 			else
 				mouse.mouse_button("left", true)
@@ -158,8 +167,18 @@ function touch.update(frame)
 	local need_double = region and DOUBLE_TAP_REGIONS[region] or false
 	state.require_double = need_double
 	if need_double then
-		local focus_object = mouse.focus_object()
-		state.double_candidate = last_tap.require_double and focus_object ~= nil and focus_object == last_tap.object
+		local candidate = false
+		if last_tap.require_double then
+			local focus_object = mouse.focus_object()
+			if focus_object and focus_object == last_tap.object then
+				candidate = true
+			elseif last_tap.region and region == last_tap.region then
+				candidate = true
+			elseif dist2(state.x, state.y, last_tap.x, last_tap.y) <= TOUCH_REPEAT_DIST2 then
+				candidate = true
+			end
+		end
+		state.double_candidate = candidate
 	else
 		state.double_candidate = false
 	end

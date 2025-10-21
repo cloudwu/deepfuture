@@ -190,7 +190,14 @@ local function draw_card(obj)
 end
 
 local function test_card(obj, mx, my)
-	return obj._move == nil and vcard.test(mx, my, obj.x, obj.y, obj.scale)
+	if obj._move then
+		return
+	end
+	local x, y, scale = obj.x, obj.y, obj.scale
+	if obj._focus_time then
+		x, y, scale = focus_args(obj)
+	end
+	return vcard.test(mx, my, x, y, scale)
 end
 
 function region:transfer(card, new_region)
