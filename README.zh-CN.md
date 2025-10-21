@@ -22,6 +22,12 @@
 
 ## 如何游玩
 
+### 在线体验
+
+点击上方“在线体验”按钮，即可在浏览器中游玩游戏。
+
+### 本地体验
+
 - 下载 [soluna](https://github.com/cloudwu/soluna/releases/tag/nightly)（游戏引擎运行时框架）。
 - 克隆本游戏仓库。
 - （可选）Linux 用户如需简体中文，请安装字体 `WenQuanYi Micro Hei`。
@@ -40,6 +46,7 @@ soluna.exe main.game
 游戏正在持续开发与改进中，欢迎参与测试并提供反馈。遇到问题请带上存档文件提交 issue，存档文件可在以下位置找到:
 
 - Windows: `%USERPROFILE%\Documents\My Games\deepfuture\save.txt`
-- macOS | Linux: `~/.local/share/deepfuture/save.txt`
+- macOS & Linux: `~/.local/share/deepfuture/save.txt`
+- Web: 浏览器 Local Storage
 
 关于游戏内容的交流，请在 Discussions 中发帖。

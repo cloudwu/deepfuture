@@ -15,6 +15,7 @@ local loadsave = require "core.loadsave"
 local track = require "gameplay.track"
 local vbutton = require "visual.button"
 local mouse = require "core.mouse"
+local touch = require "core.touch"
 local keyboard = require "core.keyboard"
 local text = require "soluna.text"
 local setting =require "core.setting"
@@ -155,10 +156,23 @@ function callback.mouse_scroll(x, y)
 	mouse.scroll(x)
 end
 
+function callback.touch_begin(x, y)
+	touch.begin(x, y)
+end
+
+function callback.touch_end(x, y)
+	touch.ended(x, y)
+end
+
+function callback.touch_moved(x, y)
+	touch.moved(x, y)
+end
+
 function callback.frame(count)
 	local x, y = mouse.sync(count)
 	vdesktop.set_mouse(x, y)
 	flow.update()
+	touch.update(count)
 	-- todo :  don't flush card here
 	vdesktop.card_count(card.count "draw", card.count "discard", card.seen())
 	map.update()

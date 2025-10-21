@@ -143,6 +143,10 @@ function mouse.focus_region()
 	return focus.region
 end
 
+function mouse.focus_object()
+	return focus.object
+end
+
 function mouse.scroll(delta)
 	mouse.z = mouse.z + delta
 end
