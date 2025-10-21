@@ -22,6 +22,12 @@ The [rules](./rules/Deep_Future_Rules_1_6.pdf) include tables and guidelines for
 
 ## How to Play
 
+### Play Online
+
+Click the "Play Online" button above to play the game in your browser.
+
+### Play Locally
+
 - Download [soluna](https://github.com/cloudwu/soluna/releases/tag/nightly) (the game engine runtime).
 - Clone the game repository.
 - (Optional) For Linux users with Simplified Chinese, install the font `WenQuanYi Micro Hei`.
@@ -40,6 +46,7 @@ soluna.exe main.game
 Feedback is welcome. Please include your save file when reporting issues. The save file can be found at:
 
 - Windows: `%USERPROFILE%\Documents\My Games\deepfuture\save.txt`
-- macOS | Linux: `~/.local/share/deepfuture/save.txt`
+- macOS & Linux: `~/.local/share/deepfuture/save.txt`
+- Web: Browser Local Storage
 
 To share your thoughts about the game, please use Discussions.
