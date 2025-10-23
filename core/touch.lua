@@ -182,7 +182,7 @@ end
 function touch.update(frame)
 	current_frame = frame
 	if pending_clear_focus then
-		mouse.set_focus(nil, nil)
+		mouse.mouse_move(0, 0)
 		pending_clear_focus = nil
 	end
 	if not state.active then
