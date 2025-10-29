@@ -4,14 +4,13 @@ setting :
 		english_name : "Simplified Chinese"
 		fontfile :
 			asset/font/MicrosoftYaHei.ttf
-			asset/font/STHeiti.ttf
+			asset/font/STYuanti-SC-Regular.ttf
 			asset/font/HeitiSC.ttf
 			asset/font/SourceHanSansSC-Regular.ttf
 		font :
 			微软雅黑
 			"Microsoft YaHei"
 			"Yuanti SC"
-			"STHeiti"
 			"Heiti SC"
 			"Source Han Sans SC Regular"
 			"WenQuanYi Micro Hei"
