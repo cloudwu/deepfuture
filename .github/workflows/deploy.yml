@@ -33,7 +33,7 @@ jobs:
           cp "${{ steps.build.outputs.SOLUNA_JS_PATH }}" ./build/
           zip -r ./build/main.zip asset core gameplay localization service visual main.game main.lua
           cp .github/assets/index.html ./build/
-          cp .github/assets/font.zip ./build/
+          cp .github/assets/*.ttf ./build/
           cp .github/assets/coi-serviceworker.min.js ./build/
       - name: Upload static files as artifact
         id: deployment

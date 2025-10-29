@@ -57,6 +57,70 @@
       opacity: 0.85;
       margin: 0;
     }
+    #overlay-progress {
+      margin: 18px auto 0;
+      width: 100%;
+      max-width: 420px;
+      text-align: left;
+    }
+    #overlay-progress-track {
+      position: relative;
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(215, 229, 255, 0.16);
+      overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(6, 12, 28, 0.45);
+    }
+    #overlay-progress-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(135deg, rgba(126, 188, 255, 0.9), rgba(56, 116, 218, 0.9));
+      box-shadow: 0 0 12px rgba(96, 158, 255, 0.4);
+      transition: width 0.3s ease;
+    }
+    #overlay-progress-label {
+      display: block;
+      margin-top: 8px;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-align: right;
+      color: rgba(215, 229, 255, 0.72);
+    }
+    #font-permission-btn {
+      display: none;
+      margin: 18px auto 0;
+      padding: 12px 26px;
+      border-radius: 999px;
+      border: 1px solid rgba(126, 188, 255, 0.55);
+      background: linear-gradient(135deg, rgba(28, 48, 92, 0.9), rgba(16, 24, 48, 0.9));
+      color: #d7e5ff;
+      font-size: 0.95rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(10, 22, 48, 0.4);
+      transition: transform 0.18s ease, opacity 0.18s ease, border-color 0.18s ease;
+    }
+    #font-permission-btn.visible {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    #font-permission-btn:hover:not(:disabled),
+    #font-permission-btn:focus-visible:not(:disabled) {
+      transform: translateY(-1px);
+      border-color: rgba(156, 208, 255, 0.85);
+      outline: none;
+    }
+    #font-permission-btn:disabled {
+      cursor: wait;
+      opacity: 0.6;
+    }
     #metrics {
       position: fixed;
       bottom: 24px;
@@ -194,6 +258,13 @@
       <h1 id="overlay-title"></h1>
       <div id="overlay-intro"></div>
       <p id="overlay-status"></p>
+      <div id="overlay-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div id="overlay-progress-track">
+          <div id="overlay-progress-fill"></div>
+        </div>
+        <span id="overlay-progress-label">0%</span>
+      </div>
+      <button id="font-permission-btn" type="button"></button>
     </div>
   </div>
   <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
@@ -223,10 +294,15 @@
     const titleEl = document.getElementById('overlay-title');
     const introEl = document.getElementById('overlay-intro');
     const statusEl = document.getElementById('overlay-status');
+    const progressEl = document.getElementById('overlay-progress');
+    const progressFillEl = document.getElementById('overlay-progress-fill');
+    const progressLabelEl = document.getElementById('overlay-progress-label');
+    const fontPermissionBtn = document.getElementById('font-permission-btn');
     const sourceLinkEl = document.getElementById('source-link');
     const uvLabel = document.getElementById('uv_label');
     const pvLabel = document.getElementById('pv_label');
     const metrics = document.getElementById('metrics');
+    let lastProgressValue = 0;
 
     function attachLabelSanitizer(label, prefix) {
       if (!label) return;
@@ -280,6 +356,12 @@
       loadingResources: '正在加载游戏资源…',
       loadingMainArchive: '正在加载核心资源包…',
       loadingFontArchive: '正在加载字体资源包…',
+      waitingLocalFontAuthorization: '请授权读取本地字体…',
+      requestingLocalFont: '正在请求访问本地字体…',
+      loadingEnglishFont: '正在加载英文字体…',
+      loadingChineseFont: '正在加载中文字体…',
+      localFontUnavailable: '无法使用本地字体，改为下载字体资源…',
+      localFontButton: '授权使用本地字体',
       runtimeReady: '引擎已就绪，正在启动…',
       runtimeFailedTitle: '运行时加载失败',
       runtimeFailedDetail: '加载运行时失败，请稍后重试。'
@@ -296,17 +378,237 @@
       loadingResources: 'Loading game assets…',
       loadingMainArchive: 'Fetching core content…',
       loadingFontArchive: 'Fetching font resources…',
+      waitingLocalFontAuthorization: 'Awaiting font authorization…',
+      requestingLocalFont: 'Requesting access to local fonts…',
+      loadingEnglishFont: 'Loading English font…',
+      loadingChineseFont: 'Loading Chinese font…',
+      localFontUnavailable: 'Local fonts unavailable. Fetching bundled font…',
+      localFontButton: 'Authorize local fonts',
       runtimeReady: 'Runtime ready. Launching…',
       runtimeFailedTitle: 'Runtime failed to load',
       runtimeFailedDetail: 'We could not load the runtime. Please try again later.'
     };
 
+    const supportsLocalFontAPI = typeof window.queryLocalFonts === 'function';
+    const textEncoder = typeof TextEncoder !== 'undefined' ? new TextEncoder() : null;
+    const ENGLISH_FONT_POSTSCRIPT_NAMES = [
+      'ArialMT',
+      'LiberationSerif',
+      'Arial',
+      'Helvetica'
+    ];
+    const CHINESE_FONT_POSTSCRIPT_NAMES = [
+      'STHeiti',
+      'MicrosoftYaHei',
+      'HeitiSC',
+    ];
+
+    const CRC32_TABLE = (() => {
+      const table = new Uint32Array(256);
+      for (let n = 0; n < 256; n++) {
+        let c = n;
+        for (let k = 0; k < 8; k++) {
+          c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+        }
+        table[n] = c >>> 0;
+      }
+      return table;
+    })();
+
+    function calculateCRC32(data) {
+      let crc = 0xFFFFFFFF;
+      for (let i = 0; i < data.length; i++) {
+        crc = CRC32_TABLE[(crc ^ data[i]) & 0xFF] ^ (crc >>> 8);
+      }
+      return (crc ^ 0xFFFFFFFF) >>> 0;
+    }
+
+    function sanitizeFontName(name, index) {
+      const base = name.trim();
+      return base.replace(/[^A-Za-z0-9-_.]/g, '_');
+    }
+
+    function createFontZip(entries) {
+      if (!entries.length) {
+        throw new Error('No font data provided to zip');
+      }
+      if (!textEncoder) {
+        throw new Error('TextEncoder is not available in this environment');
+      }
+
+      const files = entries.map((entry, idx) => {
+        const safeName = sanitizeFontName(entry.name, idx);
+        const fileName = safeName.endsWith('.ttf') ? safeName : safeName + '.ttf';
+        const fullName = 'asset/font/' + fileName;
+        console.log('Adding font to zip:', fullName);
+        const nameBytes = textEncoder.encode(fullName);
+        const data = entry.data;
+        const crc32 = calculateCRC32(data);
+        const nameLength = nameBytes.length;
+        const size = data.length;
+        return {
+          data,
+          crc32,
+          nameBytes,
+          nameLength,
+          size
+        };
+      });
+
+      let localSize = 0;
+      let centralSize = 0;
+      files.forEach(file => {
+        localSize += 30 + file.nameLength + file.size;
+        centralSize += 46 + file.nameLength;
+      });
+
+      const endOfCentralDirectorySize = 22;
+      const totalSize = localSize + centralSize + endOfCentralDirectorySize;
+      const output = new Uint8Array(totalSize);
+      const view = new DataView(output.buffer);
+
+      let offset = 0;
+      const centralRecords = [];
+
+      files.forEach(file => {
+        const localHeaderOffset = offset;
+        view.setUint32(offset, 0x04034b50, true);
+        view.setUint16(offset + 4, 20, true); // version needed to extract
+        view.setUint16(offset + 6, 0, true); // general purpose bit flag
+        view.setUint16(offset + 8, 0, true); // compression (store)
+        view.setUint16(offset + 10, 0, true); // last mod file time
+        view.setUint16(offset + 12, 0, true); // last mod file date
+        view.setUint32(offset + 14, file.crc32, true);
+        view.setUint32(offset + 18, file.size, true); // compressed size
+        view.setUint32(offset + 22, file.size, true); // uncompressed size
+        view.setUint16(offset + 26, file.nameLength, true);
+        view.setUint16(offset + 28, 0, true); // extra field length
+        offset += 30;
+
+        output.set(file.nameBytes, offset);
+        offset += file.nameLength;
+
+        output.set(file.data, offset);
+        offset += file.size;
+
+        centralRecords.push({
+          file,
+          localHeaderOffset
+        });
+      });
+
+      const centralDirectoryOffset = offset;
+
+      centralRecords.forEach(({ file, localHeaderOffset }) => {
+        view.setUint32(offset, 0x02014b50, true);
+        view.setUint16(offset + 4, 20, true); // version made by
+        view.setUint16(offset + 6, 20, true); // version needed to extract
+        view.setUint16(offset + 8, 0, true); // general purpose bit flag
+        view.setUint16(offset + 10, 0, true); // compression
+        view.setUint16(offset + 12, 0, true); // last mod file time
+        view.setUint16(offset + 14, 0, true); // last mod file date
+        view.setUint32(offset + 16, file.crc32, true);
+        view.setUint32(offset + 20, file.size, true); // compressed size
+        view.setUint32(offset + 24, file.size, true); // uncompressed size
+        view.setUint16(offset + 28, file.nameLength, true);
+        view.setUint16(offset + 30, 0, true); // extra field length
+        view.setUint16(offset + 32, 0, true); // file comment length
+        view.setUint16(offset + 34, 0, true); // disk number start
+        view.setUint16(offset + 36, 0, true); // internal file attributes
+        view.setUint32(offset + 38, 0, true); // external file attributes
+        view.setUint32(offset + 42, localHeaderOffset, true); // relative offset
+        offset += 46;
+
+        output.set(file.nameBytes, offset);
+        offset += file.nameLength;
+      });
+
+      const centralDirectorySize = offset - centralDirectoryOffset;
+
+      view.setUint32(offset, 0x06054b50, true);
+      view.setUint16(offset + 4, 0, true); // number of this disk
+      view.setUint16(offset + 6, 0, true); // number of the disk with the start
+      view.setUint16(offset + 8, files.length, true); // total entries on this disk
+      view.setUint16(offset + 10, files.length, true); // total entries
+      view.setUint32(offset + 12, centralDirectorySize, true);
+      view.setUint32(offset + 16, centralDirectoryOffset, true);
+      view.setUint16(offset + 20, 0, true); // comment length
+
+      return output;
+    }
+
+    async function fetchFontEntry(url, fallbackName) {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('HTTP ' + response.status + ' while fetching ' + url);
+      }
+      const buffer = await response.arrayBuffer();
+      return {
+        name: fallbackName,
+        data: new Uint8Array(buffer)
+      };
+    }
+
+    async function getLocalFontEntry(postscriptNames) {
+      if (!supportsLocalFontAPI) {
+        return null;
+      }
+      try {
+        const fonts = await window.queryLocalFonts({ postscriptNames });
+        if (!fonts || fonts.length === 0) {
+          return null;
+        }
+        let selected = null;
+        for (const desiredName of postscriptNames) {
+          selected = fonts.find(font => font.postscriptName === desiredName);
+          if (selected) break;
+        }
+        if (!selected) {
+          selected = fonts[0];
+        }
+        const blob = await selected.blob();
+        const arrayBuffer = await blob.arrayBuffer();
+        const baseName = sanitizeFontName(selected.postscriptName || selected.fullName);
+        return {
+          name: baseName,
+          data: new Uint8Array(arrayBuffer)
+        };
+      } catch (err) {
+        console.error('queryLocalFonts failed', err);
+        throw err;
+      }
+    }
+
+    function writeFontZipToModule(entries) {
+      const zipData = createFontZip(entries);
+      Module.FS.writeFile('/data/font.zip', zipData, { canOwn: true });
+      console.log('font.zip prepared:', entries.map(entry => entry.name));
+    }
+
     titleEl.textContent = strings.gameTitle;
     introEl.innerHTML = strings.intro.map(text => '<p>' + text + '</p>').join('');
     sourceLinkEl.setAttribute('aria-label', strings.sourceAriaLabel);
+    setProgress(0);
 
-    function setStatus(message) {
+    function setProgress(value) {
+      if (!progressEl || !progressFillEl || !progressLabelEl) {
+        return;
+      }
+      const clamped = Math.max(0, Math.min(100, value));
+      const nextValue = Math.max(lastProgressValue, clamped);
+      lastProgressValue = nextValue;
+      const rounded = Math.round(nextValue);
+      progressFillEl.style.width = nextValue + '%';
+      progressEl.setAttribute('aria-valuenow', String(rounded));
+      progressEl.setAttribute('aria-valuetext', rounded + '%');
+      progressLabelEl.textContent = rounded + '%';
+    }
+
+    function setStatus(message, progressValue) {
       statusEl.textContent = message;
+      if (typeof progressValue === 'number') {
+        setProgress(progressValue);
+      }
     }
 
     function showError(title, detail) {
@@ -343,7 +645,7 @@
       });
     }
 
-    setStatus(strings.checkingWebGPU);
+    setStatus(strings.checkingWebGPU, 5);
 
     hasWebGPU().then(function (supported) {
       if (!supported) {
@@ -351,7 +653,7 @@
         return;
       }
 
-      setStatus(strings.loadingResources);
+      setStatus(strings.loadingResources, 12);
 
       window.Module = {
         arguments: ["zipfile=/data/main.zip:/data/font.zip"],
@@ -393,7 +695,7 @@
           }
 
           Module.addRunDependency(runDependency);
-          setStatus(strings.loadingMainArchive);
+          setStatus(strings.loadingMainArchive, 28);
           fetch('./main.zip')
             .then(function (response) {
               if (!response.ok) {
@@ -405,6 +707,7 @@
               const data = new Uint8Array(buffer);
               Module.FS.writeFile('/data/main.zip', data, { canOwn: true });
               console.log('main.zip loaded:', Module.FS.readdir('/data'));
+              setProgress(48);
             })
             .catch(function (err) {
               console.error('Failed to load main.zip', err);
@@ -414,30 +717,102 @@
               Module.removeRunDependency(runDependency);
             });
           Module.addRunDependency(fontDependency);
-          setStatus(strings.loadingFontArchive);
-          fetch('./font.zip')
-            .then(function (response) {
-              if (!response.ok) {
-                throw new Error('HTTP ' + response.status + ' while fetching font.zip');
-              }
-              return response.arrayBuffer();
-            })
-            .then(function (buffer) {
-              const data = new Uint8Array(buffer);
-              Module.FS.writeFile('/data/font.zip', data, { canOwn: true });
-              console.log('font.zip loaded:', Module.FS.readdir('/data'));
-            })
-            .catch(function (err) {
-              console.error('Failed to load font.zip', err);
-              throw err;
-            })
-            .finally(function () {
+
+          let fontDependencyResolved = false;
+          function resolveFontDependency() {
+            if (!fontDependencyResolved) {
+              fontDependencyResolved = true;
+              setProgress(90);
               Module.removeRunDependency(fontDependency);
+            }
+          }
+
+          function loadBundledFontZip() {
+            (async () => {
+              try {
+                setStatus(strings.loadingEnglishFont, 68);
+                const englishEntry = await fetchFontEntry('./arial.ttf', 'arial.ttf');
+                setProgress(72);
+                setStatus(strings.loadingChineseFont, 78);
+                const chineseEntry = await fetchFontEntry('./SourceHanSansSC-Regular.ttf', 'SourceHanSansSC-Regular.ttf');
+                setProgress(82);
+                writeFontZipToModule([englishEntry, chineseEntry]);
+                setStatus(strings.loadingFontArchive, 85);
+              } catch (err) {
+                console.error('Failed to load fallback font files', err);
+                throw err;
+              } finally {
+                resolveFontDependency();
+              }
+            })().catch(err => {
+              console.error('Unhandled fallback font error', err);
             });
+          }
+
+          function handleLocalFontAuthorization() {
+            if (!supportsLocalFontAPI || !fontPermissionBtn) {
+              loadBundledFontZip();
+              return;
+            }
+
+            fontPermissionBtn.textContent = strings.localFontButton;
+            fontPermissionBtn.setAttribute('aria-label', strings.localFontButton);
+            fontPermissionBtn.classList.add('visible');
+            fontPermissionBtn.disabled = false;
+            setStatus(strings.waitingLocalFontAuthorization, 52);
+
+            const requestLocalFonts = async () => {
+              fontPermissionBtn.disabled = true;
+              setStatus(strings.requestingLocalFont, 58);
+              try {
+                const fontEntries = [];
+
+                let englishEntry = await getLocalFontEntry(ENGLISH_FONT_POSTSCRIPT_NAMES);
+                if (englishEntry) {
+                  fontEntries.push(englishEntry);
+                  setProgress(68);
+                } else {
+                  setStatus(strings.loadingEnglishFont, 68);
+                  englishEntry = await fetchFontEntry('./arial.ttf', 'arial.ttf');
+                  fontEntries.push(englishEntry);
+                  setProgress(72);
+                }
+
+                let chineseEntry = await getLocalFontEntry(CHINESE_FONT_POSTSCRIPT_NAMES);
+                if (chineseEntry) {
+                  fontEntries.push(chineseEntry);
+                  setProgress(78);
+                } else {
+                  setStatus(strings.loadingChineseFont, 78);
+                  chineseEntry = await fetchFontEntry('./SourceHanSansSC-Regular.ttf', 'SourceHanSansSC-Regular.ttf');
+                  fontEntries.push(chineseEntry);
+                  setProgress(82);
+                }
+
+                writeFontZipToModule(fontEntries);
+                setStatus(strings.loadingFontArchive, 85);
+                fontPermissionBtn.classList.remove('visible');
+                resolveFontDependency();
+              } catch (err) {
+                console.warn('Local font access failed, falling back to bundled font files', err);
+                fontPermissionBtn.classList.remove('visible');
+                setStatus(strings.localFontUnavailable, 60);
+                loadBundledFontZip();
+              }
+            };
+
+            fontPermissionBtn.addEventListener('click', () => {
+              requestLocalFonts().catch(err => {
+                console.error('Unexpected error during local font request', err);
+              });
+            }, { once: true });
+          }
+
+          handleLocalFontAuthorization();
         }],
         onRuntimeInitialized: function () {
           console.log('Soluna runtime ready');
-          setStatus(strings.runtimeReady);
+          setStatus(strings.runtimeReady, 100);
           setTimeout(hideOverlay, 400);
         },
         onExit: function (status) {
