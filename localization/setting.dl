@@ -2,18 +2,32 @@ setting :
 	schinese :
 		name : 简体中文
 		english_name : "Simplified Chinese"
-		fontfile : asset/font/WenQuanWeiMiHei-1.ttf
+		fontfile :
+			asset/font/MicrosoftYaHei.ttf
+			asset/font/STHeiti.ttf
+			asset/font/HeitiSC.ttf
+			asset/font/SourceHanSansSC-Regular.ttf
 		font :
 			微软雅黑
+			"Microsoft YaHei"
 			"Yuanti SC"
+			"STHeiti"
+			"Heiti SC"
+			"Source Han Sans SC Regular"
 			"WenQuanYi Micro Hei"
 		timefmt : "%Y/%m/%d %H:%M"
 		homepage : "https://blog.codingnow.com/2025/07/deep_future.html"
 	english:
 		name : English
-		fontfile : asset/font/arial.ttf
+		fontfile :
+			asset/font/arial.ttf
+			asset/font/ArialMT.ttf
+			asset/font/LiberationSerif.ttf
+			asset/font/Helvetica.ttf
 		font :
 			Arial
-			"Noto Sans"
+			"Arial MT"
+			"Liberation Serif"
+			Helvetica
 		timefmt : "%b %d, %Y %H:%M"
 		homepage : "https://boardgamegeek.com/boardgame/194986/deep-future"
