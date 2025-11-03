@@ -3,6 +3,7 @@ local menu = require "gameplay.menu"
 local setting = require "core.setting"
 local loadsave = require "core.loadsave"
 local flow = require "core.flow"
+local soluna = require "soluna"
 
 global print, print_r
 
@@ -47,6 +48,8 @@ return function()
 
 	MENU[#MENU+1] = "manual"
 	MENU[#MENU+1] = "credits"
-	MENU[#MENU+1] = "exit"
+	if soluna.platform ~= "wasm" then
+		MENU[#MENU+1] = "exit"
+	end
 	return menu(MENU) or flow.state.startmenu
 end

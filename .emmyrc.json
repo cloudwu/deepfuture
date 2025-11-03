@@ -1,0 +1,17 @@
+{
+    "$schema": "https://raw.githubusercontent.com/EmmyLuaLs/emmylua-analyzer-rust/refs/heads/main/crates/emmylua_code_analysis/resources/schema.json",
+    "diagnostics": {
+        "enable": true,
+        "disable": [
+            "missing-fields"
+        ]
+    },
+    "runtime": {
+        "version": "Lua5.5"
+    },
+    "workspace": {
+        "library": [
+          "./soluna/docs"
+        ]
+    }
+}
