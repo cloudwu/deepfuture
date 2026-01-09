@@ -18,7 +18,7 @@
 
 ## 游戏截图
 
-<img width="2044" height="1532" alt="deepfuture-zhcn" src="https://github.com/user-attachments/assets/8f337dd7-98d4-48c7-85ae-8df19de29961" />
+<img width="2044" height="1532" alt="deepfuture-zhcn" src="https://github.com/user-attachments/assets/5c00b920-02bf-4bec-a850-4d22ba0f0c77" />
 
 ## 如何游玩
 

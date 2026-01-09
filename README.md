@@ -18,7 +18,7 @@ The [rules](./rules/Deep_Future_Rules_1_6.pdf) include tables and guidelines for
 
 ## Screenshots
 
-<img width="2046" height="1534" alt="deepfuture" src="https://github.com/user-attachments/assets/501d750b-136d-4717-9423-b42f6d0b22c1" />
+<img width="2046" height="1534" alt="deepfuture" src="https://github.com/user-attachments/assets/2c9b8f80-20be-4377-902e-406615aa1691" />
 
 ## How to Play
 
