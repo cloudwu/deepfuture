@@ -51,7 +51,7 @@ function version.older_than(v1, v2)
 end
 
 local root_list = {
-	"assert",
+	"asset",
 	"core",
 	"gameplay",
 	"localization",
@@ -97,7 +97,7 @@ end
 local VERSION
 function version.text()
 	if VERSION == nil then
-		local hash = calc_hash("./", root_list)
+		local hash = calc_hash("", root_list)
 		VERSION = string.format("%s.%s", ver, hash:sub(1, 5))
 	end
 	return VERSION
