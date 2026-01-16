@@ -11,6 +11,8 @@ track :
 	focus_color : 0x2020FF
 desktop :
 	focus_duration : 30
+	colony_line : 5
+	colony_line_spacing : 30
 card :
 	mask_normal : 0x2000ff00
 	mask_focus : 0x8000ff00

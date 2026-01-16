@@ -25,6 +25,14 @@ local VTIPS = {}
 local FONT_ID
 local SPRITES
 
+local CAMERA
+local DURATION <const> = ui.desktop.focus_duration * 2
+local COLONY_LINE <const> = ui.desktop.colony_line
+local COLONY_LINE_SPACING <const> = ui.desktop.colony_line_spacing
+local INV_DURATION <const> = 1 / DURATION
+local PI2 <const> = math.pi * 0.5
+local sin = math.sin
+
 local M = {}
 
 local desktop = {
@@ -76,14 +84,15 @@ do
 			local scale = calc_scale(self, n)
 			local offx = n <= 1 and 0 or (card_w * scale + 3)
 			local x = 0
-			for idx, obj in ipairs(r) do
-				obj.x = x
-				obj.scale = scale
-				if idx > 3 then
-					obj.focus_target.x = obj.x - card_w * (1-scale)
-				else
-					obj.focus_target.x = nil
+			for i, obj in ipairs(r) do
+				local idx = i % COLONY_LINE
+				local offy = (i-1) // COLONY_LINE * COLONY_LINE_SPACING
+				if idx == 1 then
+					x = 0
 				end
+				obj.x = x
+				obj.y = offy
+				obj.scale = scale
 				obj.focus_target.scale = 1
 				x = x + offx
 			end
@@ -319,12 +328,6 @@ function M.describe(text)
 		describe.text = nil
 	end
 end
-
-local CAMERA
-local DURATION <const> = ui.desktop.focus_duration * 2
-local INV_DURATION <const> = 1 / DURATION
-local PI2 <const> = math.pi * 0.5
-local sin = math.sin
 
 local function open_camera()
 	local timeline = CAMERA.timeline + 1

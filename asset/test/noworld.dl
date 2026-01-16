@@ -15,3 +15,31 @@ setup :
 	type : blank
 	---
 	type : blank
+start :
+	---
+	to : colony
+	type : world
+	---
+	to : colony
+	type : world
+	---
+	to : colony
+	type : world
+	---
+	to : colony
+	type : world
+	---
+	to : colony
+	type : world
+	---
+	to : colony
+	type : world
+	---
+	to : colony
+	type : world
+	---
+	to : colony
+	type : world
+	---
+	to : colony
+	type : world
