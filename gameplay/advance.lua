@@ -21,7 +21,7 @@ local table = table
 global pairs, error, print, print_r, ipairs
 
 local CARD_COPY <const> = "$(card.copy)"
-local CHOOSE <const> = { phycics = true }
+local CHOOSE <const> = { physics = true }
 local REDRAW <const> = { chemistry = true }
 local TRACK <const> = {
 	engineering = true,

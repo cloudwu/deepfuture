@@ -1,4 +1,4 @@
-# test POWER action
+# test ADVANCE action
 
 setup :
 	to : colony
@@ -14,7 +14,7 @@ start :
 	type : tech
 	name : TEST
 	adv :
-		chemistry
+		*chemistry
 		M
 	---
 	to : colony

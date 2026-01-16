@@ -364,12 +364,18 @@ function card.generate_newcard()
 end
 
 local function convert_adv(advname)
+	local circle
+	if advname and advname:sub(1,1) == "*" then
+		circle = true
+		advname = advname:sub(2)
+	end
 	local c = advancement.config(advname)
 	if c then
 		return {
 			suit = c.suit,
 			value = c.value,
 			era = HISTORY.era,
+			chosen = circle,
 		}
 	end
 end
