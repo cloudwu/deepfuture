@@ -292,7 +292,7 @@ function desktop.choose_sector(c)
 	
 	-- add init adv
 	
-	c.type = "world"
+	card.blank_to_world(c)
 
 	local clone = util.shallow_clone(c, { adv1 = {}})
 

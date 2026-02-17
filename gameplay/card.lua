@@ -842,6 +842,12 @@ function card.settling(c)
 	end
 end
 
+function card.blank_to_world(c)
+	assert(c.type == "blank")
+	c.type = "world"
+	c.era = HISTORY.era
+end
+
 function card.find_uncomplete(where, r)
 	local n = 1
 	while true do
