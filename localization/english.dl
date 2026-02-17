@@ -263,6 +263,7 @@ english:
   desc.text.hand : "[blue]$(phase.action)[n] phase: Play as action card to initiate [blue]${action}[n] action:\n - ${action_desc}[n].\n\n[blue]$(phase.payment)[n] phase: This card allows cards with ${suit} advancements in the homeworld area to avoid challenges and produce [cube].\n\n[blue]$(phase.challenge)[n] phase: This card can be used to counter negative effects from ${suit} type challenges.\n\n"
   desc.text.hand.world : "$(desc.text.hand)This card represents a colonizable [planet] planet [blue]${name}[n] in sector [blue]${sector}[n], $(plant.era). If you control sector ${sector}, this card can be used for $(action.settle).\n\nNote: Advancement effects marked on the card provide no benefits while in hand."
   desc.text.hand.blank : "$(desc.text.hand)When there are no other [blue]$(card.type.world)[n] in hand, $(card.type.blank) can be used for $(action.settle). After colonization, this card becomes a $(card.type.world)."
+  desc.text.hand.world.complete : "$(desc.text.hand.world)"
   desc.text.hand.tech.complete : "$(desc.tech.discard)\n\n$(desc.text.hand)"
   desc.tech.discard : "This card created in era ${era} is complete and can be used in the following phases:\n${adv1_discard}\n${adv2_discard}\n${adv3_discard}"
   desc.text.hand.tech : "This card created in era ${era} still has room for advancement. Advancement abilities of incomplete ${type} in hand cannot be used until this card is completed.\n\n$(desc.text.hand)"

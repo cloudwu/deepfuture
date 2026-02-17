@@ -20,6 +20,14 @@ start :
 		computation
 		computation
 	---
+	to : hand
+	type : world
+	name : TEST
+	adv :
+		art
+		computation
+		computation
+	---
 	to : colony
 	type : world
 	sector : 22
