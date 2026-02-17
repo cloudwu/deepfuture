@@ -57,6 +57,19 @@ start:
 	---
 	type : civ
 	name : TEST
+	sector : 22
+	era : 1
+	suit : M
+	world : NOWORLD
+	victory : culture
+	advancement : H
+	tech :
+		NONAME1
+		NONAME2
+		NONAME3
+	---
+	type : civ
+	name : TEST
 	sector : 33
 	era : 1
 	suit : S

@@ -142,7 +142,9 @@ function card.load()
 		c._id = id
 		card.gen_desc(c)
 		new_card(c)
-		
+		if c.type == "civ" then
+			assert(c._sector)
+		end
 		local upkeep_count = GAME.upkeep[id]
 		if upkeep_count and upkeep_count > 0 then
 			c._upkeep = UPKEEP_LOGO:rep(upkeep_count)
@@ -521,7 +523,7 @@ function card.gen_desc(c)
 		end
 		c._name = "$(card.civ.name.final)"
 		if c.tech then
-			-- may in generating process (no c.tech yet)
+			-- may be in generating process (no c.tech yet)
 			gen_civ(c)
 		end
 	end

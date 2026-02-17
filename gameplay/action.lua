@@ -214,7 +214,7 @@ local function ctrl_neutral()
 	end
 end
 
-local function check_evoke(hands)
+local function check_evoke(hands, allow)
 	local cards = {}
 	local n = 1
 	while true do
@@ -224,7 +224,7 @@ local function check_evoke(hands)
 		end
 		n = n + 1
 		if c.type == "civ" then
-			local enable = map.player_ctrl(c._sector)
+			local enable = allow and map.player_ctrl(c._sector)
 			cards[c] = {
 				action = hands[c],
 				evoke = enable,
@@ -426,7 +426,7 @@ return function ()
 	else
 		BUTTONS.button2.n = 2
 	end
-	evoke_cards = evoke_cards and check_evoke(hands)
+	evoke_cards = evoke_cards and check_evoke(hands, action1 ~= "evoke")
 	button_enable(nil, true)
 	vdesktop.set_text("phase", { text = "$(phase.action)", extra = "[blue]$(CHOOSE)[n]" } )
 	vdesktop.button_enable("button_setting", { text = "button.setting" })

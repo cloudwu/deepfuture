@@ -169,6 +169,7 @@ english:
   tips.expand.confirm.invalid : "Select a sector, move at least one [blue][people][n]"
   tips.evoke.enable : "[lbutton]$(action.evoke)\n - ${advancement}\n - ${victory}"
   tips.evoke.disable : "Control the sector[sector] ${sector} first to $(action.evoke)"
+  tips.evoke.taken : "$(action.evoke) has already been taken"
   NAMED_SECTOR : "A civilization named it : ${name}"
   WONDER_SECTOR : "\n - There is a wonder : ${wonder}\n - ${effect}"
   BLACKHOLE : "Black Hole"

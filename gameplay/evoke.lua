@@ -62,7 +62,11 @@ local function evoke_or_action(c, state, last_action)
 					if state.evoke then
 						vtips.set("tips.evoke.enable", desc)
 					else
-						vtips.set("tips.evoke.disable", desc)
+						if last_action == "evoke" then
+							vtips.set("tips.evoke.taken")
+						else
+							vtips.set("tips.evoke.disable", desc)
+						end
 					end
 				else
 					assert(focus_state.object == clone)

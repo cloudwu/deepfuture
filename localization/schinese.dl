@@ -170,6 +170,7 @@ schinese:
   tips.expand.confirm.invalid : "选定一个星区[sector]，至少移出一个[blue][people][n]"
   tips.evoke.enable : "[lbutton]$(action.evoke)\n - ${advancement}\n - ${victory}"
   tips.evoke.disable : "只有占领了星区[sector] ${sector} 才可以$(action.evoke)"
+  tips.evoke.taken : "已经执行过 $(action.evoke)"
   NAMED_SECTOR : "过往文明称之为：${name}"
   WONDER_SECTOR : "\n - 这里有一座奇迹：${wonder}\n - ${effect}"
   BLACKHOLE : 黑洞
