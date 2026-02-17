@@ -4,3 +4,6 @@ width : 1024
 height : 768
 high_dpi : true
 soluna : 3
+text_sampler :
+	min_filter : linear
+	mag_filter : linear
