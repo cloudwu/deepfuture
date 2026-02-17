@@ -51,3 +51,4 @@ cardlist :
 editbox :
 	cursor_speed : 20
 	cursor_color : 0x0000ff
+	preedit_color : 0x000000

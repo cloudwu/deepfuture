@@ -11,6 +11,7 @@ local fontcobj = font.cobj()
 local CURRENT_EDITBOX
 local CURSOR_SPEED <const> = ui.cursor_speed
 local CURSOR_COLOR <const> = ui.cursor_color
+local PREEDIT_COLOR <const> = ui.preedit_color
 local KEY_LEFT <const> = 263
 local KEY_RIGHT <const> = 262
 local KEY_ESC <const> = 256
@@ -113,7 +114,13 @@ function keyboard.editbox(desc)
 		if x ~= desc.ime_rect_x or y ~= desc.ime_rect_y then
 			desc.ime_rect_x = x
 			desc.ime_rect_y = y
-			app.set_ime_rect(x, y, cw, ch)
+			app.set_ime_rect {
+				x=x,
+				y=y,
+				width=cw,
+				height=ch,
+				text_color=PREEDIT_COLOR,
+			}
 		end
 		desc.cursor = cursor
 		desc.text = text
