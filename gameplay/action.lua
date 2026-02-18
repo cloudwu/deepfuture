@@ -323,6 +323,8 @@ local function choose_action(hands, evoke_cards, last_action)
 					local evoke_state = evoke_cards and evoke_cards[c]
 					if evoke_state and evoke_state.evoke then
 						desc.evoke = "$(tips.action.evoke)"
+					else
+						desc.evoke = nil
 					end
 					vtips.set("tips.action.choose", desc)
 				else
