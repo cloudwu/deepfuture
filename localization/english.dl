@@ -42,7 +42,7 @@ english:
   tips.setup.newworld : "[lbutton]Create a new [blue]$(card.type.world)[n] as homeworld\n - Because there's no $(card.type.world) in hand"
   tips.setup.newworld.invalid : "This is a ${type}, cannot be used as homeworld\n - Please create a new $(card.type.world)"
   tips.evoke.action.choose : "[lbutton]Choose action [blue]${action}[n]\n - ${desc}\n"
-  tips.evoke.action.unique : "Cannot perform [blue]${action}[n]行动\n - ${action} action has already been performed in the action phase"
+  tips.evoke.action.unique : "Cannot perform [blue]${action}[n] action\n - ${action} action has already been performed in the action phase"
   tips.evoke.action.invalid : "Cannot perform [blue]${action}[n] action\n - ${desc}"
   tips.action.choose : "${evoke|}$(tips.evoke.action.choose)$(tips.explain)"
   tips.action.unique : "$(tips.evoke.action.unique)\n - Can choose other action cards\n - Can execute $(button.action.plan)\n$(tips.explain)"
