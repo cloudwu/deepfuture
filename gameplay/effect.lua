@@ -566,7 +566,7 @@ function adv_check.infrastructure()
 end
 
 function adv_check.history()
-	return card.count "draw" - card.seen() > 0
+	return card.count "draw" + card.count "discard" - card.seen() > 0
 end
 
 function adv_check.economy()

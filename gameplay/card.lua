@@ -204,6 +204,20 @@ function card.add_seen()
 		seen = seen + 1
 		draw_pile[seen], draw_pile[idx] = draw_pile[idx], draw_pile[seen]
 		GAME.seen = seen
+	else
+		-- draw a random card from discard pile into draw pile
+		-- See https://github.com/cloudwu/deepfuture/issues/63
+		assert(#draw_pile == seen)
+		local discard_pile = GAME.discard
+		local discard_n = #discard_pile
+		if discard_n > 0 then
+			local idx = math.random(discard_n)
+			seen = seen + 1
+			draw_pile[seen] = discard_pile[idx]
+			discard_pile[idx] = discard_pile[discard_n]
+			discard_pile[discard_n] = nil
+			GAME.seen = seen
+		end
 	end
 	return seen
 end
