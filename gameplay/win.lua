@@ -552,7 +552,6 @@ local function choose_wonder(wonders, sec)
 	vdesktop.set_text("phase", {
 		extra = "$(phase.victory.wonder)",
 	})
-	wonders.TM = true
 	wonders = merge_suits(wonders)
 	local choose = gen_symbol_choice(wonders, sec)
 	local choose_card = choose_symbol(choose, sec)
