@@ -34,6 +34,7 @@ english:
   tips.menu.exit : "[lbutton]Exit Game"
   tips.menu.start : "[lbutton]Start Game"
   tips.menu.newgame : "[lbutton]New Campaign"
+  tips.menu.continue : "[lbutton]Continue Campaign\n - $(hud.turn)"
   tips.menu.manual : "[lbutton] Open game manual by default browser"
   tips.menu.credits : "[lbutton] Show Credits"
   tips.menu.cardlist : "[lbutton] Browse current deck\n - You can customize the names of the cards"
