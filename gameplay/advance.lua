@@ -312,6 +312,9 @@ local function advance(c, advs)
 		local clone = choose[1]
 		local adv_index = clone._random
 		if adv_index then
+			-- show this card for comfirming
+			vdesktop.add("deck", c)
+			vdesktop.transfer("deck", c, "float")
 			-- draw value
 			draw_value(advs, c, adv_index)
 			advs:reset()
