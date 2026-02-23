@@ -165,8 +165,10 @@ function lang.menu(m)
 		i = i + 1
 		r[i] = key
 	end
+	local lang_name = DATA.setting[LANG].name
 	m.language = {
-		name = DATA.setting[LANG].name
+		name = lang_name,
+		english_name = lang_name or DATA.setting[LANG].name,
 	}
 	m[#m+1] = r
 end
