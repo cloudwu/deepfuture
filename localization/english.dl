@@ -562,7 +562,7 @@ english:
   adv.ftl.detail : "When moving, add one space to range, can pass through galactic center or rival [sector] (but cannot stop)."
   adv.random.confirm : "[blue]Please confirm[n]"
   adv.random.value : "[blue]Random draw[n]"
-  adv.choose.value : "[blue]Free choice[n]"
+  adv.choose.value : "[blue]Choose[n]"
   credits.programmer : "Programmer"
   credits.artist : "Artist"
   credits.designer : "Designer"

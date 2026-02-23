@@ -401,6 +401,10 @@ function card.next_era()
 	HISTORY.year = HISTORY.era * 1000
 end
 
+function card.current_era()
+	return HISTORY.era
+end
+
 function card.pickup(where, card)
 	local id = card._id
 	local area = GAME[where]

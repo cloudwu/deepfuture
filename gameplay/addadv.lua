@@ -131,14 +131,14 @@ function addadv.choose_value(c, adv_index, pick)
 	flow.sleep(5)
 	local cards = {}
 	local adv_suit = c[adv_index].suit
-	local adv_era = c[adv_index].era
+	local adv_era = card.current_era()
 	for i = 1, 6 do
 		local clone = util.shallow_clone(c, {})
 		clone.name = CARD_COPY
 		local adv = {
 			suit = adv_suit,
 			value = i,
-			era = c.era,
+			era = adv_era,
 		}
 		clone[adv_index] = adv
 		card.gen_desc(clone)
@@ -181,7 +181,7 @@ function addadv.choose_value(c, adv_index, pick)
 			end
 			flow.sleep(20)
 			c[adv_index].value = clone[adv_index].value
-			c[adv_index].era = clone.era
+			c[adv_index].era = clone[adv_index].era
 			if not pick then
 				c[adv_index].chosen = true
 			end

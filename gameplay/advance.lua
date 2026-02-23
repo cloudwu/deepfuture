@@ -243,7 +243,7 @@ local function draw_value(advs, c, adv_index)
 	vdesktop.transfer("deck", value_card, "float")
 	interval()
 	c[adv_index].value = value_card.value
-	c[adv_index].era = c.era
+	c[adv_index].era = card.current_era()
 	card.gen_desc(c)
 	vcard.flush(c)
 	interval()
