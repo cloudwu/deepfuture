@@ -174,7 +174,8 @@ local function choose_or_random(random_value_choice, advs, need_physics)
 			vtips.set()
 			advs:reset()
 			local r = addadv.choose_random_adv(random_value_choice)
-			-- If only one choice, don't remove the card from the float region, remain this card for comfirming
+			-- If there's only one choice, don't remove the card from the float region.
+			-- and remain this card for confirming
 			--   https://github.com/cloudwu/deepfuture/issues/66
 			--   https://github.com/cloudwu/deepfuture/issues/68
 			if #r > 1 then
