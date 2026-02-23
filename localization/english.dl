@@ -252,7 +252,7 @@ english:
   tips.challenge.desc : "[blue]Face Challenge[n] ${challenge_name}\n - ${challenge_desc}"
   tips.challenge.desc.track : "${track1} moves back ${dec1}, ${track2} moves back ${dec2}"
   tips.challenge.desc.trackrival : "${track} moves back ${dec}, randomly add [people]x${rival}"
-  tips.challenge.desc.newciv : "Add neutral planets, add [people]x${rival}"
+  tips.challenge.desc.newciv : "Add a neutral world with [people]x${rival}"
   tips.adv.S.choice : " - 1 $(adv.computation.name) 2 $(adv.engineering.name) 3 $(adv.communication.name)\n - 4 $(adv.weapons.name) 5 $(adv.industry.name) 6 $(adv.energy.name)"
   tips.adv.M.choice : " - 1 $(adv.art.name) 2 $(adv.leisure.name) 3 $(adv.philosophy.name)\n - 4 $(adv.literature.name) 5 $(adv.government.name) 6 $(adv.society.name)"
   tips.adv.R.choice : " - 1 $(adv.infrastructure.name) 2 $(adv.labor.name) 3 $(adv.machinery.name)\n - 4 $(adv.medicine.name) 5 $(adv.biology.name) 6 $(adv.genetics.name)"
