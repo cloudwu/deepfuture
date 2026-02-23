@@ -173,9 +173,15 @@ local function choose_or_random(random_value_choice, advs, need_physics)
 			-- choose random
 			vtips.set()
 			advs:reset()
-			vdesktop.transfer("float", random_value_choice, "deck")
-			flow.sleep(5)
-			return addadv.choose_random_adv(random_value_choice)
+			local r = addadv.choose_random_adv(random_value_choice)
+			-- If only one choice, don't remove the card from the float region, remain this card for comfirming
+			--   https://github.com/cloudwu/deepfuture/issues/66
+			--   https://github.com/cloudwu/deepfuture/issues/68
+			if #r > 1 then
+				vdesktop.transfer("float", random_value_choice, "deck")
+				flow.sleep(5)
+			end
+			return r
 		elseif advs:focus(click_card) then
 			vtips.set()
 			advs:use(click_card)
@@ -312,9 +318,6 @@ local function advance(c, advs)
 		local clone = choose[1]
 		local adv_index = clone._random
 		if adv_index then
-			-- show this card for comfirming
-			vdesktop.add("deck", c)
-			vdesktop.transfer("deck", c, "float")
 			-- draw value
 			draw_value(advs, c, adv_index)
 			advs:reset()
