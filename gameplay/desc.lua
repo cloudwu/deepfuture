@@ -66,7 +66,8 @@ end
 
 local function gen_desc(c, desc)
 	if c.type == "civ" then
-		desc.world = c.world
+		desc.world = c.name
+		desc.sector = c._sector
 		desc.victory = c._victory
 		desc.advancement = c._advancement
 	end

@@ -16,7 +16,7 @@ name :
 	width : 90%
 	text : card.civ.name
 	size : 18
-	flex : 0.2
+	flex : 0.25
 	text_align : C
 adv :
 	flex : 0.4
