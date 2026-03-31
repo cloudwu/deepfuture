@@ -1,2 +1,5 @@
 soluna/
 .DS_Store
+website/node_modules/
+website/dist/
+website/public/runtime
