@@ -11,13 +11,13 @@ on:
 
 jobs:
   build:
-    name: Build Runtime
+    name: Build Website
     if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
       - name: Build Soluna
@@ -25,21 +25,27 @@ jobs:
         id: build
         with:
           soluna_path: "./soluna"
-      - name: Prepare Game Content
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Build Website
         shell: bash
+        working-directory: website
+        env:
+          SITE_BASE: /deepfuture/
+          SOLUNA_JS_PATH: ${{ steps.build.outputs.SOLUNA_JS_PATH }}
+          SOLUNA_WASM_PATH: ${{ steps.build.outputs.SOLUNA_WASM_PATH }}
+          SOLUNA_WASM_MAP_PATH: ${{ steps.build.outputs.SOLUNA_WASM_MAP_PATH }}
         run: |
-          mkdir build
-          cp "${{ steps.build.outputs.SOLUNA_WASM_PATH }}" ./build/
-          cp "${{ steps.build.outputs.SOLUNA_JS_PATH }}" ./build/
-          zip -r ./build/main.zip asset core gameplay localization service visual main.game main.lua
-          cp .github/assets/index.html ./build/
-          cp .github/assets/*.ttf ./build/
-          cp .github/assets/coi-serviceworker.min.js ./build/
+          corepack enable
+          pnpm install --no-frozen-lockfile
+          pnpm run build
       - name: Upload static files as artifact
         id: deployment
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
-          path: build/
+          path: website/dist/
   deploy:
     name: Deploy to GitHub Pages
     if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/master'
@@ -55,5 +61,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-

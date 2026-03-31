@@ -1,0 +1,23 @@
+{
+  "gameTitle": "深远未来",
+  "intro": [
+    "拓殖星球，发展科技，永无止境地进化你银河系的深远未来。",
+    "《深远未来》是桌游的数字化版本，带来“边玩边创造”的独特体验，每一局都能拓展属于你的银河文明。"
+  ],
+  "sourceAriaLabel": "查看源码",
+  "checkingWebGPU": "正在检查 WebGPU 支持…",
+  "webgpuMissingTitle": "当前浏览器未开启 WebGPU 支持",
+  "webgpuMissingDetail": "请在支持 WebGPU 的浏览器中打开，或者在浏览器设置中启用 WebGPU 后刷新页面。",
+  "loadingRuntime": "正在加载运行时入口…",
+  "loadingMainArchive": "正在加载核心资源包…",
+  "waitingLocalFontAuthorization": "请授权读取本地字体…",
+  "requestingLocalFont": "正在请求访问本地字体…",
+  "loadingEnglishFont": "正在加载英文字体…",
+  "loadingChineseFont": "正在加载中文字体…",
+  "localFontUnavailable": "无法使用本地字体，改为下载字体资源…",
+  "localFontButton": "授权使用本地字体",
+  "mountingStorage": "正在初始化本地存档…",
+  "startingRuntime": "引擎已就绪，正在启动…",
+  "runtimeFailedTitle": "运行时加载失败",
+  "runtimeFailedDetail": "加载运行时失败，请稍后重试。"
+}

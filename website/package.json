@@ -1,0 +1,25 @@
+{
+  "name": "deepfuture-website",
+  "type": "module",
+  "private": true,
+  "packageManager": "pnpm@10.33.0",
+  "scripts": {
+    "build": "pnpm run prepare:runtime && vite build",
+    "build:pages": "SITE_BASE=/deepfuture/ pnpm run build",
+    "dev": "pnpm run prepare:runtime && vite",
+    "format": "eslint . --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prepare:runtime": "node scripts/prepare-runtime.mjs",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "fflate": "^0.8.2"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^7.7.3",
+    "eslint": "^10.1.0",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.3"
+  }
+}

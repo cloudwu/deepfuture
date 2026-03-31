@@ -1,0 +1,205 @@
+body {
+  margin: 0;
+  background: #000;
+  font-family: "Segoe UI", "PingFang SC", "Hiragino Sans GB", Arial, sans-serif;
+  color: #f5f5f5;
+}
+
+#canvas {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+
+#overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+  background: radial-gradient(circle at top, rgba(36, 64, 128, 0.8), rgba(6, 10, 24, 0.95));
+  text-align: center;
+  transition: opacity 0.4s ease;
+  z-index: 10;
+}
+
+#overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#overlay.error {
+  background: rgba(16, 16, 16, 0.95);
+}
+
+.overlay-content {
+  max-width: 640px;
+}
+
+#overlay-title {
+  font-size: 2rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 0 12px;
+}
+
+#overlay-intro {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+#overlay-intro p {
+  margin: 0 0 12px;
+}
+
+#overlay-status {
+  font-size: 0.95rem;
+  opacity: 0.85;
+  margin: 0;
+}
+
+#overlay-progress {
+  margin: 18px auto 0;
+  width: 100%;
+  max-width: 420px;
+  text-align: left;
+}
+
+#overlay-progress-track {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(215, 229, 255, 0.16);
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(6, 12, 28, 0.45);
+}
+
+#overlay-progress-fill {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(126, 188, 255, 0.9), rgba(56, 116, 218, 0.9));
+  box-shadow: 0 0 12px rgba(96, 158, 255, 0.4);
+  transition: width 0.3s ease;
+}
+
+#overlay-progress-label {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: right;
+  color: rgba(215, 229, 255, 0.72);
+}
+
+#font-permission-btn {
+  display: none;
+  margin: 18px auto 0;
+  padding: 12px 26px;
+  border-radius: 999px;
+  border: 1px solid rgba(126, 188, 255, 0.55);
+  background: linear-gradient(135deg, rgba(28, 48, 92, 0.9), rgba(16, 24, 48, 0.9));
+  color: #d7e5ff;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(10, 22, 48, 0.4);
+}
+
+#font-permission-btn.visible {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#metrics {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  padding: 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(96, 158, 255, 0.35);
+  background: linear-gradient(135deg, rgba(18, 30, 58, 0.85), rgba(8, 12, 28, 0.85));
+  box-shadow: 0 12px 28px rgba(10, 22, 48, 0.45), inset 0 0 12px rgba(64, 124, 255, 0.25);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  backdrop-filter: blur(12px);
+  z-index: 8;
+  overflow: hidden;
+  max-width: 56px;
+  min-height: 46px;
+  box-sizing: border-box;
+  transition: max-width 0.28s ease, padding 0.28s ease, border-color 0.28s ease;
+}
+
+#metrics:hover,
+#metrics:focus-within {
+  max-width: 320px;
+  padding: 8px 14px;
+  border-color: rgba(126, 188, 255, 0.6);
+  justify-content: flex-start;
+}
+
+#source-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  color: #d7e5ff;
+  text-decoration: none;
+  opacity: 0.8;
+}
+
+#source-link svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.metrics-details {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  transform: translateX(-6px);
+  pointer-events: none;
+  max-width: 0;
+  flex: 0 1 0%;
+  overflow: hidden;
+  margin-left: 0;
+  transition: opacity 0.18s ease, transform 0.2s ease, max-width 0.28s ease, margin-left 0.28s ease;
+}
+
+#metrics:hover .metrics-details,
+#metrics:focus-within .metrics-details {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+  max-width: 260px;
+  flex-basis: 260px;
+  margin-left: 12px;
+}
+
+#metrics label {
+  color: #d7e5ff;
+  font-weight: 600;
+}
+
+.separator {
+  color: rgba(215, 229, 255, 0.45);
+  font-size: 0.7rem;
+  letter-spacing: normal;
+}

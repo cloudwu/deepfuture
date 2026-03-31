@@ -1,0 +1,23 @@
+{
+  "gameTitle": "Deep Future",
+  "intro": [
+    "Settle worlds, advance techs, and endlessly evolve your galaxy's deep future.",
+    "Deep Future is the digital take on the make-as-you-play board game where every session grows your galactic civilization."
+  ],
+  "sourceAriaLabel": "Source code on GitHub",
+  "checkingWebGPU": "Checking for WebGPU support…",
+  "webgpuMissingTitle": "WebGPU is not enabled in this browser",
+  "webgpuMissingDetail": "Open the page in a browser with WebGPU support or enable it in your browser settings, then reload.",
+  "loadingRuntime": "Loading runtime entry…",
+  "loadingMainArchive": "Fetching core content…",
+  "waitingLocalFontAuthorization": "Awaiting font authorization…",
+  "requestingLocalFont": "Requesting access to local fonts…",
+  "loadingEnglishFont": "Loading English font…",
+  "loadingChineseFont": "Loading Chinese font…",
+  "localFontUnavailable": "Local fonts unavailable. Fetching bundled font…",
+  "localFontButton": "Authorize local fonts",
+  "mountingStorage": "Preparing local save storage…",
+  "startingRuntime": "Runtime ready. Launching…",
+  "runtimeFailedTitle": "Runtime failed to load",
+  "runtimeFailedDetail": "We could not load the runtime. Please try again later."
+}
