@@ -99,14 +99,15 @@ function keyboard.editbox(desc)
 		local text = desc.text or ""
 		local width = desc.width
 		local height = desc.height
-		local cx, cy, cw, ch, cursor, decent = desc.cursor_get(text, desc.cursor or utf8.len(text), width, height)
+		local layout = desc.cursor_get(text, width, height)
+		local cx, cy, cw, ch, cursor, decent = layout:cursor(desc.cursor or utf8.len(text))
 		if desc.input then
 			local input_len = utf8.len(desc.input)
 			local offset = utf8.offset(text, cursor + 1)
 			text = text:sub(1, offset-1) .. desc.input .. text:sub(offset)
 			desc.input = nil
 			cursor = cursor + input_len
-			cx, cy, cw, ch, cursor, decent = desc.cursor_get(text, cursor, width, height)
+			cx, cy, cw, ch, cursor, decent = layout:cursor(cursor)
 			desc.label = nil
 		end
 		local x = cx+desc.ime_x
